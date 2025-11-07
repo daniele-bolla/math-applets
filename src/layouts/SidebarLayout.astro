@@ -26,7 +26,7 @@ const { title } = Astro.props;
                 {
                     examples.map((ex) => (
                         <a
-                            href={`/examples/${ex.slug}`}
+                            href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
                             class="block py-1 text-slate-700 hover:text-blue-600"
                         >
                             {ex.data.title}

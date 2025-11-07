@@ -13,7 +13,7 @@ const examples: CollectionEntry<"examples">[] = await getCollection("examples");
 			examples.map((ex) => (
 				<li>
 					<a
-						href={`/examples/${ex.slug}`}
+						href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
 						class="block p-4 border border-slate-200 rounded-lg hover:bg-slate-100 transition"
 					>
 						<h3 class="text-xl font-semibold">{ex.data.title}</h3>
