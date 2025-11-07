@@ -1,0 +1,23 @@
+---
+import Layout from "../../layouts/SidebarLayout.astro";
+import { getCollection, getEntry } from "astro:content";
+
+export async function getStaticPaths() {
+    const examples = await getCollection("examples");
+    return examples.map((ex) => ({
+        params: { slug: ex.slug },
+    }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntry("examples", slug);
+if (!entry) throw new Error(`No example found for slug: ${slug}`);
+
+const { Content } = await entry.render();
+---
+
+<Layout title={entry.data.title}>
+    <article class="prose prose-slate max-w-none">
+        <Content />
+    </article>
+</Layout>

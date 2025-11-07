@@ -1,0 +1,27 @@
+---
+import "katex/dist/katex.min.css";
+import "../styles/global.css";
+
+const { title } = Astro.props;
+---
+
+<html lang="en" class="bg-slate-50 text-slate-900">
+    <head>
+        <meta charset="utf-8" />
+        <title>{title}</title>
+    </head>
+    <body class="font-sans antialiased p-8 max-w-3xl mx-auto prose prose-slate">
+        <header class="mb-10">
+            <h1 class="text-3xl font-bold tracking-tight">{title}</h1>
+            <p class="text-slate-600 text-sm">Interactive Calculus Applets</p>
+        </header>
+
+        <main>
+            <slot />
+        </main>
+
+        <footer class="mt-10 text-sm text-slate-500 border-t pt-4">
+            © {new Date().getFullYear()} Daniele Bolla – Math Visualizations
+        </footer>
+    </body>
+</html>

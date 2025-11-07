@@ -1,0 +1,23 @@
+---
+title: Intermediate Value Theorem
+description: Visualization of the Intermediate Value Theorem.
+---
+
+import IntermediateValueTheorem from "../../components/applets/IntermediateValueTheorem";
+import MathBlock from "../../components/MathBlock";
+
+# Intermediate Value Theorem
+
+<MathBlock type="theorem" title="Intermediate Value Theorem">
+Let $f : [a,b] \to \mathbb{R}$ be continuous, and suppose that either 
+$f(a) < c < f(b)$ or $f(a) > c > f(b)$. Then there exists an $x \in (a,b)$ such that 
+$$
+f(x) = c.
+$$
+</MathBlock>
+
+--- 
+
+<IntermediateValueTheorem client:load />
+
+--- 

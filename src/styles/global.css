@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@plugin '@tailwindcss/typography';
+
+@theme {
+    --font-roboto: "Roboto", sans-serif;
+
+    --color-orange: #f7b563;
+    --color-orange-light: #fff4e0;
+
+    --color-teal: #72a1a7;
+    --color-teal-light: #e5f5f6;
+
+    --color-red: #de6363;
+    --color-red-light: #ffecec;
+
+    --color-green: #7fb685;
+    --color-green-light: #e6f4ec;
+
+    --color-brown: #a9746e;
+    --color-brown-light: #f6ebe9;
+
+    --color-purple: #b19cd9;
+    --color-purple-light: #f3effc;
+
+    --color-gray: #cccccc;
+    --color-gray-light: #f5f5f5;
+}
+
+.katex-display>.katex {
+    display: block;
+    text-align: center;
+    white-space: unset !important;
+}
+
+.jxgbox {
+    display: block;
+    width: 100%;
+    max-height: 80vh;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #ccc;
+}
