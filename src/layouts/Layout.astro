@@ -5,7 +5,7 @@ import "../styles/global.css";
 const { title } = Astro.props;
 ---
 
-<html lang="en" class="bg-slate-50 text-slate-900">
+<html lang="en" class="text-slate-900">
     <head>
         <meta charset="utf-8" />
         <title>{title}</title>
@@ -20,7 +20,7 @@ const { title } = Astro.props;
             <slot />
         </main>
 
-        <footer class="mt-10 text-sm text-slate-500 border-t pt-4">
+        <footer class="mt-10 text-sm text-slate-700 border-t pt-4">
             © {new Date().getFullYear()} Daniele Bolla – Math Visualizations
         </footer>
     </body>

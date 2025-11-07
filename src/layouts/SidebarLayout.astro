@@ -6,39 +6,25 @@ import { getCollection } from "astro:content";
 
 const examples: CollectionEntry<"examples">[] = await getCollection("examples");
 const { title } = Astro.props;
+import Sidebar from "../components/SidebarLayout.tsx";
 ---
 
-<html lang="en" class="bg-slate-50 text-slate-900">
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"
-    />
-
-    <meta charset="utf-8" />
-    <title>{title}</title>
-
-    <body class="font-sans antialiased flex h-screen overflow-hidden">
-        <aside
-            class="w-64 bg-slate-100 h-screen p-6 border-r border-slate-200 overflow-y-auto"
-        >
-            <h2 class="text-xl font-semibold mb-4">Math Applets</h2>
-            <nav class="space-y-2">
-                {
-                    examples.map((ex) => (
-                        <a
-                            href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
-                            class="block py-1 text-slate-700 hover:text-blue-600"
-                        >
-                            {ex.data.title}
-                        </a>
-                    ))
-                }
-            </nav>
-        </aside>
-        <main
-            class="flex-1 h-screen overflow-y-auto p-8 prose prose-slate max-w-none bg-white"
+<html lang="en" class="text-slate-900">
+    <head>
+        <meta charset="utf-8" />
+        <title>{title}</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"
+        />
+    </head>
+    <body class="font-sans antialiased">
+        <Sidebar
+            examples={Object.values(examples)}
+            title="Math Applets"
+            client:load
         >
             <slot />
-        </main>
+        </Sidebar>
     </body>
 </html>
