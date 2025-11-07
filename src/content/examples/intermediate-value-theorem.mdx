@@ -10,10 +10,7 @@ import MathBlock from "../../components/MathBlock";
 
 <MathBlock type="theorem" title="Intermediate Value Theorem">
 Let $f : [a,b] \to \mathbb{R}$ be continuous, and suppose that either 
-$f(a) < c < f(b)$ or $f(a) > c > f(b)$. Then there exists an $x \in (a,b)$ such that 
-$$
-f(x) = c.
-$$
+$f(a) < c < f(b)$ or $f(a) > c > f(b)$. Then there exists an $x \in (a,b)$ such that $f(x) = c$.
 </MathBlock>
 
 --- 
@@ -21,3 +18,30 @@ $$
 <IntermediateValueTheorem client:load />
 
 --- 
+
+## Description
+
+This example illustrates how the **Intermediate Value Theorem (IVT)** holds 
+for continuous functions on a closed interval $[a,b]$.
+
+By moving points $a$ and $b$, one can adjust the domain.
+
+If the functions is continuous and $\min(f(a), f(b))< c < \max(f(a), f(b))$,
+then there exists **at least one** an $x \in (a,b)$ such that $f(x) = c$.
+In the applet, it can be observed that there may be more than one such $x$.
+
+A nice thing to notice is that, given continuity, the image of the function, over $[a,b]$, 
+is again a closed interval 
+(with no gaps).
+The applets highligths the image of the function,
+with a green segment when the function is continuous on the given domain and with a "warning" orange segment 
+whenthe function is not continuous at the given domain and its image contains gaps.
+
+I also plan to add another example illustrating a **discontinuous function** for which the IVT still holds, 
+such as the curve:
+$$
+    f(x) = \begin{cases}
+        \sin{\frac{1}{x}} & \text{if } x \ge 0 \\
+        0 & \text{if } x = 0
+    \end{cases}
+$$

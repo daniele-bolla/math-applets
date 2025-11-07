@@ -45,7 +45,7 @@ export default function SidebarLayout({ examples, title, children }: SidebarLayo
 
             {/* Sidebar */}
             <aside
-                className={`fixed sm:static top-0 left-0 h-full w-64  border-r border-r-2 border-slate-200 p-6 transform transition-transform duration-200 ease-in-out overflow-y-auto z-40 ${isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
+                className={`fixed sm:static bg-white top-0 left-0 h-full w-64  border-r border-r-2 border-slate-200 p-6 transform transition-transform duration-200 ease-in-out overflow-y-auto z-40 ${isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
                     }`}
             >
                 <h2 className="text-xl font-semibold mb-4 hidden sm:block">                    <a
