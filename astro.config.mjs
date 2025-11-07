@@ -6,6 +6,8 @@ import rehypeKatex from 'rehype-katex';
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+    site: 'https://daniele-bolla.github.io',
+    base: '/math-applets',
     vite: {
         plugins: [tailwindcss()],
     },
