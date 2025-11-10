@@ -22,7 +22,7 @@ export default function MathBlock({ type = "theorem", title, children }: MathBlo
     const textClass = `text-${color}-700`;
 
     return (
-        <div className={`p-2 mb-1 ${borderClass} rounded`}>
+        <div className={`px-2 py-1 ${borderClass} rounded`}>
             <strong className={`${textClass} block mb-1`}>
                 {title || type.charAt(0).toUpperCase() + type.slice(1)}:
             </strong>

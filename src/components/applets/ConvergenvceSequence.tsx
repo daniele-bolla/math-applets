@@ -10,26 +10,24 @@ export default function LimitApplet() {
                 const sequence = (n: number) => 1 / n;
                 const limit = 0;
 
+                // Transform n to x-coordinate using log scale
+                const transformN = (n: number) => n * 0.25;
+
                 // Calculate N for given epsilon
                 function findN(epsilon: number): number {
-                    for (let n = 1; n <= 100; n++) {
-                        if (Math.abs(sequence(n) - limit) < epsilon) {
-                            return n;
-                        }
-                    }
-                    return 1;
+                    return Math.ceil(1 / epsilon);
                 }
 
-                // Create a constrained segment for epsilon glider (from 0.05 to 2.5 on y-axis)
+                // Create a constrained segment for epsilon glider
                 const epsilonSegment = board.create('segment', [
                     [0, 0.05],
-                    [0, 2.5]
+                    [0, 0.8]
                 ], {
                     visible: false,
                     fixed: true,
                 });
 
-                // Draggable epsilon point on the constrained segment
+                // Draggable epsilon point
                 const epsilonPoint = board.create('glider', [0, 0.3, epsilonSegment], {
                     name: 'ε',
                     face: '<>',
@@ -38,7 +36,7 @@ export default function LimitApplet() {
                     strokeColor: '#E65100',
                 });
 
-                // Limit line (a = 0)
+                // Limit line
                 board.create('line', [
                     [0, limit],
                     [1, limit]
@@ -82,8 +80,8 @@ export default function LimitApplet() {
                 // Shaded ε-neighborhood
                 board.create('polygon', [
                     [0, () => limit - epsilonPoint.Y()],
-                    [15, () => limit - epsilonPoint.Y()],
-                    [15, () => limit + epsilonPoint.Y()],
+                    [10, () => limit - epsilonPoint.Y()],
+                    [10, () => limit + epsilonPoint.Y()],
                     [0, () => limit + epsilonPoint.Y()]
                 ], {
                     fillColor: '#4CAF50',
@@ -92,29 +90,34 @@ export default function LimitApplet() {
                     fixed: true,
                 });
 
-                // Sequence points
+                // Sequence points with logarithmic spacing
                 let sequencePoints: any[] = [];
-                const maxPoints = 30;
+                let sequenceLabels: any[] = [];
+                const maxPoints = 60;
 
                 function createSequencePoints() {
                     sequencePoints.forEach(p => board.removeObject(p));
+                    sequenceLabels.forEach(l => board.removeObject(l));
                     sequencePoints = [];
+                    sequenceLabels = [];
 
                     const epsilon = epsilonPoint.Y();
                     const N = findN(epsilon);
 
                     for (let n = 1; n <= maxPoints; n++) {
                         const an = sequence(n);
+                        const xPos = n //transformN(n);
                         const isAfterN = n >= N;
 
-                        const point = board.create('point', [n, an], {
-                            name: n <= 3 ? `a${n}` : '',
-                            size: 2,
+                        const point = board.create('point', [xPos, an], {
+                            name: '',
+                            size: 3,
                             fillColor: isAfterN ? '#9C27B0' : '#F44336',
                             strokeColor: isAfterN ? '#6A1B9A' : '#C62828',
                             fixed: true,
                         });
                         sequencePoints.push(point);
+
                     }
                 }
 
@@ -128,10 +131,11 @@ export default function LimitApplet() {
 
                     const epsilon = epsilonPoint.Y();
                     const N = findN(epsilon);
+                    const xN = transformN(N);
 
                     NLine = board.create('line', [
-                        [N, -1],
-                        [N, 3]
+                        [xN, -1],
+                        [xN, 1]
                     ], {
                         strokeColor: '#9C27B0',
                         strokeWidth: 3,
@@ -141,13 +145,13 @@ export default function LimitApplet() {
                         fixed: true,
                     });
 
-                    NPoint = board.create('point', [N, 0], {
-                        name: `N_ε`,
-                        size: 2,
-                        // face: '|',
+                    NPoint = board.create('point', [xN, 0], {
+                        name: `N=${N}`,
+                        size: 3,
                         fillColor: '#9C27B0',
                         strokeColor: '#6A1B9A',
                         fixed: true,
+                        label: { offset: [5, -15], fontSize: 12 }
                     });
                 }
 

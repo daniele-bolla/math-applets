@@ -4,9 +4,14 @@ description: Visualization of the derivative.
 ---
 
 import Tangent from "../../components/applets/Tangent";
+import MathBlock from "../../components/MathBlock";
 
 # Secant Tangent and Derivative at a point 
-
+<MathBlock type="definition" title="Derivative at a point">
+Let $D \subseteq \mathbb{R}$ and $f : D \to \mathbb{R}$. The function $f$ is called differentiable in $x_0 \in D$, if $x_0$ is an accumulation point of $D$ and if the limit
+$$f'(x_0) := \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}$$
+exists. In this case, $f'(x_0)$ is called the derivative of $f$ in $x_0$.
+</MathBlock>
 ---
 <Tangent client:load />
 ---

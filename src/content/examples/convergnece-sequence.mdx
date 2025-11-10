@@ -4,9 +4,29 @@ description: Visualization of convergence of a sequence.
 ---
 
 import ConvergenvceSequence from "../../components/applets/ConvergenvceSequence";
+import MathBlock from "../../components/MathBlock";
 
 #  Convergence of a sequence
-
+<MathBlock type="definition" title="Convergence">
+Let $(a_n)_{n \in \mathbb{N}}$ be a sequence of real numbers. The sequence $(a_n)_{n \in \mathbb{N}}$ is said to be convergent towards $a \in \mathbb{R}$, if for every $\varepsilon > 0$ there exists an $N \in \mathbb{N}$ such that for all $n \in \mathbb{N}$ with $n \geq N$ it holds that
+$$|a_n - a| < \varepsilon.$$
+In this case, $a$ is called the limit of the sequence $(a_n)_{n \in \mathbb{N}}$. We write
+$$\lim_{n \to \infty} a_n = a \quad \text{or} \quad a_n \to a \text{ for } n \to \infty.$$
+</MathBlock>
 ---
 <ConvergenvceSequence client:load />
 ---
+## Description
+
+Using  $(\frac{1}{n})_{n \in \mathbb{N}}$ with limit 0, i am visualizing the convergence defintions.
+
+The epsilon neighborhood from the lmit $0$ is adjustable and highlighted in green.
+
+The index $N$ is calculated by $|\frac{1}{n} -0| < \varepsilon \iff \ n \ge \frac{1}{\varepsilon} $ 
+giving $N= \lceil \frac{1}{\varepsilon} \rceil $.
+
+```typescript
+    function findN(epsilon: number): number {
+        return Math.ceil(1 / epsilon);
+    }
+```
