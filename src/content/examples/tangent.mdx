@@ -7,5 +7,34 @@ import Tangent from "../../components/applets/Tangent";
 
 # Secant Tangent and Derivative at a point 
 
-
+---
 <Tangent client:load />
+---
+
+## Description
+
+The example is an geometric interpretation of the derivative, specifically showing the connetcion between 
+the slope of the secant between two points and the slope of a tangent point.
+[Here a link where i took inspiration from](https://www.mit.edu/~hlb/StantonGrant/Lecture1/geomdfn.pdf).
+
+The slope of the secant is given by:
+```javascript
+    () => `Secant: slope = ${((pointB.Y() - pointA.Y()) / (pointB.X() - pointA.X())).toFixed(3)}`
+```
+
+Meaning:
+$$
+\frac{ f(a+h) - f (a)}{(a+h) - a} = \frac{ f(a+h) - f (a)}{h} 
+$$
+
+Where `pointB = (a+h, f(a+h))`, and the value `h` is controlled by a slider.
+
+When `h` approach zero (the slider sets a minimum value of 0.001), the secant slope corresponds 
+to the slope of the tangfent at pointA, 
+showing that the tangent line is the best approximation of a derivative at a point.
+
+The tangent is calculated using the derivative of f since:
+$$
+\lim_{h \to 0}  \frac{ f(a+h) - f (a)}{h} =  f'(a)
+$$
+

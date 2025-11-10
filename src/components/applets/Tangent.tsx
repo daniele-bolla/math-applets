@@ -33,7 +33,7 @@ export default function TangentApplet() {
                 const hSlider = board.create('slider', [
                     [0.5, -0.5],
                     [3, -0.5],
-                    [0.01, 1, 3]
+                    [0.001, 1, 3]
                 ], {
                     name: 'h',
                     snapWidth: 0.01,
@@ -68,12 +68,12 @@ export default function TangentApplet() {
                 board.create('text', [
                     () => (pointA.X() + pointB.X()) / 2 + 0.2,
                     () => (pointA.Y() + pointB.Y()) / 2 + 0.3,
-                    () => `Secant: slope = ${((pointB.Y() - pointA.Y()) / (pointB.X() - pointA.X())).toFixed(3)}`
+                    () => `Secant: slope = ${((pointB.Y() - pointA.Y()) / (hSlider.Value())).toFixed(3)}`
                 ], {
                     fontSize: 12,
                     color: '#FF6B6B',
                     fixed: true,
-                    visible: () => hSlider.Value() >= 0.1
+                    // visible: () => hSlider.Value() >= 0.1
                 });
 
                 // Tangent line at A
@@ -91,7 +91,7 @@ export default function TangentApplet() {
                 board.create('text', [
                     () => pointA.X() + 0.5,
                     () => pointA.Y() + fPrime(pointA.X()) * 0.5 + 0.3,
-                    () => `Tangent: f'(${pointA.X().toFixed(2)}) = ${fPrime(pointA.X()).toFixed(3)}`
+                    () => `Tangent: f'(${pointA.X()}) = ${fPrime(pointA.X()).toFixed(3)}`
                 ], {
                     fontSize: 12,
                     color: '#9C27B0',

@@ -14,9 +14,7 @@ $f(a) < c < f(b)$ or $f(a) > c > f(b)$. Then there exists an $x \in (a,b)$ such 
 </MathBlock>
 
 --- 
-
 <IntermediateValueTheorem client:load />
-
 --- 
 
 ## Description
@@ -28,14 +26,23 @@ By moving points $a$ and $b$, one can adjust the domain.
 
 If the functions is continuous and $\min(f(a), f(b))< c < \max(f(a), f(b))$,
 then there exists **at least one** an $x \in (a,b)$ such that $f(x) = c$.
-In the applet, it can be observed that there may be more than one such $x$.
+By moving the point $c$ in between the $f(a)$ and $f(b)$ one can
+observe that there may be more than one such $x$.
+
+To show this points i have created 3 (maximum roots of the function) intersection points with the lineC (parallel ot the x-axis) 
+and graph.
+```typescript
+board.create('intersection', [graph, lineC, 1]...
+```
+I then make the intersection and their projection to the x-axis visible, only when $c$ is in between $f(a)$ and $f(b)$ (`isPointCinBetweenFaFb()`) 
+and the intersection project to the interval $[a,b]$ (`isPointAPointBInInterval()`)
 
 A nice thing to notice is that, given continuity, the image of the function, over $[a,b]$, 
-is again a closed interval 
-(with no gaps).
+is again a closed interval (with no gaps).
+
 The applets highligths the image of the function,
 with a green segment when the function is continuous on the given domain and with a "warning" orange segment 
-whenthe function is not continuous at the given domain and its image contains gaps.
+when the function is not continuous at the given domain and its image contains gaps.
 
 I also plan to add another example illustrating a **discontinuous function** for which the IVT still holds, 
 such as the curve:

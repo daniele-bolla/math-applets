@@ -7,8 +7,8 @@ export default function MVTApplet() {
             config={{ boundingbox: [-1, 5, 5, -1], axis: true }}
             setup={(board: JXG.Board) => {
 
-                const f = (x: number) => 0.2 * x * x * x - 0.5 * x * x + 2;
-                const fPrime = (x: number) => 0.6 * x * x - x;
+                const f = (x: number) => 0.2 * x * x * x + 2;
+                //const fPrime = (x: number) => 0.6 * x * x;
 
                 board.create('functiongraph', [f, -10, 10], {
                     strokeColor: '#2196F3',
@@ -53,7 +53,7 @@ export default function MVTApplet() {
                     fixed: true,
                 });
 
-                board.create('line', [pointFA, pointFB], {
+                const secant = board.create('line', [pointFA, pointFB], {
                     strokeColor: '#FF6B6B',
                     strokeWidth: 2,
                     dash: 2,
@@ -62,29 +62,13 @@ export default function MVTApplet() {
                 });
 
                 function findC(): number {
-                    const a = pointA.X();
-                    const b = pointB.X();
-                    const secantSlope = (f(b) - f(a)) / (b - a);
-
-                    let left = Math.min(a, b);
-                    let right = Math.max(a, b);
-
-                    for (let i = 0; i < 50; i++) {
-                        const mid = (left + right) / 2;
-                        const slope = fPrime(mid);
-
-                        if (Math.abs(slope - secantSlope) < 0.001) {
-                            return mid;
-                        }
-
-                        if (fPrime(left) < secantSlope && slope > secantSlope) {
-                            right = mid;
-                        } else {
-                            left = mid;
-                        }
-                    }
-
-                    return (left + right) / 2;
+                    const a = pointFA.X();
+                    const b = pointFB.X();
+                    const fa = pointFA.Y();
+                    const fb = pointFB.Y();
+                    const secantSlope = (fb - fa) / (b - a);
+                    const c = Math.sqrt(secantSlope / 0.6)
+                    return c
                 }
 
                 const pointConX = board.create('point', [
@@ -108,13 +92,7 @@ export default function MVTApplet() {
                     fixed: true,
                 });
 
-                board.create('line', [
-                    pointC,
-                    [
-                        () => findC() + 1,
-                        () => f(findC()) + fPrime(findC())
-                    ]
-                ], {
+                board.create('parallel', [secant, pointC], {
                     strokeColor: '#9C27B0',
                     strokeWidth: 3,
                     straightFirst: true,

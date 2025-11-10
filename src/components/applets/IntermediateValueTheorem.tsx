@@ -125,15 +125,11 @@ export default function IVTApplet() {
 
                 let initialC = (objectiveFunction(point_a.X()) + objectiveFunction(point_b.X())) / 2;
 
-                function is_point_c_in_between_fa_fb() {
+                function isPointCinBetweenFaFb() {
                     const cValue = point_c.Y();
                     const faValue = point_fa.Y();
                     const fbValue = point_fb.Y();
                     return (faValue <= cValue && cValue <= fbValue) || (fbValue <= cValue && cValue <= faValue);
-                }
-
-                function is_conditions_met() {
-                    return is_point_c_in_between_fa_fb();
                 }
 
                 const point_c = board.create('glider', [0, initialC, board.defaultAxes.y], {
@@ -153,7 +149,7 @@ export default function IVTApplet() {
                     visible: () => !hasDiscontinuity()
                 });
 
-                // DISCONTINUOUS INTERVALS - Show gaps when there IS a discontinuity
+                // DISCONTINUOUS INTERVALS 
                 // Left segment (from f(a) to discontinuity)
                 const discont_point_left = board.create('point', [
                     0,
@@ -204,9 +200,8 @@ export default function IVTApplet() {
                     visible: () => hasDiscontinuity() && point_b.X() < DISCONTINUITY_X
                 });
 
-                // Show the GAP visually with markers
+                // Gaps
                 board.create('point', [0, () => getDiscontinuityYLeft()], {
-                    name: 'gap',
                     size: 3,
                     fillColor: 'red',
                     strokeColor: 'darkred',
@@ -214,7 +209,6 @@ export default function IVTApplet() {
                 });
 
                 board.create('point', [0, () => getDiscontinuityYRight()], {
-                    name: 'gap',
                     size: 3,
                     fillColor: 'red',
                     strokeColor: 'darkred',
@@ -227,7 +221,7 @@ export default function IVTApplet() {
                     strokeWidth: 10,
                     opacity: 0.6,
                     fixed: true,
-                    visible: is_conditions_met
+                    visible: isPointCinBetweenFaFb
                 });
 
                 // Horizontal line at y = c
@@ -239,11 +233,11 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 1,
                     fixed: true,
-                    visible: is_conditions_met
+                    visible: isPointCinBetweenFaFb
                 });
 
                 // Helper function to check if x is in interval [a, b]
-                function isXInInterval(x: number): boolean {
+                function isPointAPointBInInterval(x: number): boolean {
                     if (!isFinite(x) || isNaN(x)) return false;
 
                     const minX = Math.min(point_a.X(), point_b.X());
@@ -252,7 +246,7 @@ export default function IVTApplet() {
                     return minX <= x && x <= maxX;
                 }
 
-                // Create intersection points - store references first
+                // Create intersection points of lineC with the graph
                 const intersection_0 = board.create('intersection', [graph, lineC, 0], {
                     name: 'x_0',
                     size: 2,
@@ -277,17 +271,16 @@ export default function IVTApplet() {
                     visible: false
                 });
 
-                // Now set visibility with proper access to the points
                 intersection_0.setAttribute({
-                    visible: () => is_conditions_met() && isXInInterval(intersection_0.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X())
                 });
 
                 intersection_1.setAttribute({
-                    visible: () => is_conditions_met() && isXInInterval(intersection_1.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X())
                 });
 
                 intersection_2.setAttribute({
-                    visible: () => is_conditions_met() && isXInInterval(intersection_2.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X())
                 });
 
                 // Create projection points on x-axis for each intersection
@@ -298,7 +291,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => is_conditions_met() && isXInInterval(intersection_0.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X()),
                     fixed: true
                 });
 
@@ -309,7 +302,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => is_conditions_met() && isXInInterval(intersection_1.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X()),
                     fixed: true
                 });
 
@@ -320,7 +313,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => is_conditions_met() && isXInInterval(intersection_2.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X()),
                     fixed: true
                 });
 
@@ -330,7 +323,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => is_conditions_met() && isXInInterval(intersection_0.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X())
                 });
 
                 board.create('segment', [intersection_1, projection_1], {
@@ -338,7 +331,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => is_conditions_met() && isXInInterval(intersection_1.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X())
                 });
 
                 board.create('segment', [intersection_2, projection_2], {
@@ -346,7 +339,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => is_conditions_met() && isXInInterval(intersection_2.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X())
                 });
 
             }}

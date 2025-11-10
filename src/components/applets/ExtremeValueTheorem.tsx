@@ -18,7 +18,8 @@ const examples: Record<ExampleKey, Example> = {
         interval: [0, 4],
         isOpen: false,
         render: (board, a, b) => {
-            const f = (x: number) => -(x - 2) * (x - 2) + 3;
+            // const f = (x: number) => -(x - 2) * (x - 2) + 3;
+            const f = (x: number) => -Math.pow(x, 2) + 4 * x - 1;
 
             board.create("functiongraph", [f, a, 1.999], {
                 strokeColor: "#2196F3",
@@ -28,7 +29,7 @@ const examples: Record<ExampleKey, Example> = {
                 strokeColor: "#2196F3",
                 strokeWidth: 3,
             });
-
+            // max point at (2, 3)
             board.create("point", [2, 3], {
                 size: 4,
                 fillColor: "white",

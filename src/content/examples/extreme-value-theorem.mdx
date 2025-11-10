@@ -11,8 +11,26 @@ import ExtremeValueTheorem from "../../components/applets/ExtremeValueTheorem";
 If *f* is **continuous** on a **closed interval [a,b]**,  
 then *f* attains both a **maximum** and **minimum** value on [a,b].
 </MathBlock>
---- 
 
+--- 
 <ExtremeValueTheorem client:load />
-
 --- 
+
+## Description
+
+The applets shows why the closed interval domain and the continuity of the function
+are necessary conditions.
+
+In the first example, given the closed interval $[0, 4]$ i the function $ f(x)= -(x - 2) * (x - 2) + 3$.
+The maximum of the function $(2,3)$ has been calculated manually.
+Solving $f'(x) = -2x + 4 = 0$ the critical point is $x=2$. Morover the function result 
+increasing before $x=2$ and decreasing afterwards 
+since $f'(x) > 0$ on $[0,2)$ and $f'(x) < 0$ on $(2,4]$.
+
+By removing the maximum point the function will be discontinuous, making the theremo impossible to hold.
+
+In the second example i am using the simple (continuous) function $f(x) = x$ 
+on the positive open interval $(1, 3)$.
+
+Clearly the infimum and the supremum are linearly reached at $1$ and $3$ respectively.
+Since this point are never reached due to openess, the theorem cannot hold.
