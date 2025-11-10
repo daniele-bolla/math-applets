@@ -19,6 +19,7 @@ import MeanValueTheorem from "../../components/applets/MeanValueTheorem";
 --- 
 
 ## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/MeanValueTheorem.tsx).
 
 To demonstrate the theorem i have selected a simple function $0.2*x^3 - 0.5*x^2 + 2$ with derivative $0.6x^2 - x$.
 ```typescript
@@ -42,7 +43,7 @@ If the discriminant is negative or $c$ does not lie on the interval $[a,b]$ i re
         const secantSlope = (fb - fa) / (b - a);
         const discriminant = 1 + 4 * 0.6 * secantSlope;
         if (discriminant < 0) {
-            return NaN; // No real solution
+            return NaN;
         }
         const cPos = (1 + Math.sqrt(discriminant)) / (2 * 0.6);
         const cNeg = (1 - Math.sqrt(discriminant)) / (2 * 0.6);
