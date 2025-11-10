@@ -20,30 +20,45 @@ import MeanValueTheorem from "../../components/applets/MeanValueTheorem";
 
 ## Description
 
-To demonstrate the theorem i have selected a simple function $0.2*x^3+2$ with derivative $0.6x^2$.
+To demonstrate the theorem i have selected a simple function $0.2*x^3 - 0.5*x^2 + 2$ with derivative $0.6x^2 - x$.
 ```typescript
-    const f = (x: number) => 0.2 * x * x * x + 2;
-    //const fPrime = (x: number) => 0.6 * x * x;
+    const f = (x: number) => 0.2 * x * x * x - 0.5 * x * x + 2;
+    // const fPrime = (x: number) => 0.6 * x * x - x;
 ```
-Points a and b can be adjusted. The secant is just a line passing though f(a) and f(b).
+Points a and b can be adjusted. The secant is just a line passing though $f(a)$ and $f(b)$.
 To construct $c$ i solve the equation:
 $$
-f'(c) = \frac{f(a) - f(b)}{b-a} 
+f'(c) = \frac{f(a) - f(b)}{b-a} = \text{secantSlope} 
 $$
-Giving $c= \sqrt{\frac{f(a) - f(b)}{(b-a)*0.6}}$.
+Giving $c^2 - c - \frac{f(a) - f(b)}{(b-a)*0.6}$.
+Solving with the quadratric formula: $c =1 ± \frac{\sqrt{1 + 4*0.6*\text{secantSlope}}}{2*0.6}$.
+If the discriminant is negative or $c$ does not lie on the interval $[a,b]$ i return `NaN` (not a number).  
 ```typescript
     function findC(): number {
-        const a = pointFA.X();
-        const b = pointFB.X();
-        const fa = pointFA.Y();
-        const fb = pointFB.Y();
+        const a = pointA.X();
+        const b = pointB.X();
+        const fa = f(a);
+        const fb = f(b);
         const secantSlope = (fb - fa) / (b - a);
-        const c = Math.sqrt(secantSlope / 0.6)
-        return c
+        const discriminant = 1 + 4 * 0.6 * secantSlope;
+        if (discriminant < 0) {
+            return NaN; // No real solution
+        }
+        const cPos = (1 + Math.sqrt(discriminant)) / (2 * 0.6);
+        const cNeg = (1 - Math.sqrt(discriminant)) / (2 * 0.6);
+        const minAB = Math.min(a, b);
+        const maxAB = Math.max(a, b);
+        if (cPos >= minAB && cPos <= maxAB) {
+            return cPos;
+        } else if (cNeg >= minAB && cNeg <= maxAB) {
+            return cNeg;
+        } else {
+            return NaN;
+        }
     }
 ```
 
 Finally the tangent line (best approximation of $f'(c)$) has to be parallel to the secant.
 ```typescript
-    board.create('parallel', [secant, pointC],...
+    board.create('parallel', [secant, pointC],...)
 ```

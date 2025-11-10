@@ -7,15 +7,20 @@ export default function MVTApplet() {
             config={{ boundingbox: [-1, 5, 5, -1], axis: true }}
             setup={(board: JXG.Board) => {
 
-                const f = (x: number) => 0.2 * x * x * x + 2;
-                //const fPrime = (x: number) => 0.6 * x * x;
+                const f = (x: number) => 0.2 * x * x * x - 0.5 * x * x + 2;
+                // const fPrime = (x: number) => 0.6 * x * x - x;
 
                 board.create('functiongraph', [f, -10, 10], {
                     strokeColor: '#2196F3',
                     strokeWidth: 3,
-                });
+                }); 
 
-                const pointA = board.create('glider', [0.5, 0, board.defaultAxes.x], {
+                const intervalABLimits = board.create('segment', [[-3.5, 0], [3.5, 0]], {
+                    visible: false,
+                    fixed: true,
+                });
+ 
+                const pointA = board.create('glider', [0.5, 0,intervalABLimits], {
                     name: 'a',
                     face: '<>',
                     size: 6,
@@ -23,7 +28,7 @@ export default function MVTApplet() {
                     strokeColor: '#2E7D32',
                 });
 
-                const pointB = board.create('glider', [3.5, 0, board.defaultAxes.x], {
+                const pointB = board.create('glider', [3.5, 0, intervalABLimits], {
                     name: 'b',
                     face: '<>',
                     size: 6,
@@ -61,15 +66,32 @@ export default function MVTApplet() {
                     straightLast: true,
                 });
 
-                function findC(): number {
-                    const a = pointFA.X();
-                    const b = pointFB.X();
-                    const fa = pointFA.Y();
-                    const fb = pointFB.Y();
-                    const secantSlope = (fb - fa) / (b - a);
-                    const c = Math.sqrt(secantSlope / 0.6)
-                    return c
+            function findC(): number {
+                const a = pointA.X();
+                const b = pointB.X();
+                const fa = f(a);
+                const fb = f(b);
+                const secantSlope = (fb - fa) / (b - a);
+                // Solve: 0.6c² - c = secantSlope
+                // 0.6c² - c - secantSlope = 0
+                // Using quadratic formula: c = (1 ± √(1 + 4*0.6*secantSlope)) / (2*0.6)
+                const discriminant = 1 + 4 * 0.6 * secantSlope;
+                if (discriminant < 0) {
+                    return NaN; // No real solution
                 }
+                const cPos = (1 + Math.sqrt(discriminant)) / (2 * 0.6);
+                const cNeg = (1 - Math.sqrt(discriminant)) / (2 * 0.6);
+                const minAB = Math.min(a, b);
+                const maxAB = Math.max(a, b);
+                // Return the root that's in [a, b]
+                if (cPos >= minAB && cPos <= maxAB) {
+                    return cPos;
+                } else if (cNeg >= minAB && cNeg <= maxAB) {
+                    return cNeg;
+                } else {
+                    return NaN;
+                }
+            }
 
                 const pointConX = board.create('point', [
                     () => findC(),
