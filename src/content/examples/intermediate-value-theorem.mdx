@@ -35,8 +35,8 @@ and graph.
 ```typescript
 board.create('intersection', [graph, lineC, 1]...
 ```
-I then make the intersection and their projection to the x-axis visible, only when $c$ is in between $f(a)$ and $f(b)$ (`isPointCinBetweenFaFb()`) 
-and the intersection project to the interval $[a,b]$ (`isPointAPointBInInterval()`)
+I then make the intersections and their projections to the x-axis visible, only when $c$ is in between $f(a)$ and $f(b)$ (`isPointCinBetweenFaFb()`) 
+and the projections lie on the interval $[a,b]$ (`isPointXCoordInIntervalAB()`)
 
 A nice thing to notice is that, given continuity, the image of the function, over $[a,b]$, 
 is again a closed interval (with no gaps).
@@ -44,12 +44,3 @@ is again a closed interval (with no gaps).
 The applets highligths the image of the function,
 with a green segment when the function is continuous on the given domain and with a "warning" orange segment 
 when the function is not continuous at the given domain and its image contains gaps.
-
-I also plan to add another example illustrating a **discontinuous function** for which the IVT still holds, 
-such as the curve:
-$$
-    f(x) = \begin{cases}
-        \sin{\frac{1}{x}} & \text{if } x \ge 0 \\
-        0 & \text{if } x = 0
-    \end{cases}
-$$

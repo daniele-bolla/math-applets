@@ -26,12 +26,12 @@ To demonstrate the theorem i have selected a simple function $0.2*x^3 - 0.5*x^2 
     const f = (x: number) => 0.2 * x * x * x - 0.5 * x * x + 2;
     // const fPrime = (x: number) => 0.6 * x * x - x;
 ```
-Points a and b can be adjusted. The secant is just a line passing though $f(a)$ and $f(b)$.
-To construct $c$ i solve the equation:
+Points $a$ and $b$ can be adjusted. The secant is just a line passing though $f(a)$ and $f(b)$.
+To construct $c$ i solved the equation:
 $$
-f'(c) = \frac{f(a) - f(b)}{b-a} = \text{secantSlope} 
+f'(c) = \frac{f(b) - f(a)}{b-a} = \text{secantSlope} 
 $$
-Giving $c^2 - c - \frac{f(a) - f(b)}{(b-a)*0.6}$.
+Giving $c^2 - c - \frac{f(b) - f(a)}{(b-a)*0.6}$.
 Solving with the quadratric formula: $c =1 ± \frac{\sqrt{1 + 4*0.6*\text{secantSlope}}}{2*0.6}$.
 If the discriminant is negative or $c$ does not lie on the interval $[a,b]$ i return `NaN` (not a number).  
 ```typescript

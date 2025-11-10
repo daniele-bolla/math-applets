@@ -237,7 +237,7 @@ export default function IVTApplet() {
                 });
 
                 // Helper function to check if x is in interval [a, b]
-                function isPointAPointBInInterval(x: number): boolean {
+                function isPointXCoordInIntervalAB(x: number): boolean {
                     if (!isFinite(x) || isNaN(x)) return false;
 
                     const minX = Math.min(point_a.X(), point_b.X());
@@ -272,15 +272,15 @@ export default function IVTApplet() {
                 });
 
                 intersection_0.setAttribute({
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X())
                 });
 
                 intersection_1.setAttribute({
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X())
                 });
 
                 intersection_2.setAttribute({
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X())
                 });
 
                 // Create projection points on x-axis for each intersection
@@ -291,7 +291,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X()),
                     fixed: true
                 });
 
@@ -302,7 +302,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X()),
                     fixed: true
                 });
 
@@ -313,7 +313,7 @@ export default function IVTApplet() {
                     size: 2,
                     fillColor: '#9C27B0',
                     strokeColor: '#6A1B9A',
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X()),
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X()),
                     fixed: true
                 });
 
@@ -323,7 +323,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_0.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X())
                 });
 
                 board.create('segment', [intersection_1, projection_1], {
@@ -331,7 +331,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_1.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X())
                 });
 
                 board.create('segment', [intersection_2, projection_2], {
@@ -339,7 +339,7 @@ export default function IVTApplet() {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                    visible: () => isPointCinBetweenFaFb() && isPointAPointBInInterval(intersection_2.X())
+                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X())
                 });
 
             }}

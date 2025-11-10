@@ -15,7 +15,7 @@ export default function MVTApplet() {
                     strokeWidth: 3,
                 }); 
 
-                const intervalABLimits = board.create('segment', [[-3.5, 0], [3.5, 0]], {
+                const intervalABLimits = board.create('segment', [[-6.5, 0], [6.5, 0]], {
                     visible: false,
                     fixed: true,
                 });
