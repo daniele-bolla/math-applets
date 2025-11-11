@@ -26,16 +26,17 @@ for continuous functions on a closed interval $[a,b]$.
 By moving points $a$ and $b$, one can adjust the domain.
 
 If the functions is continuous and $\min(f(a), f(b))< c < \max(f(a), f(b))$,
-then there exists **at least one** an $x \in (a,b)$ such that $f(x) = c$.
+then there exists **at least one** $x \in (a,b)$ such that $f(x) = c$.
 By moving the point $c$ in between the $f(a)$ and $f(b)$ one can
 observe that there may be more than one such $x$.
 
-To show this points i have created 3 (maximum roots of the function) intersection points with the lineC (parallel ot the x-axis) 
+To show these points i have created 3 (maximum roots of the function) **intersection points** with the lineC (parallel ot the x-axis) 
 and graph.
 ```typescript
 board.create('intersection', [graph, lineC, 1]...
 ```
-I then make the intersections and their projections to the x-axis visible, only when $c$ is in between $f(a)$ and $f(b)$ (`isPointCinBetweenFaFb()`) 
+I then make the intersections and their projections to the x-axis visible, only when $c$ is in between $f(a)$ 
+and $f(b)$ (`isPointCinBetweenFaFb()`) 
 and the projections lie on the interval $[a,b]$ (`isPointXCoordInIntervalAB()`)
 
 A nice thing to notice is that, given continuity, the image of the function, over $[a,b]$, 
