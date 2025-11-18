@@ -1,0 +1,22 @@
+---
+title: Epsilon Delta Definition
+description: Visualization of the Epsilon Delta Definition.
+---
+import MathBlock from "../../components/MathBlock";
+import EpsilonDeltaDef from "../../components/applets/EpsilonDeltaDef";
+
+# Epsilon Delta Definition
+
+<MathBlock type="theorem" title="Epsilon Delta Definition">
+    Let $D \subseteq  \mathbb{R}$, $f : D \to \mathbb{R}$, and $a \in D$. 
+
+    Then $\forall \varepsilon > 0 $,  $\exists \delta > 0$ such that $\forall x \in D: 
+        |x - a| < \delta$ $\Rightarrow$  $|f(x) - f(a)| < \varepsilon$
+</MathBlock>
+
+--- 
+<EpsilonDeltaDef client:load />
+--- 
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/EpsilonDeltaDef.tsx).

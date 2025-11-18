@@ -116,8 +116,7 @@ export default function EVTApplet() {
             <JSXGraphBoard
                 config={{
                     boundingbox: [-1, 4, 5, -1],
-                    axis: false,
-                    keepAspectRatio: true,
+
                 }}
                 setup={setup}
             />
