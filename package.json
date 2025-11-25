@@ -13,7 +13,7 @@
     "@astrojs/react": "^4.4.2",
     "@tailwindcss/vite": "^4.1.17",
     "astro": "^5.15.4",
-    "jsxgraph": "^1.12.0",
+    "jsxgraph": "1.12.0",
     "katex": "^0.16.25",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

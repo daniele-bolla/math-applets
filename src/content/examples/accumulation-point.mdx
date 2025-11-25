@@ -1,0 +1,38 @@
+---
+title: Accumulation Point
+description: Visualization of an accumulation point of a set.
+---
+
+import AccumulationPoint from "../../components/applets/AccumulationPoint";
+import MathBlock from "../../components/MathBlock";
+
+# Accumulation Point
+
+<MathBlock type="definition" title="Accumulation Point">
+Let $S \subseteq \mathbb{R}$. A point $p \in \mathbb{R}$ is called an **accumulation point** (or limit point) of $S$ if every neighborhood of $p$ contains infinitely many points of $S$.
+
+Formally, for every $\varepsilon > 0$, the set $(p - \varepsilon, p + \varepsilon) \cap S$ is infinite.
+</MathBlock>
+---
+<AccumulationPoint client:load />
+---
+
+## Description
+
+This applet visualizes the definition of an accumulation point.
+
+We consider the set $S = \{ \frac{1}{n} \mid n \in \mathbb{N}^* \} \cup \{0\}$. The point $p=0$ is an accumulation point of this set.
+
+In the applet, you can:
+- Move the point `p` along the x-axis.
+- Change the size of the neighborhood `(p - ε, p + ε)` using the slider for `ε`.
+
+Observe what happens:
+- When you place `p` at `0`, no matter how small you make `ε`, the green text indicates that you can always find **infinitely many** points from the set $S$ (specifically, all $1/n$ for $n > 1/\varepsilon$) inside the yellow neighborhood. This demonstrates that `0` is an accumulation point.
+- When you move `p` to any of the other points in the set (e.g., `p = 1/2`), you can always choose `ε` small enough (e.g., `ε = 0.1`) such that the neighborhood does not contain any *other* point from $S$. This shows that the points `1/n` are isolated points, not accumulation points.
+
+### Connection to Sequences (Theorem 4.4)
+
+The theorem states that a point $a$ is an accumulation point of a set $A$ if and only if there exists a sequence $(a_n)_{n \in \mathbb{N}}$ in $A \setminus \{a\}$ that converges towards $a$.
+
+In this applet, consider the sequence $x_n = \frac{1}{n}$. This sequence is entirely contained in $S \setminus \{0\}$, and it clearly converges to $0$. This visually confirms Theorem 4.4: since $0$ is an accumulation point of $S$, we can find a sequence in $S \setminus \{0\}$ (namely $1/n$) that converges to $0$.

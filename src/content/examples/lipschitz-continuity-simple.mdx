@@ -1,0 +1,17 @@
+---
+title: "Lipschitz Continuity (Bar Comparison)"
+description: "A visualization of the Lipschitz continuity definition by comparing the magnitudes of |f(x) - f(y)| and L|x - y|."
+---
+
+import LipschitzContinuitySimple from "../../components/applets/LipschitzContinuitySimple.tsx";
+
+<LipschitzContinuitySimple client:load />
+
+This visualization demonstrates the definition of Lipschitz continuity, `|f(x) - f(y)| <= L|x - y|`, by directly comparing the two sides of the inequality.
+
+- The two points **x** and **y** can be moved along the graph of the function `f(x) = sin(x)`.
+- The slider allows you to change the Lipschitz constant **L**.
+- The bars on the left represent the values of `|f(x) - f(y)|` and `L|x - y|`.
+- The bars change color to indicate if the condition is met (green) or not (red).
+
+For `f(x) = sin(x)`, the derivative is `f'(x) = cos(x)`, which has a maximum absolute value of 1. By the Mean Value Theorem, this function is Lipschitz continuous with a constant `L=1`. Notice that for `L >= 1`, the condition is always met. If you set `L < 1`, you can find points `x` and `y` where the condition is violated.
