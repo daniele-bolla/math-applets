@@ -4,7 +4,7 @@ import "../styles/global.css";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
-const examples: CollectionEntry<"examples">[] = await getCollection("examples");
+const examples: CollectionEntry<"examples">[] = (await getCollection("examples")).filter(example => example.data.visible);
 const { title } = Astro.props;
 import Sidebar from "../components/SidebarLayout.tsx";
 ---

@@ -5,6 +5,7 @@ const examples = defineCollection({
     schema: z.object({
         title: z.string(),
         description: z.string().optional(),
+        visible: z.boolean().default(false),
     }),
 });
 

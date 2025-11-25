@@ -3,10 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
-const examples: CollectionEntry<"examples">[] = await getCollection("examples");
+const examples: CollectionEntry<"examples">[] = (await getCollection("examples")).filter(example => example.data.visible);
 ---
 
-<Layout title="Math Applets">
+<Layout title="visibleplets">
 	<ul class="space-y-1 list-none">
 		{
 			examples.map((ex) => (
