@@ -1,0 +1,31 @@
+:root {
+  --color-primary: #2196F3; /* Blue */
+  --color-primary-dark: #1976D2;
+  --color-secondary: #FFC107; /* Amber */
+  --color-secondary-dark: #FFA000;
+  --color-accent: #E91E63; /* Pink */
+  --color-accent-dark: #C2185B;
+
+  /* Graph Colors */
+  --color-graph-function: var(--color-primary);
+  --color-graph-function-highlight: var(--color-primary-dark);
+  --color-graph-point: var(--color-accent);
+  --color-graph-point-highlight: var(--color-accent-dark);
+  --color-graph-line: #4CAF50; /* Green */
+  --color-graph-line-highlight: #388E3C;
+  --color-graph-glider: var(--color-secondary);
+  --color-graph-glider-highlight: var(--color-secondary-dark);
+
+
+  /* Original Colors (for reference, to be removed later) */
+  --color-primary-green: #4CAF50;
+  --color-primary-green-dark: #2E7D32;
+  --color-primary-red: #F44336;
+  --color-primary-red-dark: #C62828;
+  --color-primary-orange: #FF9800;
+  --color-primary-orange-dark: #E65100;
+  --color-primary-cyan: #00BCD4;
+  --color-primary-purple: #9C27B0;
+  --color-primary-purple-dark: #6A1B9A;
+  --color-graph-blue: blue;
+}
