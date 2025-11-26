@@ -8,31 +8,41 @@ import MathBlock from "../../components/MathBlock";
 
 # Accumulation Point
 
-<MathBlock type="definition" title="Accumulation Point">
-Let $S \subseteq \mathbb{R}$. A point $p \in \mathbb{R}$ is called an **accumulation point** (or limit point) of $S$ if every neighborhood of $p$ contains infinitely many points of $S$.
-
-Formally, for every $\varepsilon > 0$, the set $(p - \varepsilon, p + \varepsilon) \cap S$ is infinite.
+<MathBlock type="definition" title="Accumulation Point of a Set">
+Let $A \subseteq \mathbb{R}$ and $a \in \mathbb{R}$. Then $a$ is an
+accumulation point of $A$ if, in every neighborhood of $a$, there exist
+infinitely many $x \in A$.
 </MathBlock>
+<br/>
+<MathBlock type="theorem" title="Accumulation Point">
+
+Let $A \subseteq \mathbb{R}$ be a set and $a \in \mathbb{R}$. Then the following
+statements are equivalent:
+    <ul>
+        <li>The number $a$ is an accumulation point of $A$.</li>
+        <li>There exists a sequence $(a_n)_{n \in \mathbb{N}}$ in $A \setminus \{a\}$ that converges to $a$.</li>
+    </ul>
+</MathBlock>
+
 ---
 <AccumulationPoint client:load />
 ---
 
 ## Description
 
-This applet visualizes the definition of an accumulation point.
+This applet visualizes the connection between the definition of an accumulation point of set, 
+and its characterization as being a limit point.
 
-We consider the set $S = \{ \frac{1}{n} \mid n \in \mathbb{N}^* \} \cup \{0\}$. The point $p=0$ is an accumulation point of this set.
+We consider a set $S = \{ \frac{1}{n} \mid n \in \mathbb{N}^* \} \subset \mathbb{R}$. 
+The point $a=0 \in \mathbb{R}$ is an accumulation point of this set.
+Trivially it is also a limit point of the sequence $(frac{1}{n})_{n \in \mathbb{N}}$ wich is conmtained 
+in  $S \setminus \{0\}$
 
-In the applet, you can:
-- Move the point `p` along the x-axis.
-- Change the size of the neighborhood `(p - ε, p + ε)` using the slider for `ε`.
+By moving the point `a` toward the limit point zero along the x-axis, the applet zooms in closer to zero 
+and shrink the epsilon neighborhood of $a$.
 
-Observe what happens:
-- When you place `p` at `0`, no matter how small you make `ε`, the green text indicates that you can always find **infinitely many** points from the set $S$ (specifically, all $1/n$ for $n > 1/\varepsilon$) inside the yellow neighborhood. This demonstrates that `0` is an accumulation point.
-- When you move `p` to any of the other points in the set (e.g., `p = 1/2`), you can always choose `ε` small enough (e.g., `ε = 0.1`) such that the neighborhood does not contain any *other* point from $S$. This shows that the points `1/n` are isolated points, not accumulation points.
+When points in the sequence fall within the epsilon-neighborhood, the line representing them will turn green.
+The student should notice that, as one gets closer to zero, this happens more frequently—and infinitely many times once at zero.
 
-### Connection to Sequences (Theorem 4.4)
-
-The theorem states that a point $a$ is an accumulation point of a set $A$ if and only if there exists a sequence $(a_n)_{n \in \mathbb{N}}$ in $A \setminus \{a\}$ that converges towards $a$.
-
-In this applet, consider the sequence $x_n = \frac{1}{n}$. This sequence is entirely contained in $S \setminus \{0\}$, and it clearly converges to $0$. This visually confirms Theorem 4.4: since $0$ is an accumulation point of $S$, we can find a sequence in $S \setminus \{0\}$ (namely $1/n$) that converges to $0$.
+I am aware that this is not very intuitive and may need further refinement,
+but I wanted to experiment with this idea.
