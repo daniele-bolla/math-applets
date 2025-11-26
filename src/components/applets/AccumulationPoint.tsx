@@ -23,10 +23,10 @@ export default function AccumulationPointApplet() {
                     color: '#FF9800'
                 });
 
-                const getRadius = () => Math.max(p.X() * 0.07, 0.01);
+                const getRadius = () => Math.max(Math.pow(p.X(), 2) * 0.2, 0.001);
 
                 // Create Points of rthe sequence
-                const MAX_POINTS_HARD_CAP = 100;
+                const MAX_POINTS_HARD_CAP = 150;
                 const sequencePoints: JXG.Point[] = [];
                 for (let i = 1; i < MAX_POINTS_HARD_CAP; i++) {
                     const n = i;
