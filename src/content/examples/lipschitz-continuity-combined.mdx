@@ -8,19 +8,6 @@ import LipschitzContinuityCombined from "../../components/applets/LipschitzConti
 
 <LipschitzContinuityCombined client:load />
 
-This visualization provides a bridge between the algebraic and geometric interpretations of Lipschitz continuity.
+---
 
-The Lipschitz condition is defined as:
-`|f(x) - f(y)| <= L * |x - y|`
-
-This can be rewritten as:
-`|f(x) - f(y)| / |x - y| <= L`
-
-This shows that the **absolute slope of the secant line** between `x` and `y` must be bounded by the Lipschitz constant `L`.
-
-In this applet:
-- The **right-angled triangle** highlights the components of the secant slope:
-    - The vertical side has length `|f(x) - f(y)|` (the "rise").
-    - The horizontal side has length `|x - y|` (the "run").
-- The **cone** originating from point `x` represents the geometric constraint. Its boundaries are defined by the slopes `+L` and `-L`.
-- The condition is satisfied as long as the second point `y` (and the secant line connecting to it) stays within the cone. The color of the triangle and cone will change to reflect this.
+## Description
