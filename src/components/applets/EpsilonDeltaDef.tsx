@@ -11,14 +11,14 @@ export default function EpsilonDeltaApplet() {
             setup={(board: JXG.Board) => {
 
                 // Function
-                const DISCONTINUITY = 3.25;
+                const DISCONTINUITY = 1.25;
 
                 const f = (x: number) => {
-                    // if (x < DISCONTINUITY) {
-                        return Math.sqrt(x)  ;
-                    // } else {
-                    //     return x*x - 3.5;
-                    // }
+                    if (x < DISCONTINUITY) {
+                        return Math.pow(x,3) *0.3 ;
+                    } else {
+                        return Math.pow(x,2) ;
+                    }
                 };
 
                 // Function graph
@@ -28,7 +28,7 @@ export default function EpsilonDeltaApplet() {
                 });
 
                 // a glider
-                const pointA = board.create('glider', [2,0, board.defaultAxes.x], {
+                const pointA = board.create('glider', [DISCONTINUITY,0, board.defaultAxes.x], {
                     name: 'a',
                     size: 6,
                     face: '<>',
@@ -82,7 +82,7 @@ export default function EpsilonDeltaApplet() {
                     [0, () => f(pointA.X())],
                     [0, () => f(pointA.X()) + 2.5]
                 ], {
-                    visible: true,
+                    visible: false,
                     straightFirst: false,
                     straightLast: false
                 });
@@ -90,7 +90,7 @@ export default function EpsilonDeltaApplet() {
                 // Epsilon glider
                 const epsPoint = board.create('glider', [
                     1,
-                    f(pointA.X()) + 0.5,  // Static value, not a function!
+                    f(pointA.X()) + 0.5, 
                     epsLine
                 ], {
                     name: 'f(a)+ε',
@@ -135,7 +135,7 @@ export default function EpsilonDeltaApplet() {
                     [() => pointA.X(), 0],
                     [() => pointA.X() + 1.5, 0]
                 ], {
-                    visible: true,
+                    visible: false,
                     straightFirst: false,
                     straightLast: false
                 });

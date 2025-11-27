@@ -12,7 +12,7 @@ export default function AccumulationPointApplet() {
 
                 const xAxisPositive = board.create('segment', [[0, 0], [1.0, 0]], { visible: false });
                 const p = board.create('glider', [1, 0, xAxisPositive], {
-                    name: 'p',
+                    name:'',
                     size: 6,
                     face: '<>',
                     layer: 100,
@@ -74,6 +74,7 @@ export default function AccumulationPointApplet() {
                 });
 
                 board.create('point', [0, 0], {
+                    name:'',
                     size: 2,
                     color: '#E91E63',
                     showInfobox: false,

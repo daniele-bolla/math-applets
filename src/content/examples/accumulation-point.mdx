@@ -28,21 +28,23 @@ statements are equivalent:
 <AccumulationPoint client:load />
 ---
 
+
 ## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/AccumulationPoint.tsx).
 
 This applet visualizes the connection between the definition of an accumulation point of set, 
 and its characterization as being a limit point.
 
 We consider a set $S = \{ \frac{1}{n} \mid n \in \mathbb{N}^* \} \subset \mathbb{R}$. 
 The point $a=0 \in \mathbb{R}$ is an accumulation point of this set.
-Trivially it is also a limit point of the sequence $(frac{1}{n})_{n \in \mathbb{N}}$ wich is conmtained 
-in  $S \setminus \{0\}$
+Trivially it is also a limit point of the sequence $( \frac{1}{n} )_{n \in \mathbb{N}}$ wich is contained 
+in $S \setminus \{0\}$
 
 By moving the point `a` toward the limit point zero along the x-axis, the applet zooms in closer to zero 
-and shrink the epsilon neighborhood of $a$.
+and shrinks down the epsilon neighborhood of $a$.
 
 When points in the sequence fall within the epsilon-neighborhood, the line representing them will turn green.
-The student should notice that, as one gets closer to zero, this happens more frequently—and infinitely many times once at zero.
+The student should notice that, as one gets closer to zero, this happens more frequently and infinitely many times once at zero.
 
 I am aware that this is not very intuitive and may need further refinement,
 but I wanted to experiment with this idea.

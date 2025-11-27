@@ -1,13 +1,47 @@
 ---
-title: "Lipschitz Continuity (Combined View)"
-description: "A visualization connecting the algebraic definition of Lipschitz continuity to its geometric interpretation using slopes and cones."
+title: "Lipschitz Continuity"
+description: "Geometric interpretation of Lipschitz continuity "
 visible: true
 ---
 
 import LipschitzContinuityCombined from "../../components/applets/LipschitzContinuityCombined.tsx";
+import MathBlock from "../../components/MathBlock";
+
+# Lipschitz Continuity
+
+<MathBlock type="theorem" title="Accumulation Point">
+
+Let $A \subseteq \mathbb{R}$ be a set and $a \in \mathbb{R}$. Then the following
+statements are equivalent:
+Let $D \subset \mathbb{R}$ and $f : D \to \mathbb{R}$.
+The function $f$ is called **Lipschitz continuous** if there exists an $L > 0$
+such that for all $x, y \in D$ it holds that
+$|f(x) - f(y)| \le L\, |x - y|$.
+</MathBlock>
+
+---
 
 <LipschitzContinuityCombined client:load />
 
 ---
 
 ## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/LipschitzContinuityCombined.tsx).
+
+This applet represents the standard geometric interpretation of Lipschitz continuity.
+
+Given the condition that for an $L > 0$
+$|f(x) - f(y)| \le L,|x - y|$
+
+and that the slope of a linear function is “slope = vertical difference divided by horizontal difference,”
+the slope of the secant connecting the points $f(x)$ and $f(y)$
+has slope $\frac{|f(x) - f(y)|}{|x - y|}$. From the $L$-condition we retrieve
+$\frac{|f(x) - f(y)|}{|x - y|} \le L$.
+
+Thus the absolute slope is constrained between $\pm L$, as shown.
+
+I am aware that this touches on the concept of slope, not yet covered by the student at this point, and that this connection is even better explained using the MVT.
+
+As a simple example I chose $\sin$, whose derivative is $\cos$. By the MVT we get that
+$\frac{f(x) - f(y)}{x - y} = \cos(z)$
+for some $z$ between $x$ and $y$. But $|\cos(z)| \le 1 = L > 0$.

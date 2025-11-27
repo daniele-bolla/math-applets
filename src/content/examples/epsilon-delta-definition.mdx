@@ -21,3 +21,61 @@ import EpsilonDeltaDef from "../../components/applets/EpsilonDeltaDef";
 
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/EpsilonDeltaDef.tsx).
+
+This example is adapted from the [JSXGraph documentation](https://jsxgraph.org/share/example/continuity).
+
+The function is defined with a discontinuity at the point where $a$ is placed:
+
+```typescript
+const DISCONTINUITY = 1.25;
+
+const f = (x: number) => {
+    if (x < DISCONTINUITY) {
+        return Math.pow(x, 3) * 0.3;
+    } else {
+        return Math.pow(x, 2);
+    }
+};
+...
+const pointA = board.create('glider', [DISCONTINUITY, 0 ...
+```
+This is to show how the definition works in particular when a function is discontinuous.
+
+The value $x$ is constrained by $|x - a| < \delta$.
+
+In the code, $\delta$ is represented as the horizontal 
+distance between `deltaPoint` and the point $a$:
+
+```typescript
+const getDelta = () => Math.abs(deltaPoint.X() - pointA.X());
+...
+// ===== POINT X =====
+// Line for x glider (constrained to delta neighborhood)
+const xLine = board.create('line', [
+    [() => pointA.X() - getDelta(), 0],
+    [() => deltaPoint.X(), 0]
+], ...);
+// x glider
+const xPoint = board.create('glider', [
+    pointA.X() + getDelta() / 2,
+    0,
+    xLine
+], ...);
+```
+
+The segment between $(a, f(a))$ and $(x, f(x))$ changes 
+color depending on whether the continuity condition holds:
+
+```typescript
+board.create('line', [pointYfpointA, point0fx], {
+    ...
+    strokeColor: () => {
+        const epsilon = getEpsilon();
+        const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
+        return dist < epsilon ? '#ff00ff' : '#ff0e0eff';
+    },
+   ...
+});
+```
+Here, `dist` corresponds to $|f(x) - f(a)|$, and the color changes depending on 
+whether $|f(x) - f(a)| < \varepsilon$.

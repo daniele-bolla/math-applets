@@ -45,34 +45,13 @@ export default function LipschitzContinuityCombined() {
             borders: { strokeColor: "black" },
             layer: 0
         });
-
-        // Vertical line for |f(x) - f(y)|
-        const fy_minus_fx = () => Math.abs(p2.Y() - p1.Y());
-        board.create("segment", [[-4.5, 0], [-4.5, fy_minus_fx]], { strokeColor: color, strokeWidth: 4 });
-        board.create("text", [-4.5, -0.5, "|f(x) - f(y)|"], { anchorX: "middle", anchorY: "top" });
-
-        // Vertical line for |x - y|
-        const x_minus_y = () => Math.abs(p2.X() - p1.X());
-        board.create("segment", [[-3.5, 0], [-3.5, x_minus_y]], { strokeColor: color, strokeWidth: 4 });
-        board.create("text", [-3.5, -0.5, "|x - y|"], { anchorX: "middle", anchorY: "top" });
-
-        // Vertical line for L
-        const lValue = () => lSlider.Value();
-        board.create("segment", [[-2.5, 0], [-2.5, lValue]], { strokeColor: color, strokeWidth: 4 });
-        board.create("text", [-2.5, -0.5, "L"], { anchorX: "middle", anchorY: "top" });
-
-        // Vertical line for L|x - y|
-        const L_times_x_minus_y = () => lSlider.Value() * Math.abs(p2.X() - p1.X());
-        board.create("segment", [[-1.5, 0], [-1.5, L_times_x_minus_y]], { strokeColor: color, strokeWidth: 4 });
-        board.create("text", [-1.5, -0.5, "L|x - y|"], { anchorX: "middle", anchorY: "top" });
-
+        
         // Slope visualization (unit vectors)
-        const slopeOrigin = board.create('point', [4, 1], { name: '', fixed: true, size: 1, color: 'black' });
-        const slopeEndpointUp = board.create('point', [() => slopeOrigin.X() + 1, () => slopeOrigin.Y() + lSlider.Value()], { visible: false });
-        const slopeEndpointDown = board.create('point', [() => slopeOrigin.X() + 1, () => slopeOrigin.Y() - lSlider.Value()], { visible: false });
+        const slopeEndpointUp = board.create('point', [() => p1.X() + 1, () => p1.Y() + lSlider.Value()], { visible: false });
+        const slopeEndpointDown = board.create('point', [() => p1.X() + 1, () => p1.Y() - lSlider.Value()], { visible: false });
 
-        board.create('arrow', [slopeOrigin, slopeEndpointUp], { strokeColor: 'black' });
-        board.create('arrow', [slopeOrigin, slopeEndpointDown], { strokeColor: 'black' });
+        board.create('arrow', [p1, slopeEndpointUp], { strokeColor: 'black' });
+        board.create('arrow', [p1, slopeEndpointDown], { strokeColor: 'black' });
         
         board.create('text', [() => slopeEndpointUp.X() + 0.1, () => slopeEndpointUp.Y(), '+L'], { anchorX: 'left' });
         board.create('text', [() => slopeEndpointDown.X() + 0.1, () => slopeEndpointDown.Y(), '-L'], { anchorX: 'left' });
