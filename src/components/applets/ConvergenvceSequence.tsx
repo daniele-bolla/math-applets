@@ -75,8 +75,8 @@ export default function LimitApplet() {
 
 
                 // Sequence points with spacing
-                let sequencePoints: any[] = [];
-                let sequenceLabels: any[] = [];
+                let sequencePoints: JXG.Point[] = [];
+                let sequenceLabels: JXG.Text[] = [];
                 const maxPoints = 60;
 
                 function createSequencePoints() {
@@ -102,8 +102,8 @@ export default function LimitApplet() {
                     }
                 }
                 // N vertical line
-                let NLine: any = null;
-                let NPoint: any = null;
+                let NLine: JXG.Line | null = null;
+                let NPoint: JXG.Point | null = null;
 
                 function updateNLine() {
                     if (NLine) board.removeObject(NLine);

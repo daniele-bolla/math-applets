@@ -123,7 +123,7 @@ export default function IVTApplet() {
                     return Math.pow(DISCONTINUITY_X, 2) + 1; // limit from right
                 }
 
-                let initialC = (objectiveFunction(point_a.X()) + objectiveFunction(point_b.X())) / 2;
+                const initialC = (objectiveFunction(point_a.X()) + objectiveFunction(point_b.X())) / 2;
 
                 function isPointCinBetweenFaFb() {
                     const cValue = point_c.Y();

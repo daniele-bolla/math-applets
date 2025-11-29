@@ -205,7 +205,11 @@ export default function LimSupLimInfApplet() {
                     [() => kSlider.Value(), -200],
                     [() => kSlider.Value(), 200]
                 ], {
-                    strokeColor: '#666', strokeWidth: 1, dash: 2, straightFirst: false, straightLast: false
+                    strokeColor: '#666', 
+                    strokeWidth: 1, 
+                    dash: 2, 
+                    straightFirst: false, 
+                    straightLast: false
                 });
 
                 // 9. HIGHLIGHTERS
@@ -213,14 +217,22 @@ export default function LimSupLimInfApplet() {
                     () => getSupData().index, 
                     () => getSupData().val
                 ], {
-                    name: '', size: 6, fillColor: 'transparent', strokeColor: COLOR_SUP, strokeWidth: 3, fixed: true
+                    name: '', size: 6, 
+                    fillColor: 'transparent', 
+                    strokeColor: COLOR_SUP, 
+                    strokeWidth: 3,
+                    fixed: true
                 });
 
                 board.create('point', [
                     () => getInfData().index, 
                     () => getInfData().val
                 ], {
-                    name: '', size: 6, fillColor: 'transparent', strokeColor: COLOR_INF, strokeWidth: 3, fixed: true
+                    name: '', size: 6, 
+                    fillColor: 'transparent', 
+                    strokeColor: COLOR_INF, 
+                    strokeWidth: 3, 
+                    fixed: true
                 });
 
                 // 10. LEGEND
