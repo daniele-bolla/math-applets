@@ -12,8 +12,8 @@ export default function LipschitzContinuityCombined() {
           strokeWidth: 3,
         });
 
-        const p1 = board.create("glider", [-2, f(-2), graph], { name: "x" });
-        const p2 = board.create("glider", [2, f(2), graph], { name: "y" });
+        const p1 = board.create("glider", [-2, f(-2), graph], { name: "(f(x_1), x_1)" });
+        const p2 = board.create("glider", [2, f(2), graph], { name: "(f(x_2), x_2)" });
 
         const lSlider = board.create(
           "slider",
