@@ -5,14 +5,14 @@ export default function LimSupLimInfApplet() {
     return (
         <JSXGraphBoard
             config={{
-                // Expanded left side to -15 to fit the vertical sliders
-                boundingbox: [-15, 60, 65, -80],
+                // Widened right side to 90 to fit the labels
+                boundingbox: [-15, 60, 90, -80],
                 axis: true,
             }}
             setup={(board: JXG.Board) => {
                 const MAX_K = 150;
                 const SLIDER_MIN = 1;
-                const SLIDER_MAX = 75;
+                const SLIDER_MAX = 100;
                 const SLIDER_INITIAL = 1;
 
                 const SLIDER_X_START = 35; 
@@ -42,11 +42,39 @@ export default function LimSupLimInfApplet() {
                     strokeColor: COLOR_INF, strokeWidth: 1, dash: 2, opacity: 0.1
                 });
                 
-                // Limit Lines
-                board.create('line', [[0,10], [1,10]], { strokeColor: COLOR_SUP, strokeWidth: 1, dash: 1, opacity: 0.3 });
-                board.create('line', [[0,-10], [1,-10]], { strokeColor: COLOR_INF, strokeWidth: 1, dash: 1, opacity: 0.3 });
+                // --- 3. FIXED LIMIT LINES WITH LABELS ---
+                
+                // LimSup Line
+                board.create('line', [[0, TRUE_SUP], [1, TRUE_SUP]], { 
+                    strokeColor: COLOR_SUP, 
+                    strokeWidth: 2, 
+                    dash: 2, 
+                    opacity: 0.6, 
+                    fixed: true 
+                });
+                board.create('text', [82, TRUE_SUP + 2, 'lim sup'], {
+                    color: COLOR_SUP, 
+                    fontSize: 16, 
+                    fixed: true, 
+                    anchorY: 'bottom'
+                });
 
-                // 3. Slider (k)
+                // LimInf Line
+                board.create('line', [[0, TRUE_INF], [1, TRUE_INF]], { 
+                    strokeColor: COLOR_INF, 
+                    strokeWidth: 2, 
+                    dash: 2, 
+                    opacity: 0.6, 
+                    fixed: true 
+                });
+                board.create('text', [82, TRUE_INF - 2, 'lim inf'], {
+                    color: COLOR_INF, 
+                    fontSize: 16, 
+                    fixed: true, 
+                    anchorY: 'top'
+                });
+
+                // 4. Slider (k)
                 const kSlider = board.create('slider', [[SLIDER_X_START, SLIDER_Y], [SLIDER_X_END, SLIDER_Y], [SLIDER_MIN, SLIDER_INITIAL, SLIDER_MAX]], {
                     name: 'k', 
                     snapWidth: 1,
@@ -56,51 +84,67 @@ export default function LimSupLimInfApplet() {
                     label: { fontSize: 20, color: 'black' } 
                 });
 
-                // --- 4. EPSILON SLIDERS (Constrained Segments) ---
+                // --- 5. EPSILON SLIDERS (Constrained Segments) ---
                 
                 const SLIDER_X = -4;
 
                 // SUPREMUM SLIDER (Controls top neighborhood)
-                // Segment starts exactly at 10 and goes up
                 const epsLineSup = board.create('segment', [[SLIDER_X, TRUE_SUP], [SLIDER_X, 40]], { 
-                    strokeColor: '#ccc', strokeWidth: 3, lineCap: 'round' 
+                    strokeColor: '#ccc', 
+                    strokeWidth: 3, 
+                    lineCap: 'round', 
+                    fixed: true
                 });
-                // Glider starts at 15 (epsilon = 5)
                 const epsGliderSup = board.create('glider', [SLIDER_X, 15, epsLineSup], {
-                    name: 'ε₁', size: 6, color: COLOR_SUP, label: { fontSize: 18, color: COLOR_SUP, offset: [-25, 0] }
+                    name: 'ε₁', 
+                    size: 6, 
+                    color: COLOR_SUP, 
+                    label: { fontSize: 18, color: COLOR_SUP, offset: [-25, 0] }
                 });
 
                 // INFIMUM SLIDER (Controls bottom neighborhood)
-                // Segment starts exactly at -10 and goes down
                 const epsLineInf = board.create('segment', [[SLIDER_X, TRUE_INF], [SLIDER_X, -40]], { 
-                    strokeColor: '#ccc', strokeWidth: 3, lineCap: 'round'
+                    strokeColor: '#ccc', 
+                    strokeWidth: 3, 
+                    lineCap: 'round', 
+                    fixed: true
                 });
-                // Glider starts at -15 (epsilon = 5)
                 const epsGliderInf = board.create('glider', [SLIDER_X, -15, epsLineInf], {
-                    name: 'ε₂', size: 6, color: COLOR_INF, label: { fontSize: 18, color: COLOR_INF, offset: [-25, 0] }
+                    name: 'ε₂', 
+                    size: 6, 
+                    face:'<>',
+                    color: COLOR_INF, 
+                    label: { fontSize: 18, color: COLOR_INF, offset: [-25, 0] }
                 });
 
                 const getEpsSup = () => Math.abs(epsGliderSup.Y() - TRUE_SUP);
                 const getEpsInf = () => Math.abs(epsGliderInf.Y() - TRUE_INF);
 
-                // --- 5. NEIGHBORHOOD VISUALIZATION ---
+                // --- 6. NEIGHBORHOOD VISUALIZATION ---
                 
                 // Sup Neighborhood Lines (Pink)
                 board.create('line', [[0, () => TRUE_SUP + getEpsSup()], [1, () => TRUE_SUP + getEpsSup()]], {
-                    strokeColor: COLOR_SUP, strokeWidth: 2, dash: 2
+                    strokeColor: COLOR_SUP,
+                    strokeWidth: 2, 
+                    dash: 3
                 });
                 board.create('line', [[0, () => TRUE_SUP - getEpsSup()], [1, () => TRUE_SUP - getEpsSup()]], {
-                    strokeColor: COLOR_SUP, strokeWidth: 2, dash: 2
+                    strokeColor: COLOR_SUP, 
+                    strokeWidth: 2, 
+                    dash: 3
                 });
 
                 // Inf Neighborhood Lines (Blue)
                 board.create('line', [[0, () => TRUE_INF + getEpsInf()], [1, () => TRUE_INF + getEpsInf()]], {
-                    strokeColor: COLOR_INF, strokeWidth: 2, dash: 2
+                    strokeColor: COLOR_INF, 
+                    strokeWidth: 2, 
+                    dash: 3
                 });
                 board.create('line', [[0, () => TRUE_INF - getEpsInf()], [1, () => TRUE_INF - getEpsInf()]], {
-                    strokeColor: COLOR_INF, strokeWidth: 2, dash: 2
+                    strokeColor: COLOR_INF, 
+                    strokeWidth: 2, 
+                    dash: 3
                 });
-
 
                 // --- LOGIC ---
                 const getSupData = () => {
@@ -123,11 +167,11 @@ export default function LimSupLimInfApplet() {
                     return { index: minIndex, val: minVal };
                 };
 
-                // 6. Sequence Points with DUAL COLORING
+                // 7. Sequence Points with DUAL COLORING
                 for (let n = 1; n <= MAX_K; n++) {
                     board.create('point', [n, values[n - 1]], {
                         name: '',
-                        size: 2, 
+                        size: 1, 
                         strokeColor: '#000',
                         strokeWidth: 1,
                         fixed: true,
@@ -141,23 +185,22 @@ export default function LimSupLimInfApplet() {
                             // 2. Supremum Logic
                             const epsSup = getEpsSup();
                             if (Math.abs(val - TRUE_SUP) < epsSup) {
-                                return COLOR_SUP; // Pink (Inside Sup Neighborhood)
+                                return COLOR_SUP; 
                             }
 
                             // 3. Infimum Logic
                             const epsInf = getEpsInf();
                             if (Math.abs(val - TRUE_INF) < epsInf) {
-                                return COLOR_INF; // Blue (Inside Inf Neighborhood)
+                                return COLOR_INF; 
                             }
 
-                            // 4. Outside both
                             return '#000000'; 
                         },
                         strokeOpacity: () => n < kSlider.Value() ? 0.3 : 1
                     });
                 }
 
-                // 7. The "Cut" Line
+                // 8. The "Cut" Line
                 board.create('line', [
                     [() => kSlider.Value(), -200],
                     [() => kSlider.Value(), 200]
@@ -165,7 +208,7 @@ export default function LimSupLimInfApplet() {
                     strokeColor: '#666', strokeWidth: 1, dash: 2, straightFirst: false, straightLast: false
                 });
 
-                // 8. HIGHLIGHTERS
+                // 9. HIGHLIGHTERS
                 board.create('point', [
                     () => getSupData().index, 
                     () => getSupData().val
@@ -180,7 +223,7 @@ export default function LimSupLimInfApplet() {
                     name: '', size: 6, fillColor: 'transparent', strokeColor: COLOR_INF, strokeWidth: 3, fixed: true
                 });
 
-                // 9. LEGEND
+                // 10. LEGEND
                 board.create('text', [40, 50, () => {
                     const supVal = getSupData().val.toFixed(2);
                     const infVal = getInfData().val.toFixed(2);

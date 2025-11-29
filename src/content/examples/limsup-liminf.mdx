@@ -3,11 +3,37 @@ title: LimSup LimInf
 description: Visualization of  LimSup LimIn.
 visible: true
 ---
+import MathBlock from "../../components/MathBlock";
 import LimSupLimInf from "../../components/applets/LimSupLimInf";
 
 # LimSup LimInf 
+<MathBlock type="definition" title="Definition of limit supperior and limit inferior">
+Let $(a_n)_{n \in \mathbb{N}}$ be a bounded sequence.
 
+i) The *limit superior* of $(a_n)_{n \in \mathbb{N}}$ is defined by  
+$$
+\limsup_{n \to \infty} a_n
+= \lim_{k \to \infty} \left( \sup_{n \ge k} a_n \right).
+$$
 
+ii) The *limit inferior* of $(a_n)_{n \in \mathbb{N}}$ is defined by  
+$$
+\liminf_{n \to \infty} a_n
+= \lim_{k \to \infty} \left( \inf_{n \ge k} a_n \right).
+$$
+</MathBlock>
+<MathBlock type="theorem" title="Characterization of the limit superior">
+Let $(a_n)_{n \in \mathbb{N}}$ be a bounded sequence and let $a \in \mathbb{R}$.  
+Then
+$$
+\limsup_{n \to \infty} a_n = a,
+$$
+if and only if for every $\varepsilon > 0$ the following conditions are satisfied:
+
+i) It holds that $a_n < a + \varepsilon$ for almost all (i.e., all except finitely many) $n \in \mathbb{N}$.
+
+ii) It holds that $a_n > a - \varepsilon$ for infinitely many $n \in \mathbb{N}$.
+</MathBlock>
 
 --- 
 <LimSupLimInf client:only />
