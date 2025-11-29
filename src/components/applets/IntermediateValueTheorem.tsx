@@ -1,5 +1,6 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
+import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
 export default function IVTApplet() {
     return (
@@ -16,35 +17,33 @@ export default function IVTApplet() {
                     "functiongraph",
                     [objectiveFunction],
                     {
-                        strokeColor: "blue",
+                        strokeColor: COLORS.blue,
                         strokeWidth: 2,
                     }
                 );
 
                 const point_a = board.create('glider', [-1.75, 0, board.defaultAxes.x], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'a',
-                    face: '<>',
-                    size: 6,
-                    fillColor: '#4CAF50',
-                    strokeColor: '#2E7D32',
+                    fillColor: COLORS.green,
+                    strokeColor: COLORS.darkGreen,
                 });
 
                 const point_b = board.create('glider', [1.5, 0, board.defaultAxes.x], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'b',
-                    face: '<>',
-                    size: 6,
-                    fillColor: '#F44336',
-                    strokeColor: '#C62828',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                 });
 
                 const point_fa = board.create('point', [
                     () => point_a.X(),
                     () => objectiveFunction(point_a.X())
                 ], {
-                    // name: '(a, f(a))',
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     size: 1,
-                    fillColor: '#4CAF50',
-                    strokeColor: '#2E7D32',
+                    fillColor: COLORS.green,
+                    strokeColor: COLORS.darkGreen,
                     fixed: true,
                 });
 
@@ -52,10 +51,10 @@ export default function IVTApplet() {
                     () => point_b.X(),
                     () => objectiveFunction(point_b.X())
                 ], {
-                    // name: '(b, f(b))',
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     size: 1,
-                    fillColor: '#F44336',
-                    strokeColor: '#C62828',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                     fixed: true,
                 });
 
@@ -63,10 +62,11 @@ export default function IVTApplet() {
                     0,
                     () => objectiveFunction(point_a.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: 'f(a)',
                     size: 1,
-                    fillColor: '#4CAF50',
-                    strokeColor: '#2E7D32',
+                    fillColor: COLORS.green,
+                    strokeColor: COLORS.darkGreen,
                     fixed: true,
                 });
 
@@ -74,35 +74,36 @@ export default function IVTApplet() {
                     0,
                     () => objectiveFunction(point_b.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: 'f(b)',
                     size: 1,
-                    fillColor: '#F44336',
-                    strokeColor: '#C62828',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                     fixed: true,
                 });
 
                 // Vertical lines from a and b to f(a) and f(b)
                 board.create('segment', [point_a, point_fa], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 1,
                     dash: 1,
                 });
 
                 board.create('segment', [point_b, point_fb], {
-                    strokeColor: '#F44336',
+                    strokeColor: COLORS.red,
                     strokeWidth: 1,
                     dash: 1,
                 });
 
                 // Horizontal lines from fa and fb to their projections on y-axis
                 board.create('segment', [point_fa, point_fa_on_y], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 1,
                     dash: 1,
                 });
 
                 board.create('segment', [point_fb, point_fb_on_y], {
-                    strokeColor: '#F44336',
+                    strokeColor: COLORS.red,
                     strokeWidth: 1,
                     dash: 1,
                 });
@@ -133,16 +134,15 @@ export default function IVTApplet() {
                 }
 
                 const point_c = board.create('glider', [0, initialC, board.defaultAxes.y], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'c',
-                    face: '<>',
-                    size: 6,
-                    fillColor: '#FF9800',
-                    strokeColor: '#E65100',
+                    fillColor: COLORS.orange,
+                    strokeColor: COLORS.darkOrange,
                 });
 
                 // CONTINUOUS INTERVAL - Shows when NO discontinuity
                 board.create('segment', [point_fa_on_y, point_fb_on_y], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
@@ -169,7 +169,7 @@ export default function IVTApplet() {
 
                 // Determine which segments to show based on interval direction
                 board.create('segment', [point_fa_on_y, discont_point_left], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
@@ -177,7 +177,7 @@ export default function IVTApplet() {
                 });
 
                 board.create('segment', [discont_point_right, point_fb_on_y], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
@@ -185,7 +185,7 @@ export default function IVTApplet() {
                 });
 
                 board.create('segment', [point_fa_on_y, discont_point_right], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
@@ -193,7 +193,7 @@ export default function IVTApplet() {
                 });
 
                 board.create('segment', [discont_point_left, point_fb_on_y], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
@@ -203,21 +203,21 @@ export default function IVTApplet() {
                 // Gaps
                 board.create('point', [0, () => getDiscontinuityYLeft()], {
                     size: 3,
-                    fillColor: 'red',
-                    strokeColor: 'darkred',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                     visible: false
                 });
 
                 board.create('point', [0, () => getDiscontinuityYRight()], {
                     size: 3,
-                    fillColor: 'red',
-                    strokeColor: 'darkred',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                     visible: false
                 });
 
                 // HIGHLIGHT X-AXIS INTERVAL from a to b when conditions are met
                 board.create('segment', [point_a, point_b], {
-                    strokeColor: '#00BCD4',
+                    strokeColor: COLORS.cyan,
                     strokeWidth: 10,
                     opacity: 0.6,
                     fixed: true,
@@ -229,7 +229,7 @@ export default function IVTApplet() {
                     [0, () => point_c.Y()],
                     [1, () => point_c.Y()]
                 ], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 2,
                     dash: 1,
                     fixed: true,
@@ -250,24 +250,24 @@ export default function IVTApplet() {
                 const intersection_0 = board.create('intersection', [graph, lineC, 0], {
                     name: 'x_0',
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: false // Set to false initially, will be controlled by attribute below
                 });
 
                 const intersection_1 = board.create('intersection', [graph, lineC, 1], {
                     name: 'x_1',
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: false
                 });
 
                 const intersection_2 = board.create('intersection', [graph, lineC, 2], {
                     name: 'x_2',
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: false
                 });
 
@@ -289,8 +289,8 @@ export default function IVTApplet() {
                     0
                 ], {
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X()),
                     fixed: true
                 });
@@ -300,8 +300,8 @@ export default function IVTApplet() {
                     0
                 ], {
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X()),
                     fixed: true
                 });
@@ -311,15 +311,15 @@ export default function IVTApplet() {
                     0
                 ], {
                     size: 2,
-                    fillColor: '#9C27B0',
-                    strokeColor: '#6A1B9A',
+                    fillColor: COLORS.purple,
+                    strokeColor: COLORS.darkPurple,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X()),
                     fixed: true
                 });
 
                 // Vertical segments from intersections to x-axis
                 board.create('segment', [intersection_0, projection_0], {
-                    strokeColor: '#9C27B0',
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
@@ -327,7 +327,7 @@ export default function IVTApplet() {
                 });
 
                 board.create('segment', [intersection_1, projection_1], {
-                    strokeColor: '#9C27B0',
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
@@ -335,7 +335,7 @@ export default function IVTApplet() {
                 });
 
                 board.create('segment', [intersection_2, projection_2], {
-                    strokeColor: '#9C27B0',
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,

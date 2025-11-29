@@ -1,64 +1,60 @@
 import JXG from "jsxgraph";
 
-// TODO: It would be better to read this from the CSS file
-const theme = {
-    // Primary Colors
-    '--color-primary': '#2196F3',
-    '--color-primary-dark': '#1976D2',
-    '--color-secondary': '#FFC107',
-    '--color-secondary-dark': '#FFA000',
-    '--color-accent': '#E91E63',
-    '--color-accent-dark': '#C2185B',
-    // Graph Colors
-    '--color-graph-function': '#2196F3',
-    '--color-graph-function-highlight': '#1976D2',
-    '--color-graph-point': '#E91E63',
-    '--color-graph-point-highlight': '#C2185B',
-    '--color-graph-line': '#4CAF50',
-    '--color-graph-line-highlight': '#388E3C',
-    '--color-graph-glider': '#FFC107',
-    '--color-graph-glider-highlight': '#FFA000',
+export const COLORS = {
+    // Primary colors
+    blue: "#2196F3",
+    green: "#4CAF50",
+    red: "#F44336",
+    orange: "#FF9800",
+    purple: "#9C27B0",
+    cyan: "#00BCD4",
+    pink: "#E91E63",
+
+    // Darker shades for strokes
+    darkBlue: "#1976D2",
+    darkGreen: "#388E3C",
+    darkRed: "#D32F2F",
+    darkOrange: "#F57C00",
+    darkPurple: "#7B1FA2",
+    darkCyan: "#0097A7",
+    darkPink: "#C2185B",
+
+    // Lighter shades for fills
+    lightBlue: "#BBDEFB",
+    lightGreen: "#C8E6C9",
+    lightRed: "#FFCDD2",
+    lightOrange: "#FFE0B2",
+    lightPurple: "#E1BEE7",
+    lightCyan: "#B2EBF2",
+    lightPink: "#F8BBD0",
 };
 
-
-const defaultPointAttributes = {
-    size: 3,
-    face: 'o',
-    fillColor: theme["--color-graph-point"],
-    strokeColor: theme["--color-graph-point-highlight"],
-    highlightFillColor: theme["--color-graph-point-highlight"],
-    highlightStrokeColor: theme["--color-graph-point"],
-};
-
-const defaultLineAttributes = {
-    strokeColor: theme['--color-graph-line'],
-    highlightStrokeColor: theme['--color-graph-line-highlight'],
+export const DEFAULT_GLIDER_ATTRIBUTES: JXG.GliderAttributes = {
+    face: "<>",
+    size: 6,
+    fillColor: COLORS.orange,
+    strokeColor: COLORS.darkOrange,
     strokeWidth: 2,
 };
 
-const defaultGliderAttributes = {
-    size: 6,
-    face: '<>',
-    fillColor: theme['--color-graph-glider'],
-    strokeColor: theme['--color-graph-glider-highlight'],
-    highlightFillColor: theme['--color-graph-glider-highlight'],
-    highlightStrokeColor: theme['--color-graph-glider'],
+export const DEFAULT_POINT_ATTRIBUTES: JXG.PointAttributes = {
+    size: 2,
+    fillColor: COLORS.blue,
+    strokeColor: COLORS.darkBlue,
+    strokeWidth: 1,
 };
 
-export function createPoint(board: JXG.Board, coords: JXG.Coords, attributes = {}) {
-    return board.create('point', coords, { ...defaultPointAttributes, ...attributes });
-}
+export const DEFAULT_LINE_ATTRIBUTES: JXG.LineAttributes = {
+    strokeColor: COLORS.blue,
+    strokeWidth: 2,
+};
 
-export function createLine(board: JXG.Board, coords: [JXG.Coords, JXG.Coords], attributes = {}) {
-    return board.create('line', coords, { ...defaultLineAttributes, ...attributes });
-}
+export const DEFAULT_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
+    strokeColor: COLORS.blue,
+    strokeWidth: 2,
+};
 
-export function createGlider(board: JXG.Board, coords: JXG.Coords, target: JXG.GeometryElement, attributes = {}) {
-    const newCoords: [number, number, JXG.GeometryElement] = [
-        (coords[0] as number),
-        (coords[1] as number),
-        target
-    ];
-
-    return board.create('glider', newCoords, { ...defaultGliderAttributes, ...attributes });
-}
+export const DEFAULT_FUNCTION_GRAPH_ATTRIBUTES: JXG.FunctionGraphAttributes = {
+    strokeColor: COLORS.blue,
+    strokeWidth: 2,
+};

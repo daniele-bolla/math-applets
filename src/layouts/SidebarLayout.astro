@@ -3,10 +3,11 @@ import "katex/dist/katex.min.css";
 import "../styles/global.css";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import Sidebar from "../components/SidebarLayout.tsx"; 
 
-const examples: CollectionEntry<"examples">[] = (await getCollection("examples")).filter(example => example.data.visible);
+const isProd = import.meta.env.PROD;
+const examples: CollectionEntry<"examples">[] = isProd ? (await getCollection("examples")).filter(example =>  example.data.visible) : (await getCollection("examples"))
 const { title } = Astro.props;
-import Sidebar from "../components/SidebarLayout.tsx";
 ---
 
 <html lang="en" class="text-slate-900">
