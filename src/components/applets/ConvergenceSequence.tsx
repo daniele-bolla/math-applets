@@ -1,13 +1,14 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
+import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
-export default function LimitApplet() {
+export default function ConvergenceSequenceApplet() {
     return (
         <JSXGraphBoard
             config={{ boundingbox: [-1, 1, 10, -1], axis: true }}
             setup={(board: JXG.Board) => {
 
-                const sequence = (n: number) => 1 / n ;
+                const sequence = (n: number) => 1 / n;
                 const limit = 0;
 
                 // Calculate N for given epsilon
@@ -26,11 +27,10 @@ export default function LimitApplet() {
 
                 // Draggable epsilon point
                 const epsilonPoint = board.create('glider', [0, 0.3, epsilonSegment], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'ε',
-                    face: '<>',
-                    size: 6,
-                    fillColor: '#FF9800',
-                    strokeColor: '#E65100',
+                    fillColor: COLORS.orange,
+                    strokeColor: COLORS.darkOrange,
                 });
 
                 // Limit line
@@ -38,16 +38,16 @@ export default function LimitApplet() {
                     [0, limit],
                     [1, limit]
                 ], {
-                    strokeColor: '#2196F3',
+                    strokeColor: COLORS.blue,
                     strokeWidth: 2,
                     fixed: true,
                 });
                 // Limit point
                 board.create('point', [0, limit], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: 'a',
-                    size: 2,
-                    fillColor: '#2196F3',
-                    strokeColor: '#1976D2',
+                    fillColor: COLORS.blue,
+                    strokeColor: COLORS.darkBlue,
                     fixed: true,
                 });
 
@@ -56,7 +56,7 @@ export default function LimitApplet() {
                     [0, () => limit + epsilonPoint.Y()],
                     [1, () => limit + epsilonPoint.Y()]
                 ], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
@@ -67,7 +67,7 @@ export default function LimitApplet() {
                     [0, () => limit - epsilonPoint.Y()],
                     [1, () => limit - epsilonPoint.Y()]
                 ], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
@@ -92,10 +92,10 @@ export default function LimitApplet() {
                         const an = sequence(n);
                         const isAfterN = n >= N;
                         const point = board.create('point', [n, an], {
+                            ...DEFAULT_POINT_ATTRIBUTES,
                             name: '',
-                            size: 3,
-                            fillColor: isAfterN ? '#9C27B0' : '#F44336',
-                            strokeColor: isAfterN ? '#6A1B9A' : '#C62828',
+                            fillColor: isAfterN ? COLORS.purple : COLORS.red,
+                            strokeColor: isAfterN ? COLORS.darkPurple : COLORS.darkRed,
                             fixed: true,
                         });
                         sequencePoints.push(point);
@@ -116,7 +116,7 @@ export default function LimitApplet() {
                         [N, -1],
                         [N, 1]
                     ], {
-                        strokeColor: '#9C27B0',
+                        strokeColor: COLORS.purple,
                         strokeWidth: 3,
                         straightFirst: true,
                         straightLast: true,
@@ -125,10 +125,10 @@ export default function LimitApplet() {
                     });
 
                     NPoint = board.create('point', [N, 0], {
+                        ...DEFAULT_POINT_ATTRIBUTES,
                         name: `N_ε`,
-                        size: 3,
-                        fillColor: '#9C27B0',
-                        strokeColor: '#6A1B9A',
+                        fillColor: COLORS.purple,
+                        strokeColor: COLORS.darkPurple,
                         fixed: true,
                         label: { offset: [5, -15], fontSize: 12 }
                     });

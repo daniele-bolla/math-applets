@@ -2,6 +2,8 @@ import JXG from "jsxgraph";
 
 export const COLORS = {
     // Primary colors
+    black: "#000000",
+    white: "#FFFFFF",
     blue: "#2196F3",
     green: "#4CAF50",
     red: "#F44336",
@@ -9,6 +11,11 @@ export const COLORS = {
     purple: "#9C27B0",
     cyan: "#00BCD4",
     pink: "#E91E63",
+
+    // Gray shades
+    gray: "#9E9E9E",
+    darkGray: "#616161",
+    lightGray: "#E0E0E0",
 
     // Darker shades for strokes
     darkBlue: "#1976D2",
@@ -38,9 +45,9 @@ export const DEFAULT_GLIDER_ATTRIBUTES: JXG.GliderAttributes = {
 };
 
 export const DEFAULT_POINT_ATTRIBUTES: JXG.PointAttributes = {
-    size: 2,
-    fillColor: COLORS.blue,
-    strokeColor: COLORS.darkBlue,
+    size: 1,
+    fillColor: COLORS.black,
+    strokeColor: COLORS.black,
     strokeWidth: 1,
 };
 
@@ -54,7 +61,7 @@ export const DEFAULT_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeWidth: 2,
 };
 
-export const DEFAULT_FUNCTION_GRAPH_ATTRIBUTES: JXG.FunctionGraphAttributes = {
+export const DEFAULT_FUNCTION_GRAPH_ATTRIBUTES: JXG.FunctiongraphAttributes = {
     strokeColor: COLORS.blue,
     strokeWidth: 2,
 };

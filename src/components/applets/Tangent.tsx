@@ -1,5 +1,6 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
+import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
 export default function TangentApplet() {
     return (
@@ -11,22 +12,23 @@ export default function TangentApplet() {
                 const fPrime = (x: number) => 2 * x;
 
                 const graph = board.create('functiongraph', [f, -10, 10], {
-                    strokeColor: '#2196F3',
+                    strokeColor: COLORS.blue,
                     strokeWidth: 3,
                 });
 
                 board.create('text', [3.5, f(3.5) + 0.3, 'f(x) = x²'], {
                     fontSize: 16,
-                    color: '#2196F3',
+                    color: COLORS.blue,
                     fixed: true,
                 });
 
                 const pointA = board.create('glider', [0.5, f(0.5), graph], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: '(a, f(a))',
                     face: '<>',
                     size: 6,
-                    fillColor: '#4CAF50',
-                    strokeColor: '#2E7D32',
+                    fillColor: COLORS.green,
+                    strokeColor: COLORS.darkGreen,
                 });
 
 
@@ -44,10 +46,11 @@ export default function TangentApplet() {
                     () => pointA.X() + hSlider.Value(),
                     () => f(pointA.X() + hSlider.Value())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: '(a + h, f(a + h))',
                     size: 2,
-                    fillColor: '#F44336',
-                    strokeColor: '#C62828',
+                    fillColor: COLORS.red,
+                    strokeColor: COLORS.darkRed,
                     fixed: true,
                     visible: () => hSlider.Value() >= 0.1
                 });
@@ -55,7 +58,7 @@ export default function TangentApplet() {
 
                 // Secant line through A and B
                 board.create('line', [pointA, pointB], {
-                    strokeColor: '#FF6B6B',
+                    strokeColor: COLORS.red,
                     strokeWidth: 3,
                     dash: 1,
                     straightFirst: true,
@@ -71,7 +74,7 @@ export default function TangentApplet() {
                     () => `Secant: slope = ${((pointB.Y() - pointA.Y()) / (hSlider.Value())).toFixed(3)}`
                 ], {
                     fontSize: 12,
-                    color: '#FF6B6B',
+                    color: COLORS.red,
                     fixed: true,
                     // visible: () => hSlider.Value() >= 0.1
                 });
@@ -81,7 +84,7 @@ export default function TangentApplet() {
                     pointA,
                     [() => pointA.X() + 1, () => pointA.Y() + fPrime(pointA.X())]
                 ], {
-                    strokeColor: '#9C27B0',
+                    strokeColor: COLORS.purple,
                     strokeWidth: 3,
                     straightFirst: true,
                     straightLast: true,
@@ -94,7 +97,7 @@ export default function TangentApplet() {
                     () => `Tangent: f'(${pointA.X()}) = ${fPrime(pointA.X()).toFixed(3)}`
                 ], {
                     fontSize: 12,
-                    color: '#9C27B0',
+                    color: COLORS.purple,
                     fixed: true,
                     visible: () => hSlider.Value() < 0.1
                 });
@@ -103,7 +106,7 @@ export default function TangentApplet() {
                     [() => pointA.X(), 0],
                     pointA
                 ], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 1,
                     dash: 2,
                 });
@@ -112,7 +115,7 @@ export default function TangentApplet() {
                     [() => pointB.X(), 0],
                     pointB
                 ], {
-                    strokeColor: '#F44336',
+                    strokeColor: COLORS.red,
                     strokeWidth: 1,
                     dash: 2,
                 });
@@ -121,7 +124,7 @@ export default function TangentApplet() {
                     [() => pointA.X(), 0],
                     [() => pointB.X(), 0]
                 ], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 2,
                     lastArrow: true,
                 });
@@ -132,7 +135,7 @@ export default function TangentApplet() {
                     () => `h = ${hSlider.Value().toFixed(3)}`
                 ], {
                     fontSize: 12,
-                    color: '#FF9800',
+                    color: COLORS.orange,
                     fixed: true,
                 });
 
@@ -140,7 +143,7 @@ export default function TangentApplet() {
                     [() => pointB.X(), () => pointA.Y()],
                     pointB
                 ], {
-                    strokeColor: '#FF9800',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 2,
                     lastArrow: true,
                 });
@@ -151,7 +154,7 @@ export default function TangentApplet() {
                     () => `Δf = ${(pointB.Y() - pointA.Y()).toFixed(3)}`
                 ], {
                     fontSize: 12,
-                    color: '#FF9800',
+                    color: COLORS.orange,
                     fixed: true,
                 });
             }}

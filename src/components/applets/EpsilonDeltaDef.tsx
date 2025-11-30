@@ -1,11 +1,12 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
+import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
-export default function EpsilonDeltaApplet() {
+export default function EpsilonDeltaDefApplet() {
     return (
         <JSXGraphBoard
-            config={{ 
-                boundingbox: [-3, 5, 5.5, -2], 
+            config={{
+                boundingbox: [-3, 5, 5.5, -2],
                 axis: true,
             }}
             setup={(board: JXG.Board) => {
@@ -15,25 +16,25 @@ export default function EpsilonDeltaApplet() {
 
                 const f = (x: number) => {
                     if (x < DISCONTINUITY) {
-                        return Math.pow(x,3) *0.3 ;
+                        return Math.pow(x, 3) * 0.3;
                     } else {
-                        return Math.pow(x,2) ;
+                        return Math.pow(x, 2);
                     }
                 };
 
                 // Function graph
                 board.create('functiongraph', [f], {
-                    strokeColor: '#4080aa',
+                    strokeColor: COLORS.blue,
                     strokeWidth: 2,
                 });
 
                 // a glider
-                const pointA = board.create('glider', [DISCONTINUITY,0, board.defaultAxes.x], {
+                const pointA = board.create('glider', [DISCONTINUITY, 0, board.defaultAxes.x], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'a',
                     size: 6,
                     face: '<>',
-                    fillColor: '#ff00ff',
-                    strokeColor: '#000',
+                    fillColor: COLORS.pink,
                 });
 
                 // Point (a, f(a))
@@ -41,9 +42,10 @@ export default function EpsilonDeltaApplet() {
                     () => pointA.X(),
                     () => f(pointA.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: '',
                     size: 2,
-                    fillColor: '#000',
+                    fillColor: COLORS.black,
                     fixed: true,
                 });
 
@@ -52,7 +54,7 @@ export default function EpsilonDeltaApplet() {
                     dash: 2,
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#000',
+                    strokeColor: COLORS.black,
                     strokeWidth: 1,
                 });
 
@@ -61,9 +63,10 @@ export default function EpsilonDeltaApplet() {
                     0,
                     () => f(pointA.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: '',
                     size: 2,
-                    fillColor: '#000',
+                    fillColor: COLORS.black,
                     fixed: true,
                 });
 
@@ -72,7 +75,7 @@ export default function EpsilonDeltaApplet() {
                     dash: 2,
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#000',
+                    strokeColor: COLORS.black,
                     strokeWidth: 1,
                 });
 
@@ -90,14 +93,14 @@ export default function EpsilonDeltaApplet() {
                 // Epsilon glider
                 const epsPoint = board.create('glider', [
                     1,
-                    f(pointA.X()) + 0.5, 
+                    f(pointA.X()) + 0.5,
                     epsLine
                 ], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'f(a)+ε',
                     size: 6,
                     face: '<>',
-                    fillColor: '#00dd66',
-                    strokeColor: '#000',
+                    fillColor: COLORS.green,
                 });
 
                 const getEpsilon = () => Math.abs(epsPoint.Y() - f(pointA.X()));
@@ -106,25 +109,25 @@ export default function EpsilonDeltaApplet() {
                 board.create('line', [pointYfpointA, epsPoint], {
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#00dd66',
+                    strokeColor: COLORS.green,
                     strokeWidth: 3,
                 });
                 // Line (a + ε)
                 board.create('line', [
-                    [0, () =>  epsPoint.Y()],
-                    [1, () =>  epsPoint.Y()]
+                    [0, () => epsPoint.Y()],
+                    [1, () => epsPoint.Y()]
                 ], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                 });
 
                 // Line (a - ε)
                 board.create('line', [
-                    [0, () =>f(pointA.X()) - getEpsilon()],
-                    [1, () => f(pointA.X()) -  getEpsilon()]
+                    [0, () => f(pointA.X()) - getEpsilon()],
+                    [1, () => f(pointA.X()) - getEpsilon()]
                 ], {
-                    strokeColor: '#4CAF50',
+                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                 });
@@ -142,46 +145,46 @@ export default function EpsilonDeltaApplet() {
 
                 // Delta glider
                 const deltaPoint = board.create('glider', [
-                     pointA.X() + 0.75,
+                    pointA.X() + 0.75,
                     0,
                     deltaLine
                 ], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'a+δ',
                     size: 6,
-                    face:'<>',
-                    fillColor: '#ffaa33',
-                    strokeColor: '#000',
+                    face: '<>',
+                    fillColor: COLORS.orange,
                 });
 
                 const getDelta = () => Math.abs(deltaPoint.X() - pointA.X());
                 // Line (a+δ)
                 board.create('line', [
-                    [() =>  deltaPoint.X(), 0],
-                    [() =>  deltaPoint.X(), 1]
+                    [() => deltaPoint.X(), 0],
+                    [() => deltaPoint.X(), 1]
                 ], {
-                    strokeColor: '#ffaa33',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 2,
                     dash: 2,
                 });
 
                 // Line (a - ε)
                 board.create('line', [
-                    [() =>  pointA.X() - getDelta(), 0],
-                    [() =>  pointA.X()- getDelta(), 1]
+                    [0, () => pointA.X() - getDelta()],
+                    [1, () => pointA.X() - getDelta()]
                 ], {
-                    strokeColor: '#ffaa33',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 2,
                     dash: 2,
                 });
-            //     // δ line (orange)
+                //     // δ line (orange)
                 board.create('line', [pointA, deltaPoint], {
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#ffaa33',
+                    strokeColor: COLORS.orange,
                     strokeWidth: 3,
                 });
 
-                 // ===== POINT X =====
+                // ===== POINT X =====
                 // Line for x glider (constrained to delta neighborhood)
                 const xLine = board.create('line', [
                     [() => pointA.X() - getDelta(), 0],
@@ -198,11 +201,11 @@ export default function EpsilonDeltaApplet() {
                     0,
                     xLine
                 ], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'x',
                     size: 6,
-                    face:"<>",
-                    fillColor: '#3366ff',
-                    strokeColor: '#000',
+                    face: "<>",
+                    fillColor: COLORS.blue,
                 });
 
                 // Point (x, f(x))
@@ -210,9 +213,10 @@ export default function EpsilonDeltaApplet() {
                     () => xPoint.X(),
                     () => f(xPoint.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: '',
                     size: 2,
-                    fillColor: '#000',
+                    fillColor: COLORS.black,
                     fixed: true,
                 });
 
@@ -221,9 +225,10 @@ export default function EpsilonDeltaApplet() {
                     0,
                     () => f(xPoint.X())
                 ], {
+                    ...DEFAULT_POINT_ATTRIBUTES,
                     name: 'f(x)',
                     size: 2,
-                    fillColor: '#000',
+                    fillColor: COLORS.black,
                     fixed: true,
                 });
 
@@ -232,7 +237,7 @@ export default function EpsilonDeltaApplet() {
                     dash: 2,
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#000',
+                    strokeColor: COLORS.black,
                     strokeWidth: 1,
                 });
 
@@ -241,7 +246,7 @@ export default function EpsilonDeltaApplet() {
                     dash: 2,
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#000',
+                    strokeColor: COLORS.black,
                     strokeWidth: 1,
                 });
 
@@ -250,7 +255,7 @@ export default function EpsilonDeltaApplet() {
                 board.create('line', [pointA, xPoint], {
                     straightFirst: false,
                     straightLast: false,
-                    strokeColor: '#3366ff',
+                    strokeColor: COLORS.blue,
                     strokeWidth: 3,
                 });
 
@@ -261,7 +266,7 @@ export default function EpsilonDeltaApplet() {
                     strokeColor: () => {
                         const epsilon = getEpsilon();
                         const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
-                        return dist < epsilon ? '#ff00ff' : '#ff0e0eff';
+                        return dist < epsilon ? COLORS.pink : COLORS.red;
                     },
                     strokeWidth: 3,
                 });
