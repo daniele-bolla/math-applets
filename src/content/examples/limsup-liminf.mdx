@@ -31,3 +31,26 @@ ii) It holds that $a_n > a - \varepsilon$ for infinitely many $n \in \mathbb{N}$
 --- 
 
 ## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/LimSupLimInf.tsx).
+
+For this example, I have selected the alternating sequence  
+$a_n = (-1)^n \left( 10 + \frac{10 + 60\sin(0.8n)}{n} \right)$  
+to provide a clear distinction between $\liminf$ and $\limsup$.
+
+To clarify the first definition, the student can adjust the value of $k$ in  
+$\sup_{n \ge k} a_n$ and $\inf_{n \ge k} a_n$ using the slider.  
+The current values of $\sup_{n \ge k} a_n$ and $\inf_{n \ge k} a_n$  
+are highlighted by circles with corresponding colors:  
+red for the limsup and blue for the liminf.  
+Both $\liminf$ and $\limsup$ are marked by dashed lines in their respective colors.
+
+An illustration of the theorem is provided by allowing the student to move  
+the corresponding $\epsilon$-slider for each of the limits.
+
+For instance, in the case of the $\limsup$, the points below $a+\varepsilon$, 
+are those finetely many $n$ to discharge and highlighted in orange, 
+while the infinetely many points above $a - \varepsilon$ share the same limit color.
+
+
+
+

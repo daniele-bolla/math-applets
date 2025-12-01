@@ -266,7 +266,7 @@ export default function EpsilonDeltaDefApplet() {
                     strokeColor: () => {
                         const epsilon = getEpsilon();
                         const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
-                        return dist < epsilon ? COLORS.pink : COLORS.red;
+                        return dist < epsilon ? COLORS.green : COLORS.red;
                     },
                     strokeWidth: 3,
                 });

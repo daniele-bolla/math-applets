@@ -10,49 +10,19 @@ export default function AccumulationPointApplet() {
                 axis: true,
             }}
             setup={(board: JXG.Board) => {
-
-                const xAxisPositive = board.create('segment', [[0, 0], [1.0, 0]], { visible: false });
-                const p = board.create('glider', [1, 0, xAxisPositive], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
-                    name: '',
-                    layer: 100,
-                    strokeOpacity: 0.4,
-                    fillOpacity: 0.4,
-                    color: COLORS.orange
-                });
-
-                const getRadius = () => Math.max(Math.pow(p.X(), 2) * 0.2, 0.001);
-
-                // Create Points of rthe sequence
+                // Constants
                 const MAX_POINTS_HARD_CAP = 150;
-                const sequencePoints: JXG.Point[] = [];
-                for (let i = 1; i < MAX_POINTS_HARD_CAP; i++) {
-                    const n = i;
-                    if (n > 0) {
-                        const pt = board.create('point', [1 / n, 0], {
-                            ...DEFAULT_POINT_ATTRIBUTES,
-                            name: ``,
-                            fixed: true
-                        });
-                        sequencePoints.push(pt);
-                    }
-                }
+
+                // Helper Functions
+                const getRadius = () => Math.max(Math.pow(p.X(), 2) * 0.2, 0.001);
 
                 const isIntercepting = () => {
                     const r = getRadius();
-                    // const centerTolerance = 0.001;
-                    if (p.X() == 0) return true
-                    return sequencePoints.some(ps => {
-                        const dist = ps.Dist(p);
-                        return dist <= r // && dist > centerTolerance;
-                    });
+                    if (p.X() === 0) return true;
+                    return sequencePoints.some(ps => ps.Dist(p) <= r);
                 };
 
-                p.on('drag', function () {
-                    // Color Logic
-                    const newColor = isIntercepting() ? COLORS.green : COLORS.orange;
-                    p.setAttribute({ color: newColor });
-                    // Zoom Logic
+                const updateZoom = () => {
                     const pX = p.X();
                     const minP_X = 0.1;
                     const maxP_X = 1.0;
@@ -68,7 +38,36 @@ export default function AccumulationPointApplet() {
                     const right = zoomInState.right + (zoomOutState.right - zoomInState.right) * ratio;
                     const bottom = zoomInState.bottom + (zoomOutState.bottom - zoomInState.bottom) * ratio;
                     board.setBoundingBox([left, top, right, bottom], true);
+                };
+
+                const updateColors = () => {
+                    const newColor = isIntercepting() ? COLORS.green : COLORS.orange;
+                    p.setAttribute({ color: newColor });
+                };
+
+                // JSXGraph Elements
+                const xAxisPositive = board.create('segment', [[0, 0], [1.0, 0]], { visible: false });
+
+                const p = board.create('glider', [1, 0, xAxisPositive], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES,
+                    name: '',
+                    layer: 100,
+                    strokeOpacity: 0.4,
+                    fillOpacity: 0.4,
+                    color: COLORS.orange
                 });
+
+                const sequencePoints: JXG.Point[] = [];
+                for (let i = 1; i < MAX_POINTS_HARD_CAP; i++) {
+                    if (i > 0) {
+                        const pt = board.create('point', [1 / i, 0], {
+                            ...DEFAULT_POINT_ATTRIBUTES,
+                            name: ``,
+                            fixed: true
+                        });
+                        sequencePoints.push(pt);
+                    }
+                }
 
                 board.create('point', [0, 0], {
                     ...DEFAULT_POINT_ATTRIBUTES,
@@ -84,6 +83,12 @@ export default function AccumulationPointApplet() {
                     strokeColor: () => isIntercepting() ? COLORS.green : COLORS.orange,
                     strokeWidth: 4,
                     strokeOpacity: 0.6
+                });
+
+                // Event Listeners
+                p.on('drag', () => {
+                    updateColors();
+                    updateZoom();
                 });
             }}
         />
