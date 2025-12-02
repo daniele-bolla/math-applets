@@ -65,12 +65,9 @@ export default function LimSupLimInfApplet() {
                     label: { fontSize: 20, color: COLORS.black }
                 });
 
-                // --- 5. EPSILON SLIDERS ---
                 const SLIDER_X = -4;
 
-                // SUPREMUM SLIDER (Constraint: 0.5 to 20)
-                // Starts at TRUE_SUP + 0.5 (Bottom of segment)
-                // Ends at TRUE_SUP + 20 (Top of segment)
+                // SUPREMUM SLIDER
                 const epsLineSup = board.create('segment', [
                     [SLIDER_X, TRUE_SUP + 0.5], 
                     [SLIDER_X, TRUE_SUP + 20]
@@ -82,9 +79,7 @@ export default function LimSupLimInfApplet() {
                     ...DEFAULT_GLIDER_ATTRIBUTES, name: 'ε₁', color: COLORS.pink,
                 });
 
-                // INFIMUM SLIDER (Constraint: 0.5 to 20)
-                // Starts at TRUE_INF - 0.5 (Top of segment)
-                // Ends at TRUE_INF - 20 (Bottom of segment)
+                // INFIMUM SLIDER
                 const epsLineInf = board.create('segment', [
                     [SLIDER_X, TRUE_INF - 0.5], 
                     [SLIDER_X, TRUE_INF - 20]
@@ -117,7 +112,6 @@ export default function LimSupLimInfApplet() {
                     strokeColor: COLORS.blue, strokeWidth: 2, dash: 3
                 });
 
-                // --- LOGIC ---
                 const getSupData = () => {
                     const k_curr = Math.floor(kSlider.Value());
                     let maxVal = -Infinity; let maxIndex = k_curr;
@@ -138,7 +132,6 @@ export default function LimSupLimInfApplet() {
                     return { index: minIndex, val: minVal };
                 };
 
-                // 7. Sequence Points (Symmetrical Coloring)
                 for (let n = 1; n <= MAX_K; n++) {
                     board.create('point', [n, values[n - 1]], {
                         ...DEFAULT_POINT_ATTRIBUTES,
@@ -156,19 +149,15 @@ export default function LimSupLimInfApplet() {
                             const epsSup = getEpsSup();
                             const epsInf = getEpsInf();
 
-                            // 1. EXCEPTIONS (Theorem Part i)
                             // "Almost all n are < Sup + eps" -> Exception if > Sup + eps
                             if (val > TRUE_SUP + epsSup) return COLORS.orange;
                             // "Almost all n are > Inf - eps" -> Exception if < Inf - eps
                             if (val < TRUE_INF - epsInf) return COLORS.orange;
 
-                            // 2. WITNESSES (Theorem Part ii)
                             // "Infinitely many n > Sup - eps" -> Witness if inside Sup tube
-                            // Note: val < Sup + eps is implied because it passed step 1
                             if (val > TRUE_SUP - epsSup) return COLORS.pink;
 
                             // "Infinitely many n < Inf + eps" -> Witness if inside Inf tube
-                            // Note: val > Inf - eps is implied because it passed step 1
                             if (val < TRUE_INF + epsInf) return COLORS.blue;
 
                             return COLORS.black;
@@ -177,7 +166,6 @@ export default function LimSupLimInfApplet() {
                     });
                 }
 
-                // 8. Cut Line & Highlighters
                 board.create('line', [[() => kSlider.Value(), -200], [() => kSlider.Value(), 200]], {
                     strokeColor: COLORS.darkGray, strokeWidth: 1, dash: 2
                 });
