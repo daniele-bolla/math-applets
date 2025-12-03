@@ -1,5 +1,5 @@
 import JSXGraphBoard from "../JSXGraphBoard";
-import * as JXG from "jsxgraph";
+import JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
 export default function AccumulationPointApplet() {

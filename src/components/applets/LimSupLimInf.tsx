@@ -1,5 +1,5 @@
- import JSXGraphBoard from "../JSXGraphBoard";
-import * as JXG from "jsxgraph";
+import JSXGraphBoard from "../JSXGraphBoard";
+import  JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
 export default function LimSupLimInfApplet() {
@@ -63,7 +63,7 @@ export default function LimSupLimInfApplet() {
                     fillColor: COLORS.gray,
                     strokeColor: COLORS.black,
                     label: { fontSize: 20, color: COLORS.black }
-                });
+                }) as JXG.Slider;
 
                 const SLIDER_X = -4;
 
