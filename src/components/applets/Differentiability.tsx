@@ -36,7 +36,7 @@ export default function DifferentiabilityApplet() {
                 });
 
                 // Slider for Slope (m)
-                const mSlider = board.create('slider', [[1, -4], [6, -4], [-5, 1, 5]], {
+                const mSlider = board.create('slider', [[1, -4], [6, -4], [-5, -1.8, 5]], {
                     ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'm',
                     snapWidth: 0.1,
@@ -46,7 +46,7 @@ export default function DifferentiabilityApplet() {
                 }) as JXG.Slider;
 
                 // Point Q (x) 
-                const Q = board.create('glider', [2, f(2), curve], { 
+                const Q = board.create('glider', [4, f(4), curve], { 
                     ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'x', 
                     size: 5, 
