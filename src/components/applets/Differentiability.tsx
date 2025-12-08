@@ -93,23 +93,19 @@ export default function DifferentiabilityApplet() {
                     strokeColor: COLORS.darkGray, strokeWidth: 1, dash: 3, opacity: 0.15
                 });
 
-                // Coordinate Helpers for the visual bar at x0 + 1
+                // Display Rel Error
                 const getRelErrorX = () => getX0() + 1;
                 
-                // The height of the tangent line at x0 + 1
                 const getTangentYPlus1 = () => getY0() + getM();
 
-                // The height of the secant line at x0 + 1
                 const getSecantYPlus1 = () => {
                     const dx = Q.X() - getX0();
-                    // Handle limit case to prevent division by zero or jitter
                     if (Math.abs(dx) < 0.001) return getY0() + getM();
                     
                     const secantSlope = (Q.Y() - getY0()) / dx;
                     return getY0() + secantSlope;
                 };
 
-                // The Purple Bar
                 board.create('segment', [
                     [getRelErrorX, getTangentYPlus1],
                     [getRelErrorX, getSecantYPlus1]

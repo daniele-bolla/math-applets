@@ -1,6 +1,7 @@
 ---
 title:  Differentiability 
 description: Differentiability
+visible: true
 ---
 
 import Differentiability from "../../components/applets/Differentiability";
@@ -27,9 +28,8 @@ in Item ii) is uniquely determined and we have $m = f'(x_0)$.
 </MathBlock>
 <br/>
 <MathBlock type="definition" title="Tangent and Approx error">
-The derivative $f'(x_0)$ does not only provide us with information about the slope of the
-function $f$ at the point $x_0$, but also with a description of the tangent $t$ touching the graph
-of $f$ at $x_0$. It is given by
+The he tangent $t$ touching the graph
+of $f$ at $x_0$ is given by:
 
 $$
 t : \mathbb{R} \to \mathbb{R}, \qquad t(x) = f(x_0) + f'(x_0)(x - x_0)
@@ -37,8 +37,7 @@ $$
 
 and can be interpreted as the *best linear approximation* of $f$ at $x_0$.
 
-Let us analyze the error that we make when approximating $f$ by its tangent $t$ at $x_0$,
-i.e., we consider the *error* or *remainder* function
+The *error* or *remainder* function we make when approximating $f$ by its tangent $t$ at $x_0$:
 
 $$
 R : D \to \mathbb{R}, \qquad x \mapsto R(x) := f(x) - t(x)
@@ -62,5 +61,37 @@ as a measure for the quality of a linear approximation, and to call a linear app
 ---
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/Differentiability.tsx).
 
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/Differentiability.tsx)
+
+This interactive applet illustrates when a linear approximation of a function at a point 
+can be considered a “good” one.
+
+The tangent line at $x_0$ is the best linear approximation of $f$ at that point.  
+The theorem above states that if $f$ is differentiable at $x_0$, then  $f(x) = f(x_0) + m(x - x_0) + R(x)$,  
+where the remainder term $R(x)$ satisfies $\lim_{x \to x_0} \frac{R(x)}{x - x_0} = 0$.  
+
+A key insight is that the condition $R(x) \to 0$ alone does not guarantee a good approximation: 
+even a poorly chosen linear function can have a remainder that vanishes in absolute terms. 
+What matters is the behaviour of the *relative* remainder.
+
+In the applet, the student can adjust the slope $m$ using a slider. 
+When $m$ differs from $f'(x_0)$, the linear approximation is bad.
+By dragging the point $x$ toward $x_0$, 
+the sutudent can notice that, the remainder $R(x)$ approaches $0$ as $x \to x_0$, 
+but the relative error $\frac{R(x)}{x - x_0}$ does not. 
+When the chosen line coincides with the true tangent (i.e. $m = f'(x_0)$), 
+it is highlighted in green, and both the absolute and relative remainders tend to zero as $x$ approaches $x_0$.
+```typescript
+    const isBestApprox = () => Math.abs(getM() - df(getX0())) < 0.2;
+```
+
+Thus the relative error is the difference of twp slopes: (Slope of Secant Line) - (Slope $m$)
+$$
+
+\frac{R(x)}{x - x_0} = \frac{f(x) -t(x)}{x - x_0} = \frac{f(x) -[f(x_0) +m(x -x_0)]}{x - x_0}
+=  \frac{f(x) -f(x_0)}{x - x_0} - m
+
+$$
+
+The height of the purple line mantian this ratio, since start from the secant up to the linear approximation.

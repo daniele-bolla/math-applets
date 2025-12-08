@@ -1,0 +1,29 @@
+---
+title:  CauchyMeanValueTheorem 
+description: CauchyMeanValueTheorem
+---
+
+import CauchyMeanValueTheorem from "../../components/applets/CauchyMeanValueTheorem";
+import MathBlock from "../../components/MathBlock";
+
+# CauchyMeanValueTheorem
+
+<MathBlock type="theorem" title="Cauchy’s mean value theorem">
+Let $f, g : [a, b] \to \mathbb{R}$ be continuous as well as differentiable on $(a, b)$.  
+Let further $g'(x) \neq 0$ for all $x \in (a, b)$.  
+Then $g(a) \neq g(b)$ and there exists a $\xi \in (a, b)$ such that
+
+$$
+\frac{f(b) - f(a)}{g(b) - g(a)} = \frac{f'(\xi)}{g'(\xi)}.
+$$
+
+</MathBlock>
+
+
+---
+<CauchyMeanValueTheorem client:load />
+---
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMeanValueTheorem.tsx).
+
