@@ -1,0 +1,40 @@
+---
+title:  Integral of a Staircase function 
+description: Integral of a staircase function is independent of the choice of partition
+---
+
+import StepFunctionIntegral from "../../components/applets/StepFunctionIntegral";
+import MathBlock from "../../components/MathBlock";
+
+# Integral of a Staircase function 
+
+<MathBlock type="definition" title="Integral of a staircase function">
+Let $\varphi : [a, b] \to \mathbb{R}$ be a staircase function with respect to the partition  
+$Z : a = x_0 < \dots < x_n = b$ of $[a, b]$, and let $c_1, \dots, c_n \in \mathbb{R}$ be such that  
+$\varphi(x) = c_i$ for $x \in (x_{i-1}, x_i)$ and $i = 1, \dots, n$.  
+Then the *integral* of $\varphi$ is defined by
+
+$$
+I(\varphi) := I_Z(\varphi) := \sum_{i=1}^n c_i \cdot (x_i - x_{i-1}).
+$$
+
+</MathBlock>
+<br/>
+<MathBlock type="theorem" title="Integral of a staircase function is independent of the choice of partition">
+Let $\varphi : [a, b] \to \mathbb{R}$ be a staircase function with respect to the partitions  
+$Z_1 : a = x_0 < \dots < x_n = b$ and $Z_2 : a = y_0 < \dots < y_n = b$ of $[a, b]$.  
+Then we have
+
+$$
+I_{Z_1}(\varphi) = I_{Z_2}(\varphi),
+$$
+
+</MathBlock>
+
+---
+<StepFunctionIntegral client:load />
+---
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/StepFunctionIntegral.tsx).
+

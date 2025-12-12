@@ -8,53 +8,30 @@ import MathBlock from "../../components/MathBlock";
 
 # TaylorTheorem
 
-<MathBlock type="theorem" title="Best linear approximation of derivative at a point">
-Let $D \subseteq \mathbb{R}$, $f : D \to \mathbb{R}$, and let $x_0 \in D$ be an accumulation point of $D$.  
-Then the following statements are equivalent:
+<MathBlock type="definition" title="Taylor polynomial, remainder term">
+Let $I \subseteq \mathbb{R}$ be an interval, $x_0 \in I$, and $f : I \to \mathbb{R}$ an $n$ times differentiable function.
 
-i) The function $f$ is differentiable in $x_0$.
+i) The polynomial function $T_n : \mathbb{R} \to \mathbb{R}, \qquad x \mapsto \sum_{k=0}^n \frac{f^{(k)}(x_0)}{k!}\,(x - x_0)^k$
+is called the *n-th Taylor polynomial* of $f$ in the expansion point $x_0$.
 
-ii) There exists an $m \in \mathbb{R}$ and a function $R : D \to \mathbb{R}$ such that for all $x \in D$ it holds that
-
-$$
-f(x) = f(x_0) + m \cdot (x - x_0) + R(x),
-\qquad\text{where}\qquad
-\lim_{x \to x_0} \frac{R(x)}{x - x_0} = 0.
-$$
-
-If one of these conditions is fulfilled (and hence both of them), then the parameter $m$  
-in Item ii) is uniquely determined and we have $m = f'(x_0)$.
+ii) The function $R_n : I \to \mathbb{R}, \; x \mapsto f(x) - T_n(x)$ is the *remainder term* corresponding to $T_n$.
 </MathBlock>
 <br/>
-<MathBlock type="definition" title="Tangent and Approx error">
-The derivative $f'(x_0)$ does not only provide us with information about the slope of the
-function $f$ at the point $x_0$, but also with a description of the tangent $t$ touching the graph
-of $f$ at $x_0$. It is given by
+<MathBlock type="theorem" title="Taylor’s theorem">
+Let $I \subseteq \mathbb{R}$ be an interval, $x_0 \in I$, and $f : I \to \mathbb{R}$ an $n$ times differentiable function in $x_0$, where $n \ge 1$.  
+Then the following statements hold:
 
-$$
-t : \mathbb{R} \to \mathbb{R}, \qquad t(x) = f(x_0) + f'(x_0)(x - x_0)
-$$
+i) *(Taylor’s formula)* For all $x \in I$, 
+$f(x) = \sum_{k=0}^n \frac{f^{(k)}(x_0)}{k!}\,(x - x_0)^k + R_n(x),$
+where
+$\lim_{x \to x_0} \frac{R_n(x)}{(x - x_0)^n} = 0.$
 
-and can be interpreted as the *best linear approximation* of $f$ at $x_0$.
+ii) *(Lagrange remainder)* If $f$ is even $(n+1)$ times differentiable, then for every $x \in I \setminus \{x_0\}$ there exists a  
+$\xi$ between $x$ and $x_0$ such that
+$
+R_n(x) = \frac{f^{(n+1)}(\xi)}{(n+1)!}\,(x - x_0)^{n+1}.
+$
 
-Let us analyze the error that we make when approximating $f$ by its tangent $t$ at $x_0$,
-i.e., we consider the *error* or *remainder* function
-
-$$
-R : D \to \mathbb{R}, \qquad x \mapsto R(x) := f(x) - t(x)
-    = f(x) - f(x_0) - f'(x_0)(x - x_0).
-$$
-
-The error becomes “arbitrarily small” when $x$ is near $x_0$, i.e., $\lim_{x \to x_0} R(x) = 0$.
-However, this condition can also be fulfilled by a “bad” linear approximation of $f$.
-Therefore, it is more interesting to consider the *relative error*
-
-$$
-\frac{R(x)}{x - x_0}
-$$
-
-as a measure for the quality of a linear approximation, and to call a linear approximation
-“good” if $\lim_{x \to x_0} \frac{R(x)}{x - x_0} = 0$.
 </MathBlock>
 
 ---
