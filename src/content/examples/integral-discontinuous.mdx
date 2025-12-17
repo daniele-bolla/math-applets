@@ -1,0 +1,25 @@
+---
+title: integral-discontinuous
+description: Visualization of the integral-discontinuous.
+---
+import MathBlock from "../../components/MathBlock";
+import IntegralDiscontinuous from "../../components/applets/IntegralDiscontinuous";
+
+# integral-discontinuous
+
+<MathBlock type="theorem" title="integral-discontinuous">
+Let $f : [a,b] \to \mathbb{R}$ be continuous.  
+Then there exists a $\xi \in [a,b]$ such that
+
+$$
+\int_a^b f(x)\, dx = f(\xi)\,(b - a).
+$$
+</MathBlock>
+
+--- 
+<IntegralDiscontinuous client:load />
+--- 
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/IntegralDiscontinuous.tsx).
+

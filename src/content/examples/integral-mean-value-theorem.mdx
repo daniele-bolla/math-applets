@@ -1,0 +1,38 @@
+---
+title: Meanvaluetheoremforintegrals
+description: Visualization of the Meanvaluetheoremforintegrals.
+---
+import MathBlock from "../../components/MathBlock";
+import IntegralMeanValueTheorem from "../../components/applets/IntegralMeanValueTheorem";
+
+# Meanvaluetheoremforintegrals
+
+<MathBlock type="theorem" title="Meanvaluetheoremforintegrals">
+Let $f : [a,b] \to \mathbb{R}$ be continuous.  
+Then there exists a $\xi \in [a,b]$ such that
+
+$$
+\int_a^b f(x)\, dx = f(\xi)\,(b - a).
+$$
+</MathBlock>
+
+--- 
+<IntegralMeanValueTheorem client:load />
+--- 
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/IntegralMeanValueTheorem.tsx).
+
+The applet visualize the Mean Value theorem for integrals.
+
+The function chosen is $f(x) = sin(x) + 0.5*sin(2x) + 1.5$ with 
+antidferivative $F(x) = cos(x) + 0.25*cos(2x) + 1.5$
+```typescript
+// f(x) = sin(x) + 0.5*sin(2x) + 1.5 
+const f = (x: number) => Math.sin(x) + Math.sin(2 * x) * 0.5 + 1.5;
+// Antiderivative 
+const F = (x: number) => -Math.cos(x) - Math.cos(2 * x) * 0.25 + 1.5 * x;
+```
+
+With the help of th Foundamental THeorem of Calculs $ \int{a,b} f(x) dx = F(b) -F(a)$.
+Thus to find $f(\xi

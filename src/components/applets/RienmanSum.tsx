@@ -44,7 +44,7 @@ export default function RandomRiemannApplet() {
                     name: 'n',
                     snapWidth: 1,
                     precision: 0,
-                });
+                }) as JXG.Slider;
 
                 // 4. Random Partition Logic
                 // UPDATED: Increase pool size to support up to 500 partitions

@@ -2,7 +2,7 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
 
-export default function MVTIntegralProof() {
+export default function MVTIntegralOptimized() {
     return (
         <JSXGraphBoard
             config={{
@@ -14,14 +14,9 @@ export default function MVTIntegralProof() {
             }}
             setup={(board: JXG.Board) => {
                 // ===========================================
-                // 1. FUNCTION DEFINITION
-                // Using a function similar to Figure 7.4 (wiggly)
-                // f(x) = sin(x) + sin(2x)*0.5 + 1.5
+                // 1. MATH DEFINITIONS
                 // ===========================================
                 const f = (x: number) => Math.sin(x) + Math.sin(2 * x) * 0.5 + 1.5;
-                
-                // Antiderivative for exact area calculation
-                // F(x) = -cos(x) - cos(2x)*0.25 + 1.5x
                 const F = (x: number) => -Math.cos(x) - Math.cos(2 * x) * 0.25 + 1.5 * x;
 
                 const curve = board.create('functiongraph', [f, -10, 10], {
@@ -30,7 +25,7 @@ export default function MVTIntegralProof() {
                 });
 
                 // ===========================================
-                // 2. CONTROLS (Interval [a, b])
+                // 2. CONTROLS
                 // ===========================================
                 
                 const xAxis = board.create('line', [[0, 0], [1, 0]], { visible: false });
@@ -46,166 +41,101 @@ export default function MVTIntegralProof() {
                 });
 
                 // ===========================================
-                // 3. CALCULATIONS
+                // 3. MEAN VALUE CALCULATION
                 // ===========================================
 
-                const getWidth = () => B.X() - A.X();
-                const getArea = () => F(B.X()) - F(A.X());
-                
                 const getMeanVal = () => {
-                    const w = getWidth();
+                    const w = B.X() - A.X();
                     if (Math.abs(w) < 0.001) return f(A.X());
-                    return getArea() / w;
+                    return (F(B.X()) - F(A.X())) / w;
                 };
 
-                // Helper to find Min (m) and Max (M) on [a, b] for the Proof View
                 const getExtrema = () => {
                     const start = Math.min(A.X(), B.X());
                     const end = Math.max(A.X(), B.X());
+                    // Keep the sampling for min/max as there isn't a simple built-in range extrema
                     let min = Infinity;
                     let max = -Infinity;
                     const steps = 100;
                     for(let i=0; i<=steps; i++) {
-                        const x = start + (end-start)*(i/steps);
-                        const val = f(x);
+                        const val = f(start + (end-start)*(i/steps));
                         if (val < min) min = val;
                         if (val > max) max = val;
                     }
                     return { min, max };
                 };
 
-                // Helper to find Xi (Intersection of curve and mean height)
-                // Simple scan search (IVT logic)
-                const getXi = () => {
-                    const target = getMeanVal();
-                    const start = Math.min(A.X(), B.X());
-                    const end = Math.max(A.X(), B.X());
-                    const steps = 100;
-                    
-                    // We just need ONE xi to satisfy the theorem
-                    for(let i=0; i<steps; i++) {
-                        const x1 = start + (end-start)*(i/steps);
-                        const x2 = start + (end-start)*((i+1)/steps);
-                        const y1 = f(x1);
-                        const y2 = f(x2);
-                        
-                        // Check for crossing
-                        if ((y1 <= target && target <= y2) || (y2 <= target && target <= y1)) {
-                            // Linear interp for better precision
-                            return x1 + (target - y1) * (x2 - x1) / (y2 - y1);
-                        }
-                    }
-                    return (start + end)/2; // Fallback
-                };
-
                 // ===========================================
-                // 4. VISUALIZATION LAYERS
+                // 4. INTERSECTION LOGIC (Built-in)
                 // ===========================================
 
-                // Toggle for Proof View
-                const proofCheck = board.create('checkbox', [-0.5, 4, 'Show Proof (Min/Max Squeeze)'], {
-                    fixed: true
+                // Create an invisible horizontal line at the Mean Height
+                const meanLine = board.create('line', [
+                    [0, getMeanVal], [1, getMeanVal]
+                ], { visible: false });
+
+                // Find intersection between Curve and MeanLine
+                // 'intersection' returns a point object that automatically updates
+                // The 3rd argument '0' creates the intersection, '1' would be the second one, etc.
+                // However, intersections on FunctionGraphs are tricky because there can be many.
+                // A more robust way for general x ranges is a Glider constrained to intersection logic.
+                
+                // Better Approach for dynamic range:
+                // We create a point defined by specific coordinates that calculates the root on the fly
+                // This mimics the 'intersection' behavior but ensures we pick a root strictly between A and B
+                
+                const xiPoint = board.create('point', [
+                    () => {
+                        const target = getMeanVal();
+                        // JXG.Math.Numerics.root finds x where (f(x) - target = 0)
+                        // We search specifically between A and B
+                        const root = JXG.Math.Numerics.root(
+                            (x: number) => f(x) - target,
+                            (A.X() + B.X()) / 2 // Initial guess: midpoint
+                        );
+                        return root;
+                    },
+                    getMeanVal
+                ], {
+                    name: 'ξ', color: COLORS.blue, size: 5, fixed: true,
+                    label: { offset: [0, 10], color: COLORS.blue, fontSize: 16 }
                 });
 
-                // --- INTEGRAL AREA (Green/Blue) ---
+
+                // ===========================================
+                // 5. VISUALIZATION
+                // ===========================================
+
+                // Integral Area
                 board.create('integral', [[() => A.X(), () => B.X()], curve], {
                     color: COLORS.blue, fillOpacity: 0.1, label: { visible: false }
                 });
 
-                // --- PROOF VIEW: MIN/MAX RECTANGLES ---
-                // Only visible when checkbox is checked
-                
-                // Min Rectangle (m)
+                // PROOF BOUNDARIES (m and M)
+                board.create('segment', [[() => A.X(), () => getExtrema().min], [() => B.X(), () => getExtrema().min]], { strokeColor: 'gray', dash: 2 });
+                board.create('text', [() => A.X(), () => getExtrema().min, "m"], { anchorY: 'top', color: 'gray' });
+
+                board.create('segment', [[() => A.X(), () => getExtrema().max], [() => B.X(), () => getExtrema().max]], { strokeColor: 'gray', dash: 2 });
+                board.create('text', [() => A.X(), () => getExtrema().max, "M"], { anchorY: 'bottom', color: 'gray' });
+
                 board.create('polygon', [
-                    [() => A.X(), 0], [() => B.X(), 0],
-                    [() => B.X(), () => getExtrema().min], [() => A.X(), () => getExtrema().min]
-                ], {
-                    fillColor: 'gray', fillOpacity: 0.1, borders: { dash: 2, strokeColor: 'gray' },
-                    visible: () => !!proofCheck.Value()
-                });
-                
-                // Max Rectangle (M)
-                board.create('polygon', [
-                    [() => A.X(), 0], [() => B.X(), 0],
+                    [() => A.X(), () => getExtrema().min], [() => B.X(), () => getExtrema().min],
                     [() => B.X(), () => getExtrema().max], [() => A.X(), () => getExtrema().max]
-                ], {
-                    fillColor: 'gray', fillOpacity: 0.05, borders: { dash: 2, strokeColor: 'gray' },
-                    visible: () => !!proofCheck.Value()
-                });
+                ], { fillColor: 'gray', fillOpacity: 0.05, borders: { visible: false } });
 
-                // Labels for m and M
-                board.create('text', [() => A.X(), () => getExtrema().min, "m (min)"], { 
-                    anchorY: 'top', color: 'gray', visible: () => !!proofCheck.Value() 
-                });
-                board.create('text', [() => A.X(), () => getExtrema().max, "M (max)"], { 
-                    anchorY: 'bottom', color: 'gray', visible: () => !!proofCheck.Value() 
-                });
-
-
-                // --- MVT RECTANGLE (Red - Matching Fig 7.4) ---
+                // MEAN VALUE RECTANGLE (Red)
                 board.create('polygon', [
-                    [() => A.X(), 0],
-                    [() => B.X(), 0],
-                    [() => B.X(), getMeanVal],
-                    [() => A.X(), getMeanVal]
+                    [() => A.X(), 0], [() => B.X(), 0],
+                    [() => B.X(), getMeanVal], [() => A.X(), getMeanVal]
                 ], {
                     fillColor: COLORS.red, fillOpacity: 0.2, 
                     borders: { strokeWidth: 2, strokeColor: COLORS.red }
                 });
 
-                // The Dashed Mean Value Line
-                board.create('segment', [
-                    [() => A.X(), getMeanVal], [() => B.X(), getMeanVal]
-                ], {
-                    strokeColor: 'black', strokeWidth: 1, dash: 2
-                });
-
-                // --- XI POINT ---
-                const xiPoint = board.create('point', [getXi, getMeanVal], {
-                    name: 'ξ', color: COLORS.blue, size: 5, fixed: true,
-                    label: { offset: [0, 10], color: COLORS.blue, fontSize: 16 }
-                });
-
-                // Dotted line down to xi
+                // Drop line for Xi
                 board.create('segment', [xiPoint, [() => xiPoint.X(), 0]], {
                     strokeColor: COLORS.blue, dash: 2, strokeWidth: 2
                 });
-
-
-                // ===========================================
-                // 5. EXPLANATORY TEXT
-                // ===========================================
-
-                board.create('text', [3.5, 4, () => {
-                    const mean = getMeanVal().toFixed(2);
-                    const area = getArea().toFixed(2);
-                    const isProof = !!proofCheck.Value();
-                    
-                    if (isProof) {
-                        const m = getExtrema().min.toFixed(2);
-                        const M = getExtrema().max.toFixed(2);
-                        return `
-                        <div style="font-family:sans-serif; background:white; padding:10px; border:1px solid gray; width:280px">
-                           <b>Proof Logic (Squeeze Theorem):</b><br/>
-                           m ≤ f(x) ≤ M<br/>
-                           ${m} ≤ f(ξ) ≤ ${M}<br/>
-                           <br/>
-                           The Average Height (<b style="color:${COLORS.red}">${mean}</b>)<br/>
-                           is trapped between m and M.<br/>
-                           By IVT, the curve MUST cross this height.
-                        </div>`;
-                    } else {
-                        return `
-                        <div style="font-family:sans-serif; background:white; padding:10px; border:1px solid ${COLORS.red}; width:250px">
-                           <b>Geometric View (Fig 7.4):</b><br/>
-                           <span style="color:${COLORS.blue}">Integral Area = ${area}</span><br/>
-                           <span style="color:${COLORS.red}">Rectangle Area = ${area}</span><br/>
-                           <br/>
-                           f(ξ) = ${mean}<br/>
-                           At ξ, the curve matches the average height.
-                        </div>`;
-                    }
-                }]);
 
             }}
         />

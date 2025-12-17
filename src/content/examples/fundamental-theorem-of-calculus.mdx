@@ -1,0 +1,39 @@
+---
+title:  FundamentalTheoremOfCalculs 
+description: FundamentalTheoremOfCalculs
+---
+
+import FundamentalTheoremOfCalculs from "../../components/applets/FundamentalTheoremOfCalculs";
+import MathBlock from "../../components/MathBlock";
+
+# FundamentalTheoremOfCalculs
+
+<MathBlock type="definition" title="Taylor polynomial, remainder term">
+Let $I \subseteq \mathbb{R}$ be an interval, $f : I \to \mathbb{R}$ be continuous, and $a \in I$.  
+Then the following statements are satisfied:
+
+i) The function
+$$
+F : I \to \mathbb{R}, \qquad
+x \mapsto F(x) := \int_a^x f(t)\,dt
+$$
+is an antiderivative of $f$.
+
+ii) If $G : I \to \mathbb{R}$ is another antiderivative of $f$, then there exists a $c \in \mathbb{R}$ such that
+$$
+G(x) = F(x) + c = \int_a^x f(t)\,dt + c.
+$$
+In particular, it holds that $c = G(a)$.
+
+iii) Let $b \in I$. Then for every antiderivative $G : I \to \mathbb{R}$ of $f$ it holds that
+$$
+\int_a^b f(t)\,dt = G(b) - G(a).
+$$
+</MathBlock>
+---
+<FundamentalTheoremOfCalculs client:load />
+---
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/FundamentalTheoremOfCalculs.tsx).
+
