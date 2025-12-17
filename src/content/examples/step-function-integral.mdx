@@ -41,3 +41,27 @@ $$
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/StepFunctionIntegral.tsx).
 
+This applet illustrates the definition of partitions and integral of a staircase functions.
+
+I selected a staircase functionv (to be integrated) by prescribed jump points
+```const jumps = [-4, -1, 2, 5, 8]```
+and corresponding constant values on each interval
+```const values = [1.5, -2, 2.5, -1]```.
+
+Two different partitions of the interval are considered:
+the partition $Z_1$, consisting of all points in $[a,b]$ that are multiples of $2$,
+and the partition $Z_2$, consisting of all points in $[a,b]$ that are multiples of $3$.
+Since these partitions partially overlap, their combination naturally produces a refinement, 
+which is displayed when both partitions are active.
+
+Toggle buttons allow each partition to be shown independently or simultaneously.
+When both are active, the applet highlights the refinement obtained by taking the union of their cuts.
+Vertical lines indicate partition points, while shaded rectangles represent the contribution of each subinterval to the integral.
+
+By dragging the endpoints $𝑎$ and $𝑏$, the interval of integration can be modified dynamically.
+During dragging, the partition cuts and areas are updated continuously; once the drag ends, 
+the sum of each subinterval and their total sum are displayed.
+
+This visual behavior mirrors the proof that the integral of a staircase function 
+is independent of the chosen partition and depends only on the function
+ itself, thereby illustrating the invariance of the integral under partitons.

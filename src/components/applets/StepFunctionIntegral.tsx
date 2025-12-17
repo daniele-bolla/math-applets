@@ -7,7 +7,6 @@ export default function RefinementApplet() {
         <JSXGraphBoard
             config={{ boundingbox: [-5, 5, 9, -4]}}
             setup={(board: JXG.Board) => {
-                // --- 1. SETUP DATA ---
                 const jumps = [-4, -1, 2, 5, 8]; 
                 const values = [1.5, -2, 2.5, -1]; 
 
@@ -19,7 +18,6 @@ export default function RefinementApplet() {
                     return values[values.length - 1];
                 };
 
-                // Draw Static Background Function
                 for (let i = 0; i < jumps.length - 1; i++) {
                     board.create('segment', [[jumps[i], values[i]], [jumps[i+1], values[i]]], {
                         strokeColor: COLORS.blue, strokeWidth: 4, fixed: true, highlight: false
@@ -31,7 +29,6 @@ export default function RefinementApplet() {
                     }
                 }
 
-                // --- 2. CONTROLS ---
                 const areaSegment = board.create('segment',[[-4, 0 ],[8,0]], { visible: false });
                 
                 const gliderA = board.create('glider', [-4, 0, areaSegment], {
@@ -49,7 +46,7 @@ export default function RefinementApplet() {
 
                 const btnZ1 = board.create('button', [3.5, -3.5, 'Z1 [ ON ]', () => {
                     z1Active = !z1Active;
-                    update(true); // Button click is an "end" event, so show labels
+                    update(true); 
                 }], { cssStyle: `${btnStyle} color: #E65100; background-color: #fff3e0;`, fixed: true });
 
                 const btnZ2 = board.create('button', [6.0, -3.5, 'Z2 [ OFF ]', () => {
@@ -57,21 +54,18 @@ export default function RefinementApplet() {
                     update(true);
                 }], { cssStyle: `${btnStyle} color: #4A148C; background-color: #f3e5f5;`, fixed: true });
 
-                // --- 4. PARTITION DEFINITIONS ---
+                //PARTITION DEFINITIONS ---
                 const cutsZ1_def: number[] = [];
                 for(let k = -4; k <= 8; k+=2) cutsZ1_def.push(k); // Multiples of 2
 
                 const cutsZ2_def: number[] = [];
                 for(let k = -3; k <= 8; k+=3) cutsZ2_def.push(k); // Multiples of 3
 
-                // --- 5. VISUAL ELEMENTS ---
                 
-                // Area Fill
                 const areaCurve = board.create('curve', [[0], [0]], {
                     strokeWidth: 0, fillOpacity: 0.3, visible: true
                 });
 
-                // Line Layers (Base & Overlay for bi-color effect)
                 const linesZ1_Base = board.create('curve', [[0],[0]], {
                     strokeColor: COLORS.orange, strokeWidth: 3, visible: true
                 });
@@ -82,18 +76,13 @@ export default function RefinementApplet() {
                     strokeColor: COLORS.purple, strokeWidth: 3, dash: 2, visible: true
                 });
 
-                // Total Sum Text
                 const dynamicText = board.create('text', [3.5, -3, ''], {
                     fontSize: 16, fixed: true, visible: true, anchorX: 'left' 
                 });
 
-                // Array to store individual area labels
                 let areaLabels: JXG.Text[] = [];
 
-                // --- 6. UPDATE ENGINE ---
-                // param showLabels: boolean -> If false, skips text generation (for smooth dragging)
                 const update = (showLabels: boolean = true) => {
-                    // Update Button Labels
                     const setButtonLabel = (btn: unknown, label: string) => {
                         const b = btn as { rendNodeButton?: HTMLElement | null };
                         if (b.rendNodeButton) b.rendNodeButton.innerHTML = label;
@@ -101,7 +90,6 @@ export default function RefinementApplet() {
                     setButtonLabel(btnZ1, `Z1 ${z1Active ? '[ ON ]' : '[ OFF ]'}`);
                     setButtonLabel(btnZ2, `Z2 ${z2Active ? '[ ON ]' : '[ OFF ]'}`);
 
-                    // 1. ALWAYS Clear old labels (so they disappear while dragging)
                     board.removeObject(areaLabels);
                     areaLabels = [];
 
@@ -124,13 +112,11 @@ export default function RefinementApplet() {
                     z2CutsInRange.forEach(c => activeCuts.push(c));
                     activeCuts = [...new Set(activeCuts)].sort((u, v) => u - v);
 
-                    // Determine Colors
                     let mainColor = COLORS.orange;
                     if (z1Active && z2Active) mainColor = '#008080';
                     else if (z2Active) mainColor = COLORS.purple;
 
 
-                    // --- VISUAL LOGIC: LINES ---
                     const xZ1Base: number[] = [], yZ1Base: number[] = [];
                     const xZ2Unique: number[] = [], yZ2Unique: number[] = [];
                     const xShared: number[] = [], yShared: number[] = [];
@@ -167,7 +153,6 @@ export default function RefinementApplet() {
                     linesShared_Overlay.dataX = xShared; linesShared_Overlay.dataY = yShared;
 
 
-                    // --- AREA & LABEL CALCULATION ---
                     if (!z1Active && !z2Active) {
                         areaCurve.setAttribute({ visible: false });
                         dynamicText.setText("Select a partition");
@@ -192,7 +177,6 @@ export default function RefinementApplet() {
                         areaX.push(x1, x1, x2, x2);
                         areaY.push(0, h, h, 0);
 
-                        // 2. ONLY GENERATE TEXT LABELS IF showLabels IS TRUE
                         if (showLabels && Math.abs(x2 - x1) > 0.4) {
                             const label = board.create('text', [
                                 mid, 
@@ -225,15 +209,10 @@ export default function RefinementApplet() {
                     board.update();
                 };
 
-                // --- 7. LISTENERS (MODIFIED) ---
                 
-                // When dragging: Update GEOMETRY ONLY (false), do not create text
                 gliderA.on('drag', () => update(false));
                 gliderB.on('drag', () => update(false));
                 
-                // When released (or clicked): Update EVERYTHING (true), create text
-                // 'up' covers dropping the drag
-                // 'down' covers just clicking on the line without dragging
                 gliderA.on('up', () => update(true));
                 gliderB.on('up', () => update(true));
                 gliderA.on('down', () => update(true));
