@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+import { EXAMPLE_CATEGORIES_WITH_FALLBACK, UNCATEGORIZED } from "../types/exampleCategories";
 
 const examples = defineCollection({
     type: "content",
@@ -6,6 +7,8 @@ const examples = defineCollection({
         title: z.string(),
         description: z.string().optional(),
         visible: z.boolean().default(false),
+        approved: z.boolean().default(false),
+        category: z.enum(EXAMPLE_CATEGORIES_WITH_FALLBACK).default(UNCATEGORIZED),
     }),
 });
 

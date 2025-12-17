@@ -3,29 +3,40 @@ import "katex/dist/katex.min.css";
 import "../styles/global.css";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import Sidebar from "../components/SidebarLayout.tsx"; 
+import Sidebar from "../components/SidebarLayout.tsx";
 
 const isProd = import.meta.env.PROD;
-const examples: CollectionEntry<"examples">[] = isProd ? (await getCollection("examples")).filter(example =>  example.data.visible) : (await getCollection("examples"))
+
+const examples: CollectionEntry<"examples">[] = isProd
+  ? (await getCollection("examples")).filter((example) => example.data.visible)
+  : await getCollection("examples");
+
 const { title } = Astro.props;
+
+// Pass only what Sidebar needs (including category + approved)
+const sidebarExamples = examples.map((ex) => ({
+  slug: ex.slug,
+  data: {
+    title: ex.data.title,
+    category: ex.data.category,
+    approved: ex.data.approved,
+  },
+}));
 ---
 
 <html lang="en" class="text-slate-900">
-    <head>
-        <meta charset="utf-8" />
-        <title>{title}</title>
-        <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"
-        />
-    </head>
-    <body class="font-sans antialiased h-screen overflow-hidden">
-        <Sidebar
-            examples={Object.values(examples)}
-            title="Math Applets"
-            client:load
-        >
-            <slot />
-        </Sidebar>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"
+    />
+  </head>
+
+  <body class="font-sans antialiased h-screen overflow-hidden">
+    <Sidebar examples={sidebarExamples} title="Math Applets" client:load>
+      <slot />
+    </Sidebar>
+  </body>
 </html>

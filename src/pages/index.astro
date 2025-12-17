@@ -2,25 +2,53 @@
 import Layout from "../layouts/Layout.astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-const isProd = import.meta.env.PROD
-const examples: CollectionEntry<"examples">[] = isProd ? (await getCollection("examples")).filter(example =>  example.data.visible) : (await getCollection("examples"))
+import { orderedCategoryKeys } from "../types/exampleCategories";
+
+const isProd = import.meta.env.PROD;
+
+const examples: CollectionEntry<"examples">[] = isProd
+  ? (await getCollection("examples")).filter((example) => example.data.visible)
+  : await getCollection("examples");
+
+const grouped = examples.reduce((acc, ex) => {
+  const category = ex.data.category;
+  (acc[category] ??= []).push(ex);
+  return acc;
+}, {} as Record<string, CollectionEntry<"examples">[]>);
+
+const categories = orderedCategoryKeys(grouped);
 ---
 
-<Layout title="visibleplets">
-	<ul class="space-y-1 list-none">
-		{
-			examples.map((ex) => (
-				<li>
-					<a
-						href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
-						class="block py-1 text-slate-700 hover:text-blue-600"
-					>
-						<span class="text-lg font-semibold">
-							{ex.data.title}
-						</span>
-					</a>
-				</li>
-			))
-		}
-	</ul>
+<Layout title="Interactive Math Applets" description="A collection of interactive math applets for learning and exploration.">
+  <div class="space-y-6 not-prose">
+    {
+      categories.map((category) => (
+        <section>
+          <h2 class="text-sm font-bold uppercase tracking-wide text-slate-400 mb-2">
+            {category}
+          </h2>
+
+          <ul class="space-y-1 list-none">
+            {
+              grouped[category].map((ex) => (
+                <li>
+                  <a
+                    href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
+                    class:list={[
+                      "block py-1",
+                      ex.data.approved
+                        ? "line-through !text-red-500"
+                        : "!text-slate-700 hover:!text-blue-600",
+                    ]}
+                  >
+                    <span class="text-lg font-semibold">{ex.data.title}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      ))
+    }
+  </div>
 </Layout>
