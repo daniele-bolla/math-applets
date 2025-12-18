@@ -2,224 +2,378 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
 
-export default function RefinementApplet() {
-    return (
-        <JSXGraphBoard
-            config={{ boundingbox: [-5, 5, 9, -4]}}
-            setup={(board: JXG.Board) => {
-                const jumps = [-4, -1, 2, 5, 8]; 
-                const values = [1.5, -2, 2.5, -1]; 
+type StepFunction = (x: number) => number;
 
-                const getPhi = (x: number) => {
-                    if (x < jumps[0] || x > jumps[jumps.length - 1]) return 0;
-                    for (let i = 0; i < jumps.length - 1; i++) {
-                        if (x >= jumps[i] && x < jumps[i+1]) return values[i];
-                    }
-                    return values[values.length - 1];
-                };
+const EPS = 1e-9;
 
-                for (let i = 0; i < jumps.length - 1; i++) {
-                    board.create('segment', [[jumps[i], values[i]], [jumps[i+1], values[i]]], {
-                        strokeColor: COLORS.blue, strokeWidth: 4, fixed: true, highlight: false
-                    });
-                    if (i < jumps.length - 2) {
-                        board.create('segment', [[jumps[i+1], values[i]], [jumps[i+1], values[i+1]]], {
-                            strokeColor: COLORS.blue, strokeWidth: 1, dash: 2, fixed: true, highlight: false
-                        });
-                    }
-                }
+function almostEqual(a: number, b: number, eps = 1e-6) {
+  return Math.abs(a - b) < eps;
+}
 
-                const areaSegment = board.create('segment',[[-4, 0 ],[8,0]], { visible: false });
-                
-                const gliderA = board.create('glider', [-4, 0, areaSegment], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'a', size: 5, color: COLORS.blue
-                });
+function uniqueSorted(arr: number[]) {
+  return Array.from(new Set(arr)).sort((u, v) => u - v);
+}
 
-                const gliderB = board.create('glider', [8, 0, areaSegment], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'b', size: 5, color: COLORS.blue
-                });
+function cutsInRange(cuts: number[], start: number, end: number) {
+  return cuts.filter((c) => c > start + EPS && c < end - EPS);
+}
 
-                // --- 3. BUTTONS ---
-                let z1Active = true;
-                let z2Active = false;
-                const btnStyle = 'padding: 6px; border-radius: 4px; cursor: pointer;';
+function setButtonText(btn: unknown, label: string) {
+  const b = btn as { rendNodeButton?: HTMLElement | null };
+  if (b.rendNodeButton) b.rendNodeButton.innerHTML = label;
+}
 
-                const btnZ1 = board.create('button', [3.5, -3.5, 'Z1 [ ON ]', () => {
-                    z1Active = !z1Active;
-                    update(true); 
-                }], { cssStyle: `${btnStyle} color: #E65100; background-color: #fff3e0;`, fixed: true });
+function intersectAsSet(a: number[], b: number[]) {
+  const bs = new Set(b);
+  return new Set(a.filter((x) => bs.has(x)));
+}
 
-                const btnZ2 = board.create('button', [6.0, -3.5, 'Z2 [ OFF ]', () => {
-                    z2Active = !z2Active;
-                    update(true);
-                }], { cssStyle: `${btnStyle} color: #4A148C; background-color: #f3e5f5;`, fixed: true });
+/**
+ * Creates a staircase/step function given jump points and constant values.
+ * jumps = [x0, x1, ..., xn], values = [c0, ..., c(n-1)]
+ * value on [x_i, x_{i+1}) is values[i]
+ */
+function makeStepFunction(jumps: number[], values: number[]): StepFunction {
+  return (x: number) => {
+    if (x < jumps[0] || x > jumps[jumps.length - 1]) return 0;
 
-                //PARTITION DEFINITIONS ---
-                const cutsZ1_def: number[] = [];
-                for(let k = -4; k <= 8; k+=2) cutsZ1_def.push(k); // Multiples of 2
+    for (let i = 0; i < jumps.length - 1; i++) {
+      if (x >= jumps[i] && x < jumps[i + 1]) return values[i];
+    }
 
-                const cutsZ2_def: number[] = [];
-                for(let k = -3; k <= 8; k+=3) cutsZ2_def.push(k); // Multiples of 3
+    // fallback (should only matter at the very right endpoint)
+    return values[values.length - 1];
+  };
+}
 
-                
-                const areaCurve = board.create('curve', [[0], [0]], {
-                    strokeWidth: 0, fillOpacity: 0.3, visible: true
-                });
+export default function StepFunctionIntegral() {
+  return (
+    <JSXGraphBoard
+      config={{ boundingbox: [-5, 5, 9, -4] }}
+      setup={(board: JXG.Board) => {
+        // ----------------------------
+        // 1) STEP FUNCTION DEFINITION
+        // ----------------------------
+        const stepJumps = [-4, -1, 2, 5, 8];
+        const stepValues = [1.5, -2, 2.5, -1];
+        const phi = makeStepFunction(stepJumps, stepValues);
 
-                const linesZ1_Base = board.create('curve', [[0],[0]], {
-                    strokeColor: COLORS.orange, strokeWidth: 3, visible: true
-                });
-                const linesZ2_Unique = board.create('curve', [[0],[0]], {
-                    strokeColor: COLORS.purple, strokeWidth: 3, visible: true
-                });
-                const linesShared_Overlay = board.create('curve', [[0],[0]], {
-                    strokeColor: COLORS.purple, strokeWidth: 3, dash: 2, visible: true
-                });
+        // Draw the staircase graph (static)
+        for (let i = 0; i < stepJumps.length - 1; i++) {
+          board.create(
+            "segment",
+            [
+              [stepJumps[i], stepValues[i]],
+              [stepJumps[i + 1], stepValues[i]],
+            ],
+            {
+              strokeColor: COLORS.blue,
+              strokeWidth: 4,
+              fixed: true,
+              highlight: false,
+            }
+          );
 
-                const dynamicText = board.create('text', [3.5, -3, ''], {
-                    fontSize: 16, fixed: true, visible: true, anchorX: 'left' 
-                });
+          // dashed jump connector
+          if (i < stepJumps.length - 2) {
+            board.create(
+              "segment",
+              [
+                [stepJumps[i + 1], stepValues[i]],
+                [stepJumps[i + 1], stepValues[i + 1]],
+              ],
+              {
+                strokeColor: COLORS.blue,
+                strokeWidth: 1,
+                dash: 2,
+                fixed: true,
+                highlight: false,
+              }
+            );
+          }
+        }
 
-                let areaLabels: JXG.Text[] = [];
+        // --------------------------------
+        // 2) INTEGRATION INTERVAL (GLIDERS)
+        // --------------------------------
+        const baseSegment = board.create("segment", [[-4, 0], [8, 0]], {
+          visible: false,
+        });
 
-                const update = (showLabels: boolean = true) => {
-                    const setButtonLabel = (btn: unknown, label: string) => {
-                        const b = btn as { rendNodeButton?: HTMLElement | null };
-                        if (b.rendNodeButton) b.rendNodeButton.innerHTML = label;
-                    };
-                    setButtonLabel(btnZ1, `Z1 ${z1Active ? '[ ON ]' : '[ OFF ]'}`);
-                    setButtonLabel(btnZ2, `Z2 ${z2Active ? '[ ON ]' : '[ OFF ]'}`);
+        const gliderA = board.create("glider", [-4, 0, baseSegment], {
+          ...DEFAULT_GLIDER_ATTRIBUTES,
+          name: "a",
+          color: COLORS.blue,
+        });
 
-                    board.removeObject(areaLabels);
-                    areaLabels = [];
+        const gliderB = board.create("glider", [8, 0, baseSegment], {
+          ...DEFAULT_GLIDER_ATTRIBUTES,
+          name: "b",
+          color: COLORS.blue,
+        });
 
-                    const a = gliderA.X();
-                    const b = gliderB.X();
-                    const start = Math.min(a, b);
-                    const end = Math.max(a, b);
+        // ----------------------------
+        // 3) PARTITIONS (DEFINITIONS)
+        // ----------------------------
+        const cutsZ1 = Array.from({ length: 7 }, (_, i) => -4 + 2 * i); // -4..8 step 2
+        const cutsZ2 = Array.from({ length: 4 }, (_, i) => -3 + 3 * i); // -3..6 step 3 (as in your original)
+        // If you truly want "-3..8 step 3" (i.e. include 9? doesn't fit), keep your original loop.
+        // Adjust if needed.
 
-                    // --- GENERATE ALL CUTS ---
-                    let activeCuts: number[] = [start, end];
-                    jumps.forEach(j => { if (j > start && j < end) activeCuts.push(j); });
+        const sharedCuts = intersectAsSet(cutsZ1, cutsZ2);
 
-                    const z1CutsInRange: number[] = [];
-                    const z2CutsInRange: number[] = [];
+        // ----------------------------
+        // 4) UI (BUTTONS + TEXT)
+        // ----------------------------
+        let partitionZ1Active = true;
+        let partitionZ2Active = false;
 
-                    if (z1Active) cutsZ1_def.forEach(c => { if(c > start && c < end) z1CutsInRange.push(c); });
-                    if (z2Active) cutsZ2_def.forEach(c => { if(c > start && c < end) z2CutsInRange.push(c); });
+        const btnStyle =
+          "padding: 6px; border-radius: 4px; cursor: pointer; user-select: none;";
 
-                    z1CutsInRange.forEach(c => activeCuts.push(c));
-                    z2CutsInRange.forEach(c => activeCuts.push(c));
-                    activeCuts = [...new Set(activeCuts)].sort((u, v) => u - v);
+        const btnZ1 = board.create(
+          "button",
+          [
+            3.5,
+            -3.5,
+            "Z1 [ ON ]",
+            () => {
+              partitionZ1Active = !partitionZ1Active;
+              update(true);
+            },
+          ],
+          {
+            cssStyle: `${btnStyle} color: #E65100; background-color: #fff3e0;`,
+            fixed: true,
+          }
+        );
 
-                    let mainColor = COLORS.orange;
-                    if (z1Active && z2Active) mainColor = '#008080';
-                    else if (z2Active) mainColor = COLORS.purple;
+        const btnZ2 = board.create(
+          "button",
+          [
+            6.0,
+            -3.5,
+            "Z2 [ OFF ]",
+            () => {
+              partitionZ2Active = !partitionZ2Active;
+              update(true);
+            },
+          ],
+          {
+            cssStyle: `${btnStyle} color: #4A148C; background-color: #f3e5f5;`,
+            fixed: true,
+          }
+        );
 
+        const infoText = board.create("text", [3.5, -5, ""], {
+          fontSize: 16,
+          fixed: true,
+          visible: true,
+          anchorX: "left",
+        });
 
-                    const xZ1Base: number[] = [], yZ1Base: number[] = [];
-                    const xZ2Unique: number[] = [], yZ2Unique: number[] = [];
-                    const xShared: number[] = [], yShared: number[] = [];
+        // -----------------------------------------
+        // 5) DYNAMIC DRAWING OBJECTS (UPDATED OFTEN)
+        // -----------------------------------------
+        // Rectangles / area fill
+        const areaCurve = board.create("curve", [[0], [0]], {
+          strokeWidth: 0,
+          fillOpacity: 0.3,
+          visible: true,
+        });
 
-                    const isShared = (x: number) => {
-                        const inZ1 = cutsZ1_def.some(c => Math.abs(c - x) < 0.001);
-                        const inZ2 = cutsZ2_def.some(c => Math.abs(c - x) < 0.001);
-                        return inZ1 && inZ2;
-                    };
+        // Vertical partition marks (as NaN-separated polylines)
+        const z1Lines = board.create("curve", [[0], [0]], {
+          strokeColor: COLORS.orange,
+          strokeWidth: 3,
+          visible: true,
+        });
 
-                    if (z1Active) {
-                        z1CutsInRange.forEach(x => {
-                            const val = getPhi(x);
-                            if (z2Active && isShared(x)) {
-                                xZ1Base.push(x, x, NaN); yZ1Base.push(0, val, NaN);
-                                xShared.push(x, x, NaN); yShared.push(0, val, NaN);
-                            } else {
-                                xZ1Base.push(x, x, NaN); yZ1Base.push(0, val, NaN);
-                            }
-                        });
-                    }
+        const z2UniqueLines = board.create("curve", [[0], [0]], {
+          strokeColor: COLORS.purple,
+          strokeWidth: 3,
+          visible: true,
+        });
 
-                    if (z2Active) {
-                        z2CutsInRange.forEach(x => {
-                            const val = getPhi(x);
-                            if (!(z1Active && isShared(x))) {
-                                xZ2Unique.push(x, x, NaN); yZ2Unique.push(0, val, NaN);
-                            }
-                        });
-                    }
+        const sharedLinesOverlay = board.create("curve", [[0], [0]], {
+          strokeColor: COLORS.purple,
+          strokeWidth: 3,
+          dash: 2,
+          visible: true,
+        });
 
-                    linesZ1_Base.dataX = xZ1Base; linesZ1_Base.dataY = yZ1Base;
-                    linesZ2_Unique.dataX = xZ2Unique; linesZ2_Unique.dataY = yZ2Unique;
-                    linesShared_Overlay.dataX = xShared; linesShared_Overlay.dataY = yShared;
+        let areaLabels: JXG.Text[] = [];
 
+        function clearAreaLabels() {
+          areaLabels.forEach((t) => {
+            try {
+              board.removeObject(t);
+            } catch {
+              // ignore (in case already removed)
+            }
+          });
+          areaLabels = [];
+        }
 
-                    if (!z1Active && !z2Active) {
-                        areaCurve.setAttribute({ visible: false });
-                        dynamicText.setText("Select a partition");
-                        dynamicText.setAttribute({ color: 'black' });
-                        board.update();
-                        return;
-                    }
+        function currentMainColor() {
+          if (partitionZ1Active && partitionZ2Active) return "#008080"; // refinement
+          if (partitionZ2Active) return COLORS.purple;
+          return COLORS.orange;
+        }
 
-                    const areaX: number[] = [];
-                    const areaY: number[] = [];
-                    let totalSum = 0;
+        // ----------------------------
+        // 6) MAIN UPDATE FUNCTION
+        // ----------------------------
+        const update = (showLabels = true) => {
+          board.suspendUpdate();
 
-                    for (let i = 0; i < activeCuts.length - 1; i++) {
-                        const x1 = activeCuts[i];
-                        const x2 = activeCuts[i+1];
-                        const mid = (x1 + x2)/2;
-                        const h = getPhi(mid);
-                        const subArea = h * (x2 - x1);
-                        
-                        totalSum += subArea;
+          setButtonText(btnZ1, `Z1 ${partitionZ1Active ? "[ ON ]" : "[ OFF ]"}`);
+          setButtonText(btnZ2, `Z2 ${partitionZ2Active ? "[ ON ]" : "[ OFF ]"}`);
 
-                        areaX.push(x1, x1, x2, x2);
-                        areaY.push(0, h, h, 0);
+          clearAreaLabels();
 
-                        if (showLabels && Math.abs(x2 - x1) > 0.4) {
-                            const label = board.create('text', [
-                                mid, 
-                                h / 2, 
-                                subArea.toFixed(2)
-                            ], {
-                                fontSize: 10,
-                                color: 'black', 
-                                strokeColor: 'white', 
-                                strokeWidth: 2,
-                                anchorX: 'middle',
-                                anchorY: 'middle',
-                                layer: 9 
-                            });
-                            areaLabels.push(label);
-                        }
-                    }
+          const a = gliderA.X();
+          const b = gliderB.X();
+          const start = Math.min(a, b);
+          const end = Math.max(a, b);
 
-                    let infoLabel = `Partition Z1: I = ${totalSum.toFixed(3)}`;
-                    if (z1Active && z2Active) infoLabel = `Refinement Z: I = ${totalSum.toFixed(3)}`;
-                    else if (z2Active) infoLabel = `Partition Z2: I = ${totalSum.toFixed(3)}`;
+          // Guard: interval collapsed
+          if (almostEqual(start, end)) {
+            areaCurve.setAttribute({ visible: false });
+            z1Lines.dataX = [];
+            z1Lines.dataY = [];
+            z2UniqueLines.dataX = [];
+            z2UniqueLines.dataY = [];
+            sharedLinesOverlay.dataX = [];
+            sharedLinesOverlay.dataY = [];
 
-                    areaCurve.dataX = areaX;
-                    areaCurve.dataY = areaY;
-                    areaCurve.setAttribute({ visible: true, fillColor: mainColor });
+            infoText.setText("Choose a non-degenerate interval");
+            infoText.setAttribute({ color: "black" });
+            board.unsuspendUpdate();
+            board.update();
+            return;
+          }
 
-                    dynamicText.setText(infoLabel);
-                    dynamicText.setAttribute({ color: mainColor });
-                    
-                    board.update();
-                };
+          // Determine active partition cuts within [start,end]
+          const z1CutsRange = partitionZ1Active ? cutsInRange(cutsZ1, start, end) : [];
+          const z2CutsRange = partitionZ2Active ? cutsInRange(cutsZ2, start, end) : [];
 
-                
-                gliderA.on('drag', () => update(false));
-                gliderB.on('drag', () => update(false));
-                
-                gliderA.on('up', () => update(true));
-                gliderB.on('up', () => update(true));
-                gliderA.on('down', () => update(true));
-                gliderB.on('down', () => update(true));
+          // The refinement cuts: endpoints + jump points + active partition cuts
+          const jumpCutsRange = cutsInRange(stepJumps, start, end);
+          const activeCuts = uniqueSorted([start, end, ...jumpCutsRange, ...z1CutsRange, ...z2CutsRange]);
 
-                update(true);
-            }}
-        />
-    );
+          // Draw partition vertical marks
+          const xZ1: number[] = [];
+          const yZ1: number[] = [];
+          const xZ2Unique: number[] = [];
+          const yZ2Unique: number[] = [];
+          const xShared: number[] = [];
+          const yShared: number[] = [];
+
+          const pushVertical = (xs: number[], ys: number[], x: number, h: number) => {
+            xs.push(x, x, NaN);
+            ys.push(0, h, NaN);
+          };
+
+          if (partitionZ1Active) {
+            for (const x of z1CutsRange) {
+              const h = phi(x);
+              const isShared = partitionZ2Active && sharedCuts.has(x);
+              pushVertical(xZ1, yZ1, x, h);
+              if (isShared) pushVertical(xShared, yShared, x, h);
+            }
+          }
+
+          if (partitionZ2Active) {
+            for (const x of z2CutsRange) {
+              const h = phi(x);
+              const isShared = partitionZ1Active && sharedCuts.has(x);
+              if (!isShared) pushVertical(xZ2Unique, yZ2Unique, x, h);
+            }
+          }
+
+          z1Lines.dataX = xZ1;
+          z1Lines.dataY = yZ1;
+          z2UniqueLines.dataX = xZ2Unique;
+          z2UniqueLines.dataY = yZ2Unique;
+          sharedLinesOverlay.dataX = xShared;
+          sharedLinesOverlay.dataY = yShared;
+
+          // If no partition selected, hide area and show message
+          if (!partitionZ1Active && !partitionZ2Active) {
+            areaCurve.setAttribute({ visible: false });
+            infoText.setText("Select a partition");
+            infoText.setAttribute({ color: "black" });
+
+            board.unsuspendUpdate();
+            board.update();
+            return;
+          }
+
+          // Build rectangle fill polyline and compute sum
+          const areaX: number[] = [];
+          const areaY: number[] = [];
+          let total = 0;
+
+          for (let i = 0; i < activeCuts.length - 1; i++) {
+            const x1 = activeCuts[i];
+            const x2 = activeCuts[i + 1];
+            const mid = (x1 + x2) / 2;
+
+            const h = phi(mid);
+            const subArea = h * (x2 - x1);
+            total += subArea;
+
+            // rectangle polygon points: (x1,0)->(x1,h)->(x2,h)->(x2,0)
+            areaX.push(x1, x1, x2, x2);
+            areaY.push(0, h, h, 0);
+
+            if (showLabels && Math.abs(x2 - x1) > 0.4) {
+              const label = board.create("text", [mid, h / 2, subArea.toFixed(2)], {
+                fontSize: 10,
+                color: "black",
+                strokeColor: "white",
+                strokeWidth: 2,
+                anchorX: "middle",
+                anchorY: "middle",
+                layer: 9,
+              });
+              areaLabels.push(label);
+            }
+          }
+
+          const color = currentMainColor();
+          const partitionName =
+            partitionZ1Active && partitionZ2Active
+              ? "Refinement Z"
+              : partitionZ2Active
+                ? "Partition Z2"
+                : "Partition Z1";
+
+          areaCurve.dataX = areaX;
+          areaCurve.dataY = areaY;
+          areaCurve.setAttribute({ visible: true, fillColor: color });
+
+          infoText.setText(`${partitionName}: I = ${total.toFixed(3)}`);
+          infoText.setAttribute({ color });
+
+          board.unsuspendUpdate();
+          board.update();
+        };
+
+        // Drag behavior: don’t spam labels during drag
+        const onDrag = () => update(false);
+        const onStop = () => update(true);
+
+        gliderA.on("drag", onDrag);
+        gliderB.on("drag", onDrag);
+        gliderA.on("up", onStop);
+        gliderB.on("up", onStop);
+        gliderA.on("down", onStop);
+        gliderB.on("down", onStop);
+
+        update(true);
+      }}
+    />
+  );
 }

@@ -43,7 +43,7 @@ $$
 
 This applet illustrates the definition of partitions and integral of a staircase functions.
 
-I selected a staircase functionv (to be integrated) by prescribed jump points
+I selected a staircase function (to be integrated) by prescribed jump points
 ```const jumps = [-4, -1, 2, 5, 8]```
 and corresponding constant values on each interval
 ```const values = [1.5, -2, 2.5, -1]```.
@@ -59,8 +59,15 @@ When both are active, the applet highlights the refinement obtained by taking th
 Vertical lines indicate partition points, while shaded rectangles represent the contribution of each subinterval to the integral.
 
 By dragging the endpoints $𝑎$ and $𝑏$, the interval of integration can be modified dynamically.
+The applet always integrates on $[min⁡(a,b),max⁡(a,b)][min(a,b),max(a,b)]$, so the order of the two gliders does not matter.
+
 During dragging, the partition cuts and areas are updated continuously; once the drag ends, 
 the sum of each subinterval and their total sum are displayed.
+ 
+For each subinterval $(t_i,t_{i+1})$ the code picks the midpoint $\xi_i=\frac{t_i+t_{i+1}}{2}$ 
+and computes the rectangle contribution $\varphi(\xi_i)(t_{i+1}-t_i)$. 
+This is valid because $\varphi$ is constant on each open subinterval, hence $\varphi(\xi_i)$ is 
+the same for any choice $\xi_i\in(t_i,t_{i+1})$. 
 
 This visual behavior mirrors the proof that the integral of a staircase function 
 is independent of the chosen partition and depends only on the function
