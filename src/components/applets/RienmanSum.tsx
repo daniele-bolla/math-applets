@@ -2,161 +2,292 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
 
+/**
+ * RandomRiemannApplet
+ *
+ * Draws two staircase functions on a random partition of [a,b]:
+ *  - Upper (red):  ψ_δ(x) = sup_{[x_{i-1},x_i]} f + δ   (so f <= ψ_δ)
+ *  - Lower (green):φ_δ(x) = inf_{[x_{i-1},x_i]} f - δ   (so φ_δ <= f)
+ *
+ * Here δ >= 0 is a “slack”/tightness parameter: as δ -> 0 the bounds get tighter.
+ *
+ * Note: this applet illustrates the Darboux viewpoint of the Riemann integral
+ * (upper/lower staircase bounds), not generic “tagged” Riemann sums.
+ */
 export default function RandomRiemannApplet() {
-    return (
-        <JSXGraphBoard
-            config={{ boundingbox: [-4, 6, 8, -6], axis: true }}
-            setup={(board: JXG.Board) => {
-                // 1. Define Function
-                // f(x) = 0.25x^3 - x^2 - x + 2
-                const f = (x: number) => 0.25 * Math.pow(x, 3) - Math.pow(x, 2) - x + 2;
+  return (
+    <JSXGraphBoard
+      config={{ boundingbox: [-4, 6, 8, -6], axis: true }}
+      setup={(board: JXG.Board) => {
+        // -----------------------------
+        // Configuration / small helpers
+        // -----------------------------
+        const EPS = 1e-9;
+        const MAX_PARTITIONS = 500;
 
-                // 2. Draw Graph
-                board.create('functiongraph', [f, -10, 10], {
-                    strokeColor: COLORS.blue,
-                    strokeWidth: 3,
-                    withLabel: false,
-                });
+        // Positions (chosen for boundingbox [-4,6,8,-6])
+        const LEGEND_X = 5.2;
+        const LEGEND_Y_TOP = 5.5;
+        const BTN_X = -3.5;
+        const BTN_Y = -5.85;
 
-                // 3. Controls
-                const gliderA = board.create('glider', [-2, 0, board.defaultAxes.x], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
-                    size: 4,
-                    color: COLORS.blue,
-                    withLabel: false,
-                    name: ''
-                });
+        // -----------------------------
+        // 1) Define the function f
+        // -----------------------------
+        // f(x) = 0.25x^3 - x^2 - x + 2
+        const f = (x: number) => 0.25 * x ** 3 - x ** 2 - x + 2;
 
-                const gliderB = board.create('glider', [5, 0, board.defaultAxes.x], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
-                    size: 4,
-                    color: COLORS.blue,
-                    withLabel: false,
-                    name: ''
-                });
+        board.create("functiongraph", [f, -10, 10], {
+          strokeColor: COLORS.blue,
+          strokeWidth: 3,
+          withLabel: false,
+        });
 
-                // UPDATED SLIDER: Max set to 500
-                const nSlider = board.create('slider', [
-                    [3, -5],
-                    [6, -5],
-                    [1, 50, 500] // [Min, Start, Max]
-                ], {
-                    name: 'n',
-                    snapWidth: 1,
-                    precision: 0,
-                }) as JXG.Slider;
+        // -----------------------------
+        // 2) Legend (top-right)
+        // -----------------------------
+        board.create("text", [LEGEND_X, LEGEND_Y_TOP, "Upper (red)"], {
+          fixed: true,
+          fontSize: 14,
+          color: COLORS.darkRed,
+          anchorX: "left",
+        });
 
-                // 4. Random Partition Logic
-                // UPDATED: Increase pool size to support up to 500 partitions
-                const MAX_PARTITIONS = 500;
-                const randomWeights = Array.from({ length: MAX_PARTITIONS }, () => Math.random() * 0.8 + 0.3);
+        board.create("text", [LEGEND_X, LEGEND_Y_TOP - 0.5, "Lower (green)"], {
+          fixed: true,
+          fontSize: 14,
+          color: COLORS.darkGreen,
+          anchorX: "left",
+        });
 
-                // Helper: Sample points inside interval to find correct height
-                // (Critical for non-monotonic functions)
-                const getLocalExtrema = (x1: number, x2: number) => {
-                    let min = Infinity;
-                    let max = -Infinity;
-                    // We sample a few points. 
-                    // 5 steps is enough for N=500 (since intervals are tiny). 
-                    // 10 steps is safer for small N.
-                    const steps = 6; 
-                    for (let i = 0; i <= steps; i++) {
-                        const x = x1 + (x2 - x1) * (i / steps);
-                        const val = f(x);
-                        if (val < min) min = val;
-                        if (val > max) max = val;
-                    }
-                    return { min, max };
-                };
+        // -----------------------------
+        // 3) Interval endpoints a,b (gliders on x-axis)
+        // -----------------------------
+        const xAxis = board.defaultAxes.x;
 
-                // --- Calculation Logic ---
-                const getCurveData = (type: 'upper' | 'lower') => {
-                    const n = Math.floor(nSlider.Value());
-                    const a = gliderA.X();
-                    const b = gliderB.X();
-                    
-                    const start = Math.min(a, b);
-                    const end = Math.max(a, b);
-                    const range = end - start;
+        const gliderA = board.create("glider", [-2, 0, xAxis], {
+          ...DEFAULT_GLIDER_ATTRIBUTES,
+          size: 4,
+          color: COLORS.blue,
+          withLabel: false,
+          name: "",
+        });
 
-                    let totalWeight = 0;
-                    // Safety check: Ensure loop doesn't exceed array bounds
-                    const limit = Math.min(n, MAX_PARTITIONS);
-                    
-                    for (let i = 0; i < limit; i++) totalWeight += randomWeights[i];
+        const gliderB = board.create("glider", [5, 0, xAxis], {
+          ...DEFAULT_GLIDER_ATTRIBUTES,
+          size: 4,
+          color: COLORS.blue,
+          withLabel: false,
+          name: "",
+        });
 
-                    const X: number[] = [];
-                    const Y: number[] = [];
-                    
-                    let currentSum = 0;
-                    let x1 = start;
+        // -----------------------------
+        // 4) Sliders: n (subintervals) and δ (tightness)
+        // -----------------------------
+        const nSlider = board.create(
+          "slider",
+          [
+            [3, -5],
+            [6, -5],
+            [1, 50, MAX_PARTITIONS],
+          ],
+          { name: "n", snapWidth: 1, precision: 0 }
+        ) as JXG.Slider;
 
-                    for (let i = 0; i < limit; i++) {
-                        currentSum += randomWeights[i];
-                        const x2 = start + range * (currentSum / totalWeight);
-                        
-                        const { min, max } = getLocalExtrema(x1, x2);
-                        let h = 0;
+        // δ >= 0 controls how far above/below the true sup/inf we draw the bounds.
+        const deltaSlider = board.create(
+          "slider",
+          [
+            [3, -5.6],
+            [6, -5.6],
+            [0, 0.5, 3],
+          ],
+          { name: "δ", snapWidth: 0.05, precision: 2 }
+        ) as JXG.Slider;
 
-                        if (type === 'upper') {
-                            h = max;
-                        } else {
-                            h = min;
-                        }
+        // -----------------------------
+        // 5) Random partition generator (via random positive weights)
+        // -----------------------------
+        // We use weights w_i > 0 and set x_i so that each subinterval length is
+        // proportional to w_i. This gives a random-looking partition with exactly n parts.
+        const makeWeights = () =>
+          Array.from({ length: MAX_PARTITIONS }, () => Math.random() * 0.8 + 0.3);
 
-                        X.push(x1, x1, x2, x2);
-                        Y.push(0, h, h, 0);
+        let randomWeights = makeWeights();
 
-                        x1 = x2; 
-                    }
-                    return { X, Y };
-                };
+        const buildRandomCuts = (n: number, start: number, end: number) => {
+          const range = end - start;
+          const m = Math.min(n, MAX_PARTITIONS);
 
-                // 5. Create Curves 
-                // Using thinner lines (strokeWidth 0.5) so 500 rectangles don't look messy
-                const upperCurve = board.create('curve', [[0], [0]], {
-                    strokeColor: COLORS.darkRed,
-                    strokeOpacity: 0.6,
-                    strokeWidth: 0.5, 
-                    fillColor: COLORS.red,
-                    fillOpacity: 0.2,
-                    withLabel: false
-                });
+          let totalWeight = 0;
+          for (let i = 0; i < m; i++) totalWeight += randomWeights[i];
 
-                const lowerCurve = board.create('curve', [[0], [0]], {
-                    strokeColor: COLORS.darkGreen,
-                    strokeOpacity: 0.6,
-                    strokeWidth: 0.5,
-                    fillColor: COLORS.green,
-                    fillOpacity: 0.3,
-                    withLabel: false
-                });
+          const cuts: number[] = [start];
+          let cum = 0;
 
-                // 6. Update Function
-                const updateShapes = () => {
-                    // Optimization: If n > 300, reduce opacity of strokes further?
-                    // Optional, but keeps performance snappy.
-                    
-                    const upData = getCurveData('upper');
-                    const lowData = getCurveData('lower');
+          for (let i = 0; i < m; i++) {
+            cum += randomWeights[i];
+            cuts.push(start + range * (cum / totalWeight));
+          }
 
-                    upperCurve.dataX = upData.X;
-                    upperCurve.dataY = upData.Y;
-                    
-                    lowerCurve.dataX = lowData.X;
-                    lowerCurve.dataY = lowData.Y;
-                };
+          // Force last cut exactly to end (avoid floating error accumulation)
+          cuts[cuts.length - 1] = end;
+          return cuts;
+        };
 
-                // 7. Attach Listeners
-                nSlider.on('drag', updateShapes);
-                nSlider.on('down', updateShapes);
-                gliderA.on('drag', updateShapes);
-                gliderB.on('drag', updateShapes);
+        // -----------------------------
+        // 6) Exact sup/inf on subintervals for this cubic
+        // -----------------------------
+        // For a cubic, maxima/minima on [x1,x2] occur at endpoints and at critical points.
+        // f'(x) = 0.75x^2 - 2x - 1  => two critical points (roots of f').
+        const criticalPoints = (() => {
+          const A = 0.75,
+            B = -2,
+            C = -1;
+          const D = B * B - 4 * A * C;
+          const s = Math.sqrt(D);
+          const r1 = (-B - s) / (2 * A);
+          const r2 = (-B + s) / (2 * A);
+          return [r1, r2].sort((u, v) => u - v);
+        })();
 
-                // 8. Initial Run
-                updateShapes();
-                board.update();
-            }}
-        />
-    );
+        /* i am using this function multiple time throughout the applets */
+        const extremaOnInterval = (x1: number, x2: number) => {
+          let minVal = Math.min(f(x1), f(x2));
+          let maxVal = Math.max(f(x1), f(x2));
+
+          for (const c of criticalPoints) {
+            if (c >= x1 - EPS && c <= x2 + EPS) {
+              const v = f(c);
+              minVal = Math.min(minVal, v);
+              maxVal = Math.max(maxVal, v);
+            }
+          }
+          return { min: minVal, max: maxVal };
+        };
+
+        // -----------------------------
+        // 7) JSXGraph curves representing the rectangles
+        // -----------------------------
+        const upperCurve = board.create("curve", [[0], [0]], {
+          strokeColor: COLORS.darkRed,
+          strokeOpacity: 0.6,
+          strokeWidth: 0.5,
+          fillColor: COLORS.red,
+          fillOpacity: 0.2,
+          withLabel: false,
+        });
+
+        const lowerCurve = board.create("curve", [[0], [0]], {
+          strokeColor: COLORS.darkGreen,
+          strokeOpacity: 0.6,
+          strokeWidth: 0.5,
+          fillColor: COLORS.green,
+          fillOpacity: 0.3,
+          withLabel: false,
+        });
+
+        // Build rectangle polygons (as a single NaN-free “curve polygon list”)
+        // using heights = (sup + δ) or (inf - δ) per interval.
+        const computeRectangleCurve = (cuts: number[], type: "upper" | "lower") => {
+          const X: number[] = [];
+          const Y: number[] = [];
+          const delta = Math.max(0, deltaSlider.Value());
+
+          for (let i = 0; i < cuts.length - 1; i++) {
+            const x1 = cuts[i];
+            const x2 = cuts[i + 1];
+            const { min, max } = extremaOnInterval(x1, x2);
+
+            // δ ensures we are *definitely* above/below f on each subinterval
+            const h = type === "upper" ? max + delta : min - delta;
+
+            // rectangle vertices: (x1,0)->(x1,h)->(x2,h)->(x2,0)
+            X.push(x1, x1, x2, x2);
+            Y.push(0, h, h, 0);
+          }
+
+          return { X, Y };
+        };
+
+        // -----------------------------
+        // 8) Update routine
+        // -----------------------------
+        const updateShapes = () => {
+          board.suspendUpdate();
+
+          const n = Math.max(1, Math.floor(nSlider.Value()));
+          const a = gliderA.X();
+          const b = gliderB.X();
+
+          const start = Math.min(a, b);
+          const end = Math.max(a, b);
+
+          // If interval collapses, clear shapes
+          if (end - start < EPS) {
+            upperCurve.dataX = [];
+            upperCurve.dataY = [];
+            lowerCurve.dataX = [];
+            lowerCurve.dataY = [];
+            board.unsuspendUpdate();
+            board.update();
+            return;
+          }
+
+          // Partition depends on [a,b] so it changes continuously while dragging
+          const cuts = buildRandomCuts(n, start, end);
+
+          const up = computeRectangleCurve(cuts, "upper");
+          const low = computeRectangleCurve(cuts, "lower");
+
+          upperCurve.dataX = up.X;
+          upperCurve.dataY = up.Y;
+
+          lowerCurve.dataX = low.X;
+          lowerCurve.dataY = low.Y;
+
+          board.unsuspendUpdate();
+          board.update();
+        };
+
+        // -----------------------------
+        // 9) Randomize button (bottom-left)
+        // -----------------------------
+        const btnStyle =
+          "padding: 6px; border-radius: 4px; cursor: pointer; user-select:none;";
+        board.create(
+          "button",
+          [BTN_X, BTN_Y, "Randomize partition", () => {
+            randomWeights = makeWeights();
+            updateShapes();
+          }],
+          {
+            cssStyle: `${btnStyle} color: #0D47A1; background-color: #E3F2FD;`,
+            fixed: true,
+          }
+        );
+
+        // -----------------------------
+        // 10) Event listeners
+        // -----------------------------
+        const attach = (el: JXG.GeometryElement, ev: string) => el.on(ev as any, updateShapes);
+
+        attach(nSlider, "drag");
+        attach(nSlider, "down");
+        attach(nSlider, "up");
+
+        attach(deltaSlider, "drag");
+        attach(deltaSlider, "down");
+        attach(deltaSlider, "up");
+
+        attach(gliderA, "drag");
+        attach(gliderB, "drag");
+        attach(gliderA, "up");
+        attach(gliderB, "up");
+
+        // Initial draw
+        updateShapes();
+      }}
+    />
+  );
 }

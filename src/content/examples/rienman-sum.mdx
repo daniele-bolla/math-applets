@@ -11,7 +11,42 @@ import MathBlock from "../../components/MathBlock";
 
 # RienmanSum
 
-<MathBlock type="theorem" title="Rienman Sum">
+<MathBlock type="definition" title="Riemann integral">
+Let $f : [a,b] \to \mathbb{R}$ be bounded.
+
+i) The value
+$$
+\overline{\int_a^b} f(x)\,dx
+:=
+\inf \{\, I(\varphi) \mid f \le \varphi,\; \varphi \text{ is a staircase function} \,\}
+$$
+is called the *upper integral* of $f$.
+
+ii) The value
+$$
+\underline{\int_a^b} f(x)\,dx
+:=
+\sup \{\, I(\varphi) \mid \varphi \le f,\; \varphi \text{ is a staircase function} \,\}
+$$
+is called the *lower integral* of $f$.
+
+iii) The function $f$ is *(Riemann) integrable* if
+$$
+\overline{\int_a^b} f(x)\,dx
+=
+\underline{\int_a^b} f(x)\,dx.
+$$
+
+In this case, we define
+$$
+\int_a^b f(x)\,dx
+:=
+\overline{\int_a^b} f(x)\,dx
+=
+\underline{\int_a^b} f(x)\,dx,
+$$
+and call it the *(Riemann) integral* of $f$.
+
 
 </MathBlock>
 
@@ -23,3 +58,35 @@ import MathBlock from "../../components/MathBlock";
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/RienmanSum.tsx).
 
+This applet illustrates the idea behind the lower and upper integrals in the Riemann (Darboux) definition. The function is fixed in the code as
+`const f = (x: number) => 0.25 * x ** 3 - x ** 2 - x + 2;`. 
+The interval $[a,b]$ is controlled by two draggable points on the $x$-axis.
+
+The slider `nSlider` sets the number of subintervals in a partition $Z: a=x_0<\dots<x_n=b$. 
+The partition is randomized by assigning random positive “weights”
+`randomWeights = Array.from({ length: MAX_PARTITIONS }, () => Math.random() * 0.8 + 0.3);`
+and converting them into cut points with the helper
+`buildRandomCuts(n, start, end)`.
+Pressing the button “Randomize partition” regenerates these weights
+ and therefore produces a new random partition.
+
+On each subinterval $[x_{i-1},x_i]$ the applet computes
+$m_i=\inf_{x\in[x_{i-1},x_i]} f(x)$ and $M_i=\sup_{x\in[x_{i-1},x_i]} f(x)$.
+Since $f$ is a cubic polynomial, these extrema are attained at the endpoints 
+and at critical points (zeros of $f'$). 
+In the code the two critical points are precomputed in `criticalPoints`, 
+and the values $m_i$ and $M_i$ are computed by the function `extremaOnInterval(x1, x2)`.
+
+The red rectangles represent an upper staircase function and the green rectangles 
+represent a lower staircase function. 
+Their shapes are produced by the two JSXGraph curves `upperCurve` and `lowerCurve`. 
+For each subinterval, the rectangle heights are built in `computeRectangleCurve(cuts, type)`.
+
+The slider `deltaSlider` controls how tight these staircase bounds are.
+ On each subinterval the applet draws the lower bound with height $m_i-\delta$ 
+ and the upper bound with height $M_i+\delta$:
+`const h = type === "upper" ? max + delta : min - delta;`
+This guarantees that the green staircase function stays below $f$ and the red staircase 
+function stays above $f$. 
+When $\delta$ is decreased toward $0$, the bounds become tighter and approach 
+the “best” lower and upper step functions associated to the chosen partition.

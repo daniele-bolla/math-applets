@@ -65,9 +65,15 @@ During dragging, the partition cuts and areas are updated continuously; once the
 the sum of each subinterval and their total sum are displayed.
  
 For each subinterval $(t_i,t_{i+1})$ the code picks the midpoint $\xi_i=\frac{t_i+t_{i+1}}{2}$ 
-and computes the rectangle contribution $\varphi(\xi_i)(t_{i+1}-t_i)$. 
-This is valid because $\varphi$ is constant on each open subinterval, hence $\varphi(\xi_i)$ is 
-the same for any choice $\xi_i\in(t_i,t_{i+1})$. 
+and computes the rectangle contribution $\varphi(\xi_i)(t_{i+1}-t_i)$, i could reuse the stored values,
+ but i need a mid point to place the sum text.
+ ```typescript
+    const mid = (x1 + x2) / 2;
+    const h = phi(mid);
+    const subArea = h * (x2 - x1);
+    total += subArea;
+```
+ 
 
 This visual behavior mirrors the proof that the integral of a staircase function 
 is independent of the chosen partition and depends only on the function

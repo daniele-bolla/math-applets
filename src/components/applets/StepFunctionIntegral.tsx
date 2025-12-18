@@ -51,9 +51,7 @@ export default function StepFunctionIntegral() {
     <JSXGraphBoard
       config={{ boundingbox: [-5, 5, 9, -4] }}
       setup={(board: JXG.Board) => {
-        // ----------------------------
-        // 1) STEP FUNCTION DEFINITION
-        // ----------------------------
+
         const stepJumps = [-4, -1, 2, 5, 8];
         const stepValues = [1.5, -2, 2.5, -1];
         const phi = makeStepFunction(stepJumps, stepValues);
@@ -94,7 +92,7 @@ export default function StepFunctionIntegral() {
         }
 
         // --------------------------------
-        // 2) INTEGRATION INTERVAL (GLIDERS)
+        // INTEGRATION INTERVAL 
         // --------------------------------
         const baseSegment = board.create("segment", [[-4, 0], [8, 0]], {
           visible: false,
@@ -113,17 +111,16 @@ export default function StepFunctionIntegral() {
         });
 
         // ----------------------------
-        // 3) PARTITIONS (DEFINITIONS)
+        //  PARTITIONS 
         // ----------------------------
         const cutsZ1 = Array.from({ length: 7 }, (_, i) => -4 + 2 * i); // -4..8 step 2
-        const cutsZ2 = Array.from({ length: 4 }, (_, i) => -3 + 3 * i); // -3..6 step 3 (as in your original)
-        // If you truly want "-3..8 step 3" (i.e. include 9? doesn't fit), keep your original loop.
-        // Adjust if needed.
+        const cutsZ2 = Array.from({ length: 4 }, (_, i) => -3 + 3 * i); // -3..6 step 3 
+
 
         const sharedCuts = intersectAsSet(cutsZ1, cutsZ2);
 
         // ----------------------------
-        // 4) UI (BUTTONS + TEXT)
+        // UI (BUTTONS + TEXT)
         // ----------------------------
         let partitionZ1Active = true;
         let partitionZ2Active = false;
@@ -172,9 +169,6 @@ export default function StepFunctionIntegral() {
           anchorX: "left",
         });
 
-        // -----------------------------------------
-        // 5) DYNAMIC DRAWING OBJECTS (UPDATED OFTEN)
-        // -----------------------------------------
         // Rectangles / area fill
         const areaCurve = board.create("curve", [[0], [0]], {
           strokeWidth: 0,
@@ -182,7 +176,7 @@ export default function StepFunctionIntegral() {
           visible: true,
         });
 
-        // Vertical partition marks (as NaN-separated polylines)
+        // Vertical partition marks 
         const z1Lines = board.create("curve", [[0], [0]], {
           strokeColor: COLORS.orange,
           strokeWidth: 3,
@@ -221,9 +215,6 @@ export default function StepFunctionIntegral() {
           return COLORS.orange;
         }
 
-        // ----------------------------
-        // 6) MAIN UPDATE FUNCTION
-        // ----------------------------
         const update = (showLabels = true) => {
           board.suspendUpdate();
 
