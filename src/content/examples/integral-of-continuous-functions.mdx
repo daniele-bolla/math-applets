@@ -21,3 +21,37 @@ Let $f : [a,b] \to \mathbb{R}$ be continuous. Then $f$ is integrable.
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/IntegralOfContinuouFunctions.tsx).
 
+This applet visualizes the standard proof that a continuous function 
+$f:[a,b]\to\mathbb{R}$ is Riemann integrable by constructing two staircase 
+functions $\psi\le f\le\varphi$ whose integrals differ by at most $\varepsilon$. 
+The function is fixed in the code as `const f = (x: number) => 0.5 * Math.sin(x) * x + 2.5;`.
+
+A good way to use the applet is the same order as the proof. 
+First fix an interval $[a,b]$ by dragging the gliders `gliderA` and `gliderB`. 
+Then choose an error tolerance $\varepsilon>0$ with `epsSlider`. 
+
+The applet computes $\widetilde{\varepsilon}=\varepsilon/(2(b-a))$
+via `const eTilde = eps / (2 * range);`. The dashed bracket at $x=b$ 
+has vertical length $2 \widetilde{\varepsilon}$ (objects `epsBracket` and `epsBracketLabel`), 
+and it is colored green/red together with the construction.
+
+Next choose $n$ (the number of subintervals) with `nSlider`. 
+The applet uses the uniform partition $Z: a=x_0<\dots<x_n=b$ with $x_k=a+k(b-a)/n$, implemented 
+by `uniformPartition(a,b,n)`, where `dx=(b-a)/n` is the mesh size.
+
+On each interval $(x_{i-1},x_i)$ the staircase functions are defined exactly as 
+in the proof using the right endpoint $x_i$:
+`upperH[i] = f(x_i) + eTilde;` and `lowerH[i] = f(x_i) - eTilde;`.
+These are drawn as step graphs (`upperStep` for $\varphi$ in orange 
+and `lowerStep` for $\psi$ in purple). The filled region between them (`bandPoly`) 
+illustrates the intended inequality $\psi \le f \le \varphi$.
+
+To make the $\delta$-step (7.2) explicit in a rigorous way, the code uses a 
+Lipschitz bound derived from $f'(x)$. Since $f(x)=\tfrac12 x\sin x + 2.5$, 
+we have $f'(x)=\tfrac12(\sin x + x\cos x)$ and therefore $|f'(x)|\le \tfrac12(1+|x|)$. 
+Hence on $[a,b]$ we can take `supDf = 0.5 * (1 + max(|a|,|b|))` and define `delta = eTilde / supDf`. 
+When `dx < δ` holds, condition (7.2) guarantees 
+that for all $x\in(x_{i-1},x_i)$ we have $|f(x)-f(x_i)|<\widetilde{\varepsilon}$, 
+which implies $\psi(x)\le f(x)\le\varphi(x)$ on each subinterval. 
+The band (and the $\widetilde{\varepsilon}$-bracket) turns green when this 
+condition is satisfied, and red when it is not guaranteed.
