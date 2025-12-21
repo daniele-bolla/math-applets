@@ -1,6 +1,6 @@
 ---
-title:  FundamentalTheoremOfCalculs 
-description: FundamentalTheoremOfCalculs
+title:  Fundamental Theorem Of Calculs 
+description: Fundamental Theorem Of Calculs 
 visible: false
 approved: false
 category: Integration
@@ -9,18 +9,13 @@ category: Integration
 import FundamentalTheoremOfCalculs from "../../components/applets/FundamentalTheoremOfCalculs";
 import MathBlock from "../../components/MathBlock";
 
-# FundamentalTheoremOfCalculs
+# Fundamental Theorem Of Calculs 
 
-<MathBlock type="definition" title="Taylor polynomial, remainder term">
-Let $I \subseteq \mathbb{R}$ be an interval, $f : I \to \mathbb{R}$ be continuous, and $a \in I$.  
-Then the following statements are satisfied:
+<MathBlock type="theorem" title="TFundamental theorem of calculus">
+Let $I \subseteq \mathbb{R}$ be an interval, $f : I \to \mathbb{R}$ be continuous and $a \in I$. Then the following statements are satisfied:  
 
-i) The function
-$$
-F : I \to \mathbb{R}, \qquad
-x \mapsto F(x) := \int_a^x f(t)\,dt
-$$
-is an antiderivative of $f$.
+i) The function $F : I \to \mathbb{R}, \quad x \mapsto F(x) = \int_a^x f(t) \, dt$  is an antiderivative of $f$.
+
 </MathBlock>
 ---
 <FundamentalTheoremOfCalculs client:load />
@@ -29,3 +24,48 @@ is an antiderivative of $f$.
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/FundamentalTheoremOfCalculs.tsx).
 
+The applet visualizes the **Fundamental Theorem of Calculus (I)** following 
+closely the structure of the standard proof.
+
+Given a continuous function $f$, we define
+$$
+F(x) := \int_0^x f(t)\,dt,
+$$
+which represents the accumulated area under the graph of $f$ from $0$ to $x$.
+The graph of $F$ is shown together with the graph of $f$.
+
+To study the differentiability of $F$, two points $x$ and $x+h$ are selected on the $x$-axis.
+The difference quotient
+$$
+\frac{F(x+h)-F(x)}{h}
+$$
+is visualized as the slope of the secant line of $F$ between these two points.
+
+I am reusing part of the Mean value theorem for integrals, wich is used in the proof as 
+well as visualizing the derivative  $F'(x) = f(x)$, as in the example Secant and Tangent line
+
+In this applet, we choose a **strictly increasing and invertible** function.
+
+```ts
+// f(t) = 0.1 t^3 + 1
+const f = (t: number) => 0.1 * t ** 3 + 1;
+
+// Antiderivative F(x) = 0.025 x^4 + x
+const F = (x: number) => 0.025 * x ** 4 + x;
+
+// inverse of f
+const fInverse = (y: number) => Math.cbrt(10 * (y - 1));
+```
+This additional structure allows the point $\xi_h$ to be computed explicitly as
+$$
+\xi_h = f^{-1}\!\left(\frac{F(x+h)-F(x)}{h}\right),
+$$
+without relying on numerical methods.
+The point $\xi_h$ and the corresponding height $f(\xi_h)$ are displayed in the applet.
+
+As $h$ becomes smaller, the interval $[x,x+h]$ shrinks and the point $\xi_h$ moves closer to $x$.
+Consequently, the slope of the secant line converges to $f(x)$.
+This visually illustrates the conclusion of the theorem:
+$$
+F'(x) = f(x).
+$$

@@ -45,6 +45,13 @@ export default function IntegralMeanValueTheorem() {
           color: COLORS.blue,
         });
 
+        /* TODO replace interval with
+        const a = () => Math.min(A.X(), B.X());
+        const b = () => Math.max(A.X(), B.X());
+
+        */
+
+
         const interval = () => {
           const a = A.X();
           const b = B.X();
