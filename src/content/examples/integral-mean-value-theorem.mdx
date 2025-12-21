@@ -15,7 +15,7 @@ Let $f : [a,b] \to \mathbb{R}$ be continuous.
 Then there exists a $\xi \in [a,b]$ such that
 
 $$
-\fra{1}{b-a}\int_a^b f(x)\, dx = f(\xi).
+\frac{1}{b-a}\int_a^b f(x)\, dx = f(\xi).
 $$
 </MathBlock>
 
@@ -63,5 +63,16 @@ without relying on numerical methods.
 const getXi = () => {
     const target = meanValue();
     return fInverse(target);
+};
+```
+The $min$ anf $max$ of $f$, inside $[a,b]$, are displayed in gray. 
+Since f(x) is strictly increasing, min is always at start, max is always at end
+```typescript
+const extrema = () => {
+    const { start, end } = interval();
+    return { 
+    min: f(start), 
+    max: f(end) 
+    };
 };
 ```
