@@ -1,41 +1,67 @@
 ---
-title: Meanvaluetheoremforintegrals
-description: Visualization of the Meanvaluetheoremforintegrals.
-visible: false
-approved: false
+title: Mean Value Theorem For Integrals
+description: Visualization of the Mean Value Theorem for Integrals using an analytical inverse function.
+visible: true
+approved: true
 category: Integration
 ---
 import MathBlock from "../../components/MathBlock";
-import IntegralMeanValueTheorem from "../../components/applets/IntegralMeanValueTheorem";
+import IntegralMeanValueTheoremWithInvertibleFun from "../../components/applets/IntegralMeanValueTheoremWithInvertibleFun";
 
-# Meanvaluetheoremforintegrals
+# Mean Value Theorem For Integrals
 
-<MathBlock type="theorem" title="Meanvaluetheoremforintegrals">
+<MathBlock type="theorem" title="Mean Value Theorem For Integrals">
 Let $f : [a,b] \to \mathbb{R}$ be continuous.  
 Then there exists a $\xi \in [a,b]$ such that
 
 $$
-\int_a^b f(x)\, dx = f(\xi)\,(b - a).
+\fra{1}{b-a}\int_a^b f(x)\, dx = f(\xi).
 $$
 </MathBlock>
 
 --- 
-<IntegralMeanValueTheorem client:load />
+<IntegralMeanValueTheoremWithInvertibleFun client:load />
 --- 
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/IntegralMeanValueTheorem.tsx).
 
-The applet visualize the Mean Value theorem for integrals.
+The applet visualizes the **Mean Value Theorem for Integrals**. 
 
-The function chosen is $f(x) = sin(x) + 0.5*sin(2x) + 1.5$ with 
-antidferivative $F(x) = cos(x) + 0.25*cos(2x) + 1.5$
+Geometrically, the theorem states that the area of the rectangle with width $(b-a)$ and 
+height $f(\xi)$ (shown in red) 
+is exactly equal to the area under the curve (the integral).
+
+We use a **strictly invertible** cubic function. 
+
 ```typescript
-// f(x) = sin(x) + 0.5*sin(2x) + 1.5 
-const f = (x: number) => Math.sin(x) + Math.sin(2 * x) * 0.5 + 1.5;
-// Antiderivative 
-const F = (x: number) => -Math.cos(x) - Math.cos(2 * x) * 0.25 + 1.5 * x;
-```
+// f(x) = 0.1x³ + 1
+const f = (x: number) => 0.1 * Math.pow(x, 3) + 1;
 
-With the help of th Foundamental THeorem of Calculs $ \int{a,b} f(x) dx = F(b) -F(a)$.
-Thus to find $f(\xi
+// Antiderivative F(x) = 0.025x⁴ + x
+const F = (x: number) => 0.025 * Math.pow(x, 4) + x;
+
+// Analytical Inverse f⁻¹(y) = ∛(10 * (y - 1))
+const fInverse = (y: number) => Math.cbrt(10 * (y - 1));
+```
+Using the Fundamental Theorem of Calculus, 
+we calculate the integral as $F(b) - F(a)$. 
+We then find the mean value (height) $f(\xi)$ using the theorem: \
+$$f(\xi) = \frac{F(b) - F(a)}{b - a}$$
+```typescript
+const meanValue = () => {
+    const { start, end } = interval();
+    if (Math.abs(end - start) < 1e-9) return f(start);
+    return (F(end) - F(start)) / (end - start);
+};
+```
+Since the function is invertible, we find the exact coordinate 
+$\xi$ by applying the inverse function $f^{-1}$ to the calculated mean value. 
+This allows the applet to update the point $f(\xi)$ 
+without relying on numerical methods.
+
+```typescript
+const getXi = () => {
+    const target = meanValue();
+    return fInverse(target);
+};
+```
