@@ -1,7 +1,7 @@
 ---
 title: Continuous functions are integrable proof
 description: Visualization of the Continuous functions are integrable proof.
-visible: false
+visible: true
 approved: false
 category: Integration
 ---
@@ -29,6 +29,8 @@ The function is fixed in the code as `const f = (x: number) => 0.5 * Math.sin(x)
 A good way to use the applet is the same order as the proof. 
 First fix an interval $[a,b]$ by dragging the gliders `gliderA` and `gliderB`. 
 Then choose an error tolerance $\varepsilon>0$ with `epsSlider`. 
+After selecting the  $\varepsilon>0$, thge student should decrease the interval or add more n-steps `nSlider`, 
+to get condition 7.2 ($(b-a)/n < \delta$) works and therefore the all construction.
 
 The applet computes $\widetilde{\varepsilon}=\varepsilon/(2(b-a))$
 via `const eTilde = eps / (2 * range);`. The dashed bracket at $x=b$ 
@@ -36,17 +38,17 @@ has vertical length $2 \widetilde{\varepsilon}$ (objects `epsBracket` and `epsBr
 and it is colored green/red together with the construction.
 
 Next choose $n$ (the number of subintervals) with `nSlider`. 
-The applet uses the uniform partition $Z: a=x_0<\dots<x_n=b$ with $x_k=a+k(b-a)/n$, implemented 
-by `uniformPartition(a,b,n)`, where `dx=(b-a)/n` is the mesh size.
+The applet creates the uniform partition $Z: a=x_0<\dots<x_n=b$ with $x_k=a+k(b-a)/n$, implemented 
+by `uniformPartition(a,b,n)`, where `dx=(b-a)/n` is the mesh size, as in the proof.
 
-On each interval $(x_{i-1},x_i)$ the staircase functions are defined exactly as 
-in the proof using the right endpoint $x_i$:
-`upperH[i] = f(x_i) + eTilde;` and `lowerH[i] = f(x_i) - eTilde;`.
+On each interval $(x_{i-1},x_i)$ the staircase functions are defined using the right endpoint $x_i$:
+`upperH[i] = f(x_i) + eTilde;` and `lowerH[i] = f(x_i) - eTilde;` ( I haven't included codition 7.3: $\psi(x_i) = \varphi(x_i) = f(x_i)$).
+
 These are drawn as step graphs (`upperStep` for $\varphi$ in orange 
 and `lowerStep` for $\psi$ in purple). The filled region between them (`bandPoly`) 
 illustrates the intended inequality $\psi \le f \le \varphi$.
 
-To make the $\delta$-step (7.2) explicit in a rigorous way, the code uses a 
+To make the $\delta$-step (7.2) explicit, the code uses a 
 Lipschitz bound derived from $f'(x)$. Since $f(x)=\tfrac12 x\sin x + 2.5$, 
 we have $f'(x)=\tfrac12(\sin x + x\cos x)$ and therefore $|f'(x)|\le \tfrac12(1+|x|)$. 
 Hence on $[a,b]$ we can take `supDf = 0.5 * (1 + max(|a|,|b|))` and define `delta = eTilde / supDf`. 

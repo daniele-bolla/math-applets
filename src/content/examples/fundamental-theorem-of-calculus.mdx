@@ -1,7 +1,7 @@
 ---
 title:  Fundamental Theorem Of Calculs 
 description: Fundamental Theorem Of Calculs 
-visible: false
+visible: true
 approved: false
 category: Integration
 ---
@@ -24,14 +24,13 @@ i) The function $F : I \to \mathbb{R}, \quad x \mapsto F(x) = \int_a^x f(t) \, d
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/FundamentalTheoremOfCalculs.tsx).
 
-The applet visualizes the **Fundamental Theorem of Calculus (I)** following 
-closely the structure of the standard proof.
+The applet visualizes the **Fundamental Theorem of Calculus (I)** following the proof.
 
 Given a continuous function $f$, we define
 $$
 F(x) := \int_0^x f(t)\,dt,
 $$
-which represents the accumulated area under the graph of $f$ from $0$ to $x$.
+ (blue area).
 The graph of $F$ is shown together with the graph of $f$.
 
 To study the differentiability of $F$, two points $x$ and $x+h$ are selected on the $x$-axis.
@@ -42,7 +41,7 @@ $$
 is visualized as the slope of the secant line of $F$ between these two points.
 
 I am reusing part of the Mean value theorem for integrals, wich is used in the proof as 
-well as visualizing the derivative  $F'(x) = f(x)$, as in the example Secant and Tangent line
+well as visualizing the derivative  $F'(x) = f(x)$, as in the example Secant and Tangent.
 
 In this applet, we choose a **strictly increasing and invertible** function.
 

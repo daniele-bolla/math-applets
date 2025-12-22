@@ -2,38 +2,20 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
 
-/**
- * RandomRiemannApplet
- *
- * Draws two staircase functions on a random partition of [a,b]:
- *  - Upper (red):  ψ_δ(x) = sup_{[x_{i-1},x_i]} f + δ   (so f <= ψ_δ)
- *  - Lower (green):φ_δ(x) = inf_{[x_{i-1},x_i]} f - δ   (so φ_δ <= f)
- *
- * Here δ >= 0 is a “slack”/tightness parameter: as δ -> 0 the bounds get tighter.
- *
- * Note: this applet illustrates the Darboux viewpoint of the Riemann integral
- * (upper/lower staircase bounds), not generic “tagged” Riemann sums.
- */
 export default function RandomRiemannApplet() {
   return (
     <JSXGraphBoard
       config={{ boundingbox: [-4, 6, 8, -6], axis: true }}
       setup={(board: JXG.Board) => {
-        // -----------------------------
-        // Configuration / small helpers
-        // -----------------------------
+
         const EPS = 1e-9;
         const MAX_PARTITIONS = 500;
 
-        // Positions (chosen for boundingbox [-4,6,8,-6])
         const LEGEND_X = 5.2;
         const LEGEND_Y_TOP = 5.5;
         const BTN_X = -3.5;
-        const BTN_Y = -5.85;
+        const BTN_Y = -5.25;
 
-        // -----------------------------
-        // 1) Define the function f
-        // -----------------------------
         // f(x) = 0.25x^3 - x^2 - x + 2
         const f = (x: number) => 0.25 * x ** 3 - x ** 2 - x + 2;
 
@@ -43,9 +25,6 @@ export default function RandomRiemannApplet() {
           withLabel: false,
         });
 
-        // -----------------------------
-        // 2) Legend (top-right)
-        // -----------------------------
         board.create("text", [LEGEND_X, LEGEND_Y_TOP, "Upper (red)"], {
           fixed: true,
           fontSize: 14,
@@ -60,9 +39,6 @@ export default function RandomRiemannApplet() {
           anchorX: "left",
         });
 
-        // -----------------------------
-        // 3) Interval endpoints a,b (gliders on x-axis)
-        // -----------------------------
         const xAxis = board.defaultAxes.x;
 
         const gliderA = board.create("glider", [-2, 0, xAxis], {
@@ -81,9 +57,7 @@ export default function RandomRiemannApplet() {
           name: "",
         });
 
-        // -----------------------------
-        // 4) Sliders: n (subintervals) and δ (tightness)
-        // -----------------------------
+
         const nSlider = board.create(
           "slider",
           [
@@ -94,7 +68,6 @@ export default function RandomRiemannApplet() {
           { name: "n", snapWidth: 1, precision: 0 }
         ) as JXG.Slider;
 
-        // δ >= 0 controls how far above/below the true sup/inf we draw the bounds.
         const deltaSlider = board.create(
           "slider",
           [
@@ -105,11 +78,8 @@ export default function RandomRiemannApplet() {
           { name: "δ", snapWidth: 0.05, precision: 2 }
         ) as JXG.Slider;
 
-        // -----------------------------
-        // 5) Random partition generator (via random positive weights)
-        // -----------------------------
-        // We use weights w_i > 0 and set x_i so that each subinterval length is
-        // proportional to w_i. This gives a random-looking partition with exactly n parts.
+        // Random partition generator 
+
         const makeWeights = () =>
           Array.from({ length: MAX_PARTITIONS }, () => Math.random() * 0.8 + 0.3);
 
@@ -130,7 +100,6 @@ export default function RandomRiemannApplet() {
             cuts.push(start + range * (cum / totalWeight));
           }
 
-          // Force last cut exactly to end (avoid floating error accumulation)
           cuts[cuts.length - 1] = end;
           return cuts;
         };
@@ -166,9 +135,6 @@ export default function RandomRiemannApplet() {
           return { min: minVal, max: maxVal };
         };
 
-        // -----------------------------
-        // 7) JSXGraph curves representing the rectangles
-        // -----------------------------
         const upperCurve = board.create("curve", [[0], [0]], {
           strokeColor: COLORS.darkRed,
           strokeOpacity: 0.6,
@@ -187,8 +153,6 @@ export default function RandomRiemannApplet() {
           withLabel: false,
         });
 
-        // Build rectangle polygons (as a single NaN-free “curve polygon list”)
-        // using heights = (sup + δ) or (inf - δ) per interval.
         const computeRectangleCurve = (cuts: number[], type: "upper" | "lower") => {
           const X: number[] = [];
           const Y: number[] = [];
@@ -199,10 +163,8 @@ export default function RandomRiemannApplet() {
             const x2 = cuts[i + 1];
             const { min, max } = extremaOnInterval(x1, x2);
 
-            // δ ensures we are *definitely* above/below f on each subinterval
             const h = type === "upper" ? max + delta : min - delta;
 
-            // rectangle vertices: (x1,0)->(x1,h)->(x2,h)->(x2,0)
             X.push(x1, x1, x2, x2);
             Y.push(0, h, h, 0);
           }
@@ -210,9 +172,7 @@ export default function RandomRiemannApplet() {
           return { X, Y };
         };
 
-        // -----------------------------
-        // 8) Update routine
-        // -----------------------------
+
         const updateShapes = () => {
           board.suspendUpdate();
 
@@ -250,11 +210,9 @@ export default function RandomRiemannApplet() {
           board.update();
         };
 
-        // -----------------------------
-        // 9) Randomize button (bottom-left)
-        // -----------------------------
+
         const btnStyle =
-          "padding: 6px; border-radius: 4px; cursor: pointer; user-select:none;";
+          "padding: 4px; border-radius: 4px; cursor: pointer; user-select:none;";
         board.create(
           "button",
           [BTN_X, BTN_Y, "Randomize partition", () => {
@@ -270,6 +228,7 @@ export default function RandomRiemannApplet() {
         // -----------------------------
         // 10) Event listeners
         // -----------------------------
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const attach = (el: JXG.GeometryElement, ev: string) => el.on(ev as any, updateShapes);
 
         attach(nSlider, "drag");

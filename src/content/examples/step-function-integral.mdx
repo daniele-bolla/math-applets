@@ -1,7 +1,7 @@
 ---
 title:  Integral of a Staircase function 
 description: Integral of a staircase function is independent of the choice of partition
-visible: false
+visible: true
 approved: false
 category: Integration
 ---
@@ -41,7 +41,7 @@ $$
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/StepFunctionIntegral.tsx).
 
-This applet illustrates the definition of partitions and integral of a staircase functions.
+This applet illustrates the definition of partitions, refinement and integral of a staircase functions.
 
 I selected a staircase function (to be integrated) by prescribed jump points
 ```const jumps = [-4, -1, 2, 5, 8]```
@@ -74,7 +74,5 @@ and computes the rectangle contribution $\varphi(\xi_i)(t_{i+1}-t_i)$, i could r
     total += subArea;
 ```
  
-
 This visual behavior mirrors the proof that the integral of a staircase function 
-is independent of the chosen partition and depends only on the function
- itself, thereby illustrating the invariance of the integral under partitons.
+is independent of the chosen partition.
