@@ -111,13 +111,13 @@ export default function IVTApplet() {
                 }, COLORS.orange);
 
                 // CONTINUOUS INTERVAL - Shows when NO discontinuity
-                const continuousInterval = board.create('segment', [point_fa_on_y, point_fb_on_y], {
+                board.create('segment', [point_fa_on_y, point_fb_on_y], {
+                    strokeColor: COLORS.green,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => !hasDiscontinuity()
                 });
-                continuousInterval.setAttribute({strokeColor: COLORS.green});
 
                 // DISCONTINUOUS INTERVALS
                 // Left segment (from f(a) to discontinuity)
@@ -138,37 +138,37 @@ export default function IVTApplet() {
                 );
 
                 // Determine which segments to show based on interval direction
-                const seg1 = board.create('segment', [point_fa_on_y, discont_point_left], {
+                board.create('segment', [point_fa_on_y, discont_point_left], {
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_a.X() < DISCONTINUITY_X
                 });
-                seg1.setAttribute({strokeColor: COLORS.orange});
 
-                const seg2 = board.create('segment', [discont_point_right, point_fb_on_y], {
+                board.create('segment', [discont_point_right, point_fb_on_y], {
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_b.X() > DISCONTINUITY_X
                 });
-                seg2.setAttribute({strokeColor: COLORS.orange});
 
-                const seg3 = board.create('segment', [point_fa_on_y, discont_point_right], {
+                board.create('segment', [point_fa_on_y, discont_point_right], {
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_a.X() > DISCONTINUITY_X
                 });
-                seg3.setAttribute({strokeColor: COLORS.orange});
 
-                const seg4 = board.create('segment', [discont_point_left, point_fb_on_y], {
+                board.create('segment', [discont_point_left, point_fb_on_y], {
+                    strokeColor: COLORS.orange,
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_b.X() < DISCONTINUITY_X
                 });
-                seg4.setAttribute({strokeColor: COLORS.orange});
 
                 // Gaps
                 createPoint(board, [0, () => getDiscontinuityYLeft()], {
@@ -275,29 +275,29 @@ export default function IVTApplet() {
                 );
 
                 // Vertical segments from intersections to x-axis
-                const vertSeg0 = board.create('segment', [intersection_0, projection_0], {
+                board.create('segment', [intersection_0, projection_0], {
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X())
                 });
-                vertSeg0.setAttribute({strokeColor: COLORS.darkPurple});
 
-                const vertSeg1 = board.create('segment', [intersection_1, projection_1], {
+                board.create('segment', [intersection_1, projection_1], {
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X())
                 });
-                vertSeg1.setAttribute({strokeColor: COLORS.darkPurple});
 
-                const vertSeg2 = board.create('segment', [intersection_2, projection_2], {
+                board.create('segment', [intersection_2, projection_2], {
+                    strokeColor: COLORS.darkPurple,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X())
                 });
-                vertSeg2.setAttribute({strokeColor: COLORS.darkPurple});
 
             }}
         />

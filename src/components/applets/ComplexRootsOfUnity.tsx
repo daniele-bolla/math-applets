@@ -1,6 +1,12 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import { COLORS } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    createText,
+    createPoint,
+    createSlider,
+    createArrow
+} from "../../utils/jsxgraph";
 
 export default function ComplexRootsOfunity() {
   return (
@@ -17,96 +23,81 @@ export default function ComplexRootsOfunity() {
         const MAX_N = 24;
 
         // ----- Axis labels
-        board.create("text", [1.55, 0.15, "Re(z)"], {
-          fixed: true,
+        createText(board, [1.55, 0.15], "Re(z)", {
           fontSize: 18,
+          fixed: true,
           anchorX: "left",
         });
-        board.create("text", [-0.2, 1.35, "Im(z)"], {
-          fixed: true,
+        createText(board, [-0.2, 1.35], "Im(z)", {
           fontSize: 18,
+          fixed: true,
           anchorX: "left",
         });
 
         // ----- Sliders (BOTTOM-RIGHT)
-        const nSlider = board.create(
-          "slider",
-          [
-            [0.6, -1.25],
-            [1.6, -1.25],
-            [0, 0, MAX_N],
-          ],
-          { name: "n", snapWidth: 1, precision: 0 }
+        const nSlider = createSlider(
+          board,
+          [0.6, -1.25],
+          [1.6, -1.25],
+          [0, 0, MAX_N],
+          { name: "n", snapWidth: 1 }
         ) as JXG.Slider;
 
-      const xSlider = board.create(
-        "slider",
-        [
+        const xSlider = createSlider(
+          board,
           [0.6, -1.42],
           [1.6, -1.42],
           [0, 0, TAU],           // min=0, start=0, max=2π
-        ],
-        { name: "x", snapWidth: 0.01, precision: 2 }
-      ) as JXG.Slider;
+          { name: "x", snapWidth: 0.01 }
+        ) as JXG.Slider;
 
         // ----- Base points and unit circle
-        const O = board.create("point", [0, 0], {
+        const O = createPoint(board, [0, 0], {
           name: "",
           fixed: true,
-          size: 2,
-          strokeColor: "#000",
-          fillColor: "#000",
           highlight: false,
         });
 
-        const One = board.create("point", [1, 0], {
+        const One = createPoint(board, [1, 0], {
           name: "1",
           fixed: true,
-          size: 3,
-          strokeColor: "#000",
-          fillColor: "#000",
           label: { offset: [6, -12], fontSize: 14 },
           highlight: false,
         });
 
         board.create("circle", [O, One], {
           strokeColor: "#000",
-          strokeWidth: 2,
+          strokeWidth: 1,
           highlight: false,
         });
 
         // ----- Continuous point z = e^{ix}
-        const z = board.create(
-          "point",
+        const z = createPoint(
+          board,
           [
             () => Math.cos(xSlider.Value()),
             () => Math.sin(xSlider.Value()),
           ],
           {
             name: "e^{ix}",
-            size: 3,
-            color: COLORS.red,
-            fillColor: COLORS.red,
+            size: 2,
             fixed: true,
             label: { offset: [-28, -28], fontSize: 14, color: COLORS.red },
             highlight: false,
-          }
+          },
+          COLORS.red
         );
 
         // Ray from origin to e^{ix}
-        board.create("arrow", [O, z], {
-          strokeColor: COLORS.red,
-          strokeWidth: 3,
-          straightFirst: false,
-          straightLast: false,
+        createArrow(board, [O, z], {
           lastArrow: true,
           highlight: false,
-        });
+        }, COLORS.red);
 
         // Arc from 1 to e^{ix} (shows “x is an angle”)
         const arcCurve = board.create("curve", [[0], [0]], {
           strokeColor: COLORS.red,
-          strokeWidth: 3,
+          strokeWidth: 2,
           strokeOpacity: 0.55,
           highlight: false,
         });
@@ -114,7 +105,7 @@ export default function ComplexRootsOfunity() {
         board.create("angle", [One, O, z], {
           type: "sector",
           name: "",
-          radius: 0.72,
+          radius: 0.4,
           fillColor: COLORS.red,
           fillOpacity: 0.18,
           strokeColor: COLORS.red,
@@ -130,8 +121,8 @@ export default function ComplexRootsOfunity() {
         const roots: JXG.Point[] = [];
         for (let k = 0; k < MAX_N; k++) {
           roots.push(
-            board.create(
-              "point",
+            createPoint(
+              board,
               [
                 () => Math.cos((TAU * k) / Math.floor(nSlider.Value())),
                 () => Math.sin((TAU * k) / Math.floor(nSlider.Value())),
@@ -139,12 +130,11 @@ export default function ComplexRootsOfunity() {
               {
                 name: "",
                 size: 3,
-                color: COLORS.blue,
-                fillColor: COLORS.blue,
                 fixed: true,
                 visible: false,
                 highlight: false,
-              }
+              },
+              COLORS.blue
             )
           );
         }
@@ -156,29 +146,25 @@ export default function ComplexRootsOfunity() {
         });
 
         // Highlight nearest root to current angle x
-        const highlight = board.create("point", [1, 0], {
+        const highlight = createPoint(board, [1, 0], {
           name: "",
           size: 5,
-          color: COLORS.blue,
-          fillColor: COLORS.blue,
           fixed: true,
           visible: true,
           highlight: false,
-        });
+        }, COLORS.blue);
 
-        board.create(
-          "text",
-          [
-            () => highlight.X() + 0.08,
-            () => highlight.Y() + 0.08,
-            () => {
-              const n = Math.max(2, Math.floor(nSlider.Value()));
-              const x = xSlider.Value();
-              const k = ((Math.round((n * x) / TAU) % n) + n) % n;
-              return `z_${k}`;
-            },
-          ],
-          { fontSize: 16, color: COLORS.blue }
+        createText(
+          board,
+          [() => highlight.X() + 0.08, () => highlight.Y() + 0.08],
+          () => {
+            const n = Math.max(2, Math.floor(nSlider.Value()));
+            const x = xSlider.Value();
+            const k = ((Math.round((n * x) / TAU) % n) + n) % n;
+            return `z_${k}`;
+          },
+          { fontSize: 16 },
+          COLORS.blue
         );
 
         const update = () => {

@@ -1,8 +1,13 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import { COLORS } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    createText,
+    createPoint,
+    createArrow
+} from "../../utils/jsxgraph";
 
-export default function ComplexMultiplicationPolarApplet() {
+export default function ComplexMultiplicationApplet() {
   return (
     <JSXGraphBoard
       config={{
@@ -27,47 +32,40 @@ export default function ComplexMultiplicationPolarApplet() {
         const mod = (x: number, y: number) => Math.hypot(x, y);
 
 
-        board.create("text", [3.15, 0.2, "Re(z)"], {
+        createText(board, [3.15, 0.2], "Re(z)", {
           fixed: true,
-          fontSize: 18,
           anchorX: "left",
         });
-        board.create("text", [-0.15, 3.15, "Im(z)"], {
+        createText(board, [-0.15, 3.15], "Im(z)", {
           fixed: true,
-          fontSize: 18,
           anchorX: "left",
         });
 
         // Origin and a hidden unit point for angle construction
-        const O = board.create("point", [0, 0], {
+        const O = createPoint(board, [0, 0], {
           name: "",
           fixed: true,
-          size: 3,
-          strokeColor: "#000",
-          fillColor: "#000",
           highlight: false,
         });
 
-        const U = board.create("point", [1, 0], { visible: false, fixed: true, name: "" });
+        const U = createPoint(board, [1, 0], {
+          visible: false,
+          fixed: true,
+          name: ""
+        });
 
         // ------------------------------------------------------------
         // Draggable z1, z2 (constrained away from origin)
         // ------------------------------------------------------------
-        const z1 = board.create("point", [2.3, 1.1], {
+        const z1 = createPoint(board, [2.3, 1.1], {
           name: "",
-          size: 4,
-          color: Z1_COLOR,
-          fillColor: Z1_COLOR,
           withLabel: false,
-        });
+        }, Z1_COLOR);
 
-        const z2 = board.create("point", [1.1, 2.0], {
+        const z2 = createPoint(board, [1.1, 2.0], {
           name: "",
-          size: 4,
-          color: Z2_COLOR,
-          fillColor: Z2_COLOR,
           withLabel: false,
-        });
+        }, Z2_COLOR);
 
         // Keep points away from origin so arg(z) is stable/meaningful
         const MIN_RADIUS = 0.35;
@@ -97,52 +95,51 @@ export default function ComplexMultiplicationPolarApplet() {
         z2.on("up", () => enforceMinRadius(z2));
 
         // ------------------------------------------------------------
-        // Product z = z1 z2  
+        // Product z = z1 z2
         // ------------------------------------------------------------
-        const z = board.create(
-          "point",
+        const z = createPoint(board,
           [
             () => z1.X() * z2.X() - z1.Y() * z2.Y(),
             () => z1.X() * z2.Y() + z1.Y() * z2.X(),
           ],
           {
             name: "",
-            size: 4,
-            color: Z_COLOR,
-            fillColor: Z_COLOR,
             fixed: true,
             withLabel: false,
-          }
+          },
+          Z_COLOR
         );
 
         // ------------------------------------------------------------
         // Vectors (arrows)
         // ------------------------------------------------------------
-        const arrowStyle = {
+        createArrow(board, [O, z1], {
           straightFirst: false,
           straightLast: false,
-          lastArrow: true,
-          strokeWidth: 3,
           highlight: false,
-        };
+        }, Z1_COLOR);
 
-        board.create("arrow", [O, z1], { ...arrowStyle, strokeColor: Z1_COLOR });
-        board.create("arrow", [O, z2], { ...arrowStyle, strokeColor: Z2_COLOR });
-        board.create("arrow", [O, z], { ...arrowStyle, strokeColor: Z_COLOR });
+        createArrow(board, [O, z2], {
+          straightFirst: false,
+          straightLast: false,
+          highlight: false,
+        }, Z2_COLOR);
+
+        createArrow(board, [O, z], {
+          straightFirst: false,
+          straightLast: false,
+          highlight: false,
+        }, Z_COLOR);
 
         // Simple labels z1, z2, z
-        board.create("text", [() => z1.X() + 0.12, () => z1.Y() + 0.12, "z₁"], {
-          color: Z1_COLOR,
-          fontSize: 18,
-        });
-        board.create("text", [() => z2.X() + 0.12, () => z2.Y() + 0.12, "z₂"], {
-          color: Z2_COLOR,
-          fontSize: 18,
-        });
-        board.create("text", [() => z.X() + 0.12, () => z.Y() + 0.12, "z"], {
-          color: Z_COLOR,
-          fontSize: 18,
-        });
+        createText(board, [() => z1.X() + 0.12, () => z1.Y() + 0.12], "z₁", {
+        }, Z1_COLOR);
+
+        createText(board, [() => z2.X() + 0.12, () => z2.Y() + 0.12], "z₂", {
+        }, Z2_COLOR);
+
+        createText(board, [() => z.X() + 0.12, () => z.Y() + 0.12], "z", {
+        }, Z_COLOR);
 
         // ------------------------------------------------------------
         // Angle sectors (φ1, φ2, φ)
@@ -191,18 +188,15 @@ export default function ComplexMultiplicationPolarApplet() {
           dx: number,
           dy: number
         ) =>
-          board.create(
-            "text",
-            [
-              () => p.X() + dx,
-              () => p.Y() + dy,
-              () => {
-                const r = mod(p.X(), p.Y());
-                const phi = arg(p.X(), p.Y());
-                return `${name} = ${r.toFixed(2)} e^{i·${phi.toFixed(2)}}`;
-              },
-            ],
-            { color, fontSize: 14 }
+          createText(board,
+            [() => p.X() + dx, () => p.Y() + dy],
+            () => {
+              const r = mod(p.X(), p.Y());
+              const phi = arg(p.X(), p.Y());
+              return `${name} = ${r.toFixed(2)} e^{i·${phi.toFixed(2)}}`;
+            },
+            { fontSize: 14 },
+            color
           );
 
         polarLabel(z1, Z1_COLOR, "z₁", 0.12, -0.40);
