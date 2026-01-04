@@ -1,0 +1,63 @@
+---
+title: "Geometric series: a visual proof (Mabry’s triangle)"
+description: "A triangle-area visualization of 1/4 + (1/4)^2 + (1/4)^3 + … = 1/3."
+visible: false
+approved: false
+category: "Series"
+---
+
+import GeometricSeriesMabry from "../../components/applets/GeometricSeriesMabry";
+import MathBlock from "../../components/MathBlock";
+
+# Geometric series: a visual proof (Mabry’s triangle)
+
+<MathBlock type="theorem" title="Geometric series (special case)">
+
+$$
+
+\frac14+\left(\frac14\right)^2+\left(\frac14\right)^3+\cdots=\frac13.
+
+$$
+More generally, for $|r|<1$,
+
+$$
+
+\sum_{k=1}^{\infty} r^k=\frac{r}{1-r}.
+
+$$
+</MathBlock>
+
+---
+<GeometricSeriesMabry client:load />
+---
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/GeometricSeriesMabry.tsx).  
+Paper reference (open access): https://arxiv.org/pdf/2006.05062
+
+This applet reproduces a classical picture (attributed to Mabry) that gives a visual proof of
+
+$$
+
+\frac14+\left(\frac14\right)^2+\left(\frac14\right)^3+\cdots=\frac13.
+
+$$
+Move the slider `N` to show the first $N$ shaded triangles. Each new shaded triangle represents the next term of the geometric series.
+
+The construction uses the **midpoint triangle**: inside any triangle, connect the midpoints of the three sides. The small “central” triangle has side length scaled by $\tfrac12$, hence its area is scaled by $(\tfrac12)^2=\tfrac14$. In the applet, at each step we shade this midpoint triangle, then repeat the same construction in the smaller top triangle. Therefore the shaded areas are
+
+$$
+
+\frac14,\ \left(\frac14\right)^2,\ \left(\frac14\right)^3,\dots
+
+$$
+and the total shaded area is their sum.
+
+A second viewpoint explains why the total shaded area is $\tfrac13$ of the big triangle: at every step, the current triangle is partitioned into **four congruent** triangles. One of them is shaded, while the other three form the “remainder” to be subdivided at the next step. This creates layers whose total area is exactly three times the shaded area in each layer, so the union of all shaded triangles occupies one third of the whole triangle.
+
+In the code, the midpoint construction is implemented by repeatedly computing midpoints and drawing the corresponding shaded triangle. Conceptually, one step looks like:
+```ts
+const TL = mid(T, L);
+const TR = mid(T, R);
+const LR = mid(L, R);
+// shade triangle [TL, TR, LR] (area = 1/4 of [L, R, T])

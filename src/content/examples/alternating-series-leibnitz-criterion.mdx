@@ -1,0 +1,49 @@
+---
+title: "Alternating series (Leibniz criterion)"
+description: "Visual proof idea: even and odd partial sums form monotone bounded subsequences that squeeze to the same limit."
+visible: false
+approved: false
+category: "Series"
+---
+
+import LeibnizAlternatingSeries from "../../components/applets/LeibnizAlternatingSeries";
+import MathBlock from "../../components/MathBlock";
+
+# Alternating series (Leibniz criterion)
+
+<MathBlock type="theorem" title="Leibniz criterion / alternating series test (Theorem 3.5)">
+Let $(a_n)_{n\in\mathbb{N}}$ be a monotonically decreasing null sequence (i.e. $a_{n+1}\le a_n$ and $a_n\to 0$).
+Then the alternating series
+
+$$
+
+\sum_{k=0}^{\infty} (-1)^k a_k
+
+$$
+converges.
+</MathBlock>
+
+---
+<LeibnizAlternatingSeries client:load />
+---
+
+## How to use the applet (following the proof)
+Move the slider `N` and watch the partial sums $s_n=\sum_{k=0}^n (-1)^k a_k$.
+
+The even partial sums $s_{2m}$ (red) form a decreasing sequence, while the odd partial sums $s_{2m+1}$ (blue) form an increasing sequence. The dashed horizontal lines visualize the bounds
+
+$$
+
+s_{2m+1} \le s \le s_{2m}.
+
+$$
+The vertical “gap” segment shows
+
+$$
+
+s_{2m}-s_{2m+1}=a_{2m+1}\to 0,
+
+$$
+so the two bounding subsequences squeeze together and must converge to the same limit. Therefore $(s_n)$ converges and the series converges.
+
+In this applet we use $a_n=\frac{1}{(n+1)^p}$ with $p>0$, which is decreasing and satisfies $a_n\to 0$.

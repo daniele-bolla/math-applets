@@ -1,0 +1,68 @@
+---
+title: "Convergent terms, divergent series (p-series example)"
+description: "Example where a_n → 0 but the series Σ a_n diverges; includes continuous trajectory models via function graphs."
+visible: false
+approved: false
+category: "Series"
+---
+
+import DivergentPSeriesHalf from "../../components/applets/DivergentPSeriesHalf";
+import MathBlock from "../../components/MathBlock";
+
+# Convergent terms, divergent series
+
+<MathBlock type="theorem" title="Necessary condition (Theorem 3.2)">
+If $\sum_{k=0}^{\infty} a_k$ converges, then $a_n \to 0$.
+Equivalently, if $a_n \not\to 0$, then the series cannot converge.
+</MathBlock>
+
+<br/>
+
+<MathBlock type="remark" title="But a_n → 0 is not sufficient">
+The condition $a_n\to 0$ does **not** guarantee convergence of $\sum a_n$.
+This applet provides a clear counterexample using a p-series with $p<1$.
+</MathBlock>
+
+---
+<DivergentPSeriesHalf client:load />
+---
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/DivergentPSeriesHalf.tsx).
+
+This applet shows a concrete example where the terms converge to $0$, but the series diverges:
+
+$$
+
+a_n=\frac{1}{(n+1)^{1/3}}, \qquad 
+s_n=\sum_{k=0}^{n}\frac{1}{(k+1)^{1/3}}.
+
+$$
+
+Blue points represent the terms $a_n$. Red points represent the partial sums $s_n$.  
+Move the slider `N` and observe that the blue values approach the dashed line $y=0$ (so $a_n\to 0$), while the red values keep increasing (so $(s_n)$ does not converge and the series diverges). This is a $p$-series with $p=\tfrac13<1$, so $\sum (n+1)^{-p}$ diverges even though $a_n\to 0$.
+
+To highlight the trend, the applet also draws two continuous “trajectory” curves using `functiongraph`. The first is a continuous model for the terms,
+
+$$
+
+f(x)=\frac{1}{(x+1)^{1/3}},
+\qquad \text{so } f(n)=a_n.
+
+$$
+The second is a growth model for the partial sums based on integral comparison,
+
+$$
+
+g(x)=\int_0^x \frac{1}{(t+1)^{1/3}}\,dt
+= \frac{3}{2}\big((x+1)^{2/3}-1\big),
+
+$$
+and since $g(x)\to\infty$, it indicates that the partial sums grow without bound.
+
+In the code these trajectories are created as:
+```ts
+board.create("functiongraph", [(x) => 1 / Math.cbrt(x + 1), 0, MAX_N], ...);
+board.create("functiongraph", [(x) => 1.5 * (Math.pow(x + 1, 2/3) - 1), 0, MAX_N], ...);
+
+

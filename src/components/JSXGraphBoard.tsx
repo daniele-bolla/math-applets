@@ -45,7 +45,7 @@ export default function JSXGraphBoard({
 <div
   className="  relative mx-auto border border-gray-300 rounded shadow 
         w-full 
-        max-w-[350px] sm:max-w-[500px]
+        max-w-[450px] sm:max-w-[550px]
         aspect-square"
     >
     {loading && (

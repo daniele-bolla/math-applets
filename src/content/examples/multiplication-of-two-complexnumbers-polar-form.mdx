@@ -1,0 +1,48 @@
+---
+title: Complex Multiplication
+description: Multiplication of two complex numbers in polar form
+visible: false
+approved: false
+category: Complex Numbers and Trigonometric Functions
+---
+import ComplexMultiplication from "../../components/applets/ComplexMultiplication";
+import MathBlock from "../../components/MathBlock";
+
+# Complex Multiplication
+
+<MathBlock type="definition" title="Complex Multiplication">
+For $z_1, z_2 \in \mathbb{C}$ with
+$z_1 = r_1 \cdot e^{i\varphi_1}$ and $z_2 = r_2 \cdot e^{i\varphi_2}$ with
+
+$.
+
+</MathBlock>
+
+
+---
+<ComplexMultiplication client:load />
+---
+
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/ComplexMultiplication.tsx).
+
+This applet visualizes complex multiplication using the geometric (polar) interpretation. The axes represent the complex plane: the horizontal axis is $\mathrm{Re}(z)$ and the vertical axis is $\mathrm{Im}(z)$. Two draggable points represent the complex numbers $z_1$ and $z_2$, and the product $z=z_1z_2$ is shown as a third vector.
+
+The points $z_1$ and $z_2$ are draggable (`board.create("point", ...)`). The product $z$ is defined from their Cartesian coordinates using the standard algebraic rule
+$(a_1+ib_1)(a_2+ib_2)=(a_1a_2-b_1b_2)+i(a_1b_2+b_1a_2)$.
+In code this is kept explicitly as
+`Re(z) = z1.X()*z2.X() - z1.Y()*z2.Y()` and
+`Im(z) = z1.X()*z2.Y() + z1.Y()*z2.X()`.
+
+The three arrows from the origin (created with `board.create("arrow", [O, ...])`) represent the vectors $z_1$ (green), $z_2$ (red), and $z=z_1z_2$ (black). The colored angle sectors labeled $\varphi_1$, $\varphi_2$, and $\varphi$ (created with `board.create("angle", [U, O, ...])`) visualize their arguments.
+
+The polar information is displayed next to each vector in the form $z_k=r_ke^{i\varphi_k}$ by computing
+$r=\sqrt{x^2+y^2}$ (implemented as `Math.hypot(x,y)`) and
+$\varphi=\mathrm{arg}(x+iy)$ (implemented with `Math.atan2(y,x)` and shifted to the range $[0,2\pi)$).
+This emphasizes the multiplication rule in polar form:
+if $z_1=r_1e^{i\varphi_1}$ and $z_2=r_2e^{i\varphi_2}$, then
+$z_1z_2=r_1r_2e^{i(\varphi_1+\varphi_2)}$.
+Accordingly, the readout at the bottom verifies numerically that $|z|\approx|z_1||z_2|$ and that $\arg(z)\equiv \arg(z_1)+\arg(z_2)\ (\mathrm{mod}\ 2\pi)$.
+
+To avoid an unstable argument near the origin, the applet constrains the draggable points so that $|z_1|$ and $|z_2|$ stay above a small minimum radius (`MIN_RADIUS`), enforced in `enforceMinRadius` during dragging.

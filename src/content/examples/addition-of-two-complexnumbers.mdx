@@ -1,0 +1,46 @@
+---
+title: Complex Addition
+description: Addition of two complex numbers
+visible: false
+approved: false
+category: Complex Numbers and Trigonometric Functions
+---
+import ComplexAddition from "../../components/applets/ComplexAddition";
+import MathBlock from "../../components/MathBlock";
+
+# Complex Addition
+
+<MathBlock type="definition" title="Complex Addition">
+With the geometric interpretation of the addition of two complex numbers in Remark~5.3,
+Item~iii) clarifies the notion of the ``triangle inequality''.
+In Figure~5.1, the length of the edges of the parallelogram in blue are given by $|z_1|$ and $|z_2|$,
+whereas the length of the diagonal in red is given by $|z_1 + z_2|$.
+Hence, as the figure shows, the triangle inequality says that the length of the two shortest edges
+of a triangle is at least the length of the longest edge.
+</MathBlock>
+
+
+---
+<ComplexAddition client:load />
+---
+
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/ComplexAddition.tsx).
+
+This applet visualizes addition of two complex numbers as vectors in the complex plane (horizontal axis $\mathrm{Re}(z)$, 
+vertical axis $\mathrm{Im}(z)$) and illustrates the geometric idea behind the triangle inequality. 
+The origin is the point $0$, and two draggable points represent the complex numbers $z_1$ and $z_2$.
+
+The two complex numbers are represented by blue arrows from the origin 
+to the draggable points (`board.create("arrow", [O, z1])` and `board.create("arrow", [O, z2])`). 
+Their sum is represented by the red arrow from the origin to the point $z_3$, where $z_3$ is defined dynamically as
+`z3 = (z1.X() + z2.X(), z1.Y() + z2.Y())`
+in the code:
+`const z3 = board.create("point", [() => z1.X() + z2.X(), () => z1.Y() + z2.Y()], ...)`.
+
+To help students see the parallelogram (and hence the triangle inequality), 
+the applet also draws two dashed light-azure translated arrows:
+`z2 → z3` is a translated copy of $z_1$, and it is labeled `z₁`;
+`z1 → z3` is a translated copy of $z_2$, and it is labeled `z₂`.
+These auxiliary arrows make it clear that the diagonal of the parallelogram corresponds to $z_1+z_2$.

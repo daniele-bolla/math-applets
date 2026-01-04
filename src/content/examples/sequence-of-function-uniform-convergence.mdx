@@ -1,0 +1,57 @@
+---
+title: Uniform Convergence of Sequence of functions
+description: Visualization of the Pointwise COnvergence of Sequence of mfunctions.
+visible: false
+approved: false
+category: Convergence of Function Sequences
+---
+import MathBlock from "../../components/MathBlock";
+import UniformConvergence from "../../components/applets/UniformConvergence";
+
+# UniformConvergence
+
+<MathBlock type="Definition" title="Pointwise convergence">
+Let $K$ be an arbitrary set and $f_n : K \to \mathbb{C}$ for $n \in \mathbb{N}$ and
+$f : K \to \mathbb{C}$.
+ The sequence $(f_n)_{n \in \mathbb{N}}$ is called pointwise convergent
+towards $f$, if for every $x \in K$ it holds that
+$
+\lim_{n \to \infty} f_n(x) = f(x),
+$
+i.e., for every $x \in K$ and every $\varepsilon > 0$ there exists an
+$N_{x,\varepsilon} \in \mathbb{N}$ such that
+$
+|f_n(x) - f(x)| < \varepsilon \quad \text{for all } n \ge N_{x,\varepsilon}.
+$
+
+</MathBlock>
+
+--- 
+<UniformConvergence client:load />
+--- 
+
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/UniformConvergence .tsx).
+
+This applet illustrates uniform continuity for the sequence of functions
+
+$$
+
+f_n(x)=\frac{\sin(nx)}{n}\qquad (x\in[0,2\pi]).
+
+$$
+The blue curve is $f_n$ and the red line is the limit function $f(x)=0$.
+
+Use the sliders `ε` and `δ`, and drag the point `x`. The point `y` is constrained to lie in the interval $[x-\delta,x+\delta]$, so automatically $|x-y|<\delta$. The segment between the two points on the graph shows the difference $|f_n(x)-f_n(y)|$. It turns green when $|f_n(x)-f_n(y)|<\varepsilon$.
+
+To connect with the definition of uniform continuity, fix $\varepsilon$ and try to find a $\delta$ that works no matter where you place $x$ (and for any allowed $y$ within distance $\delta$). For this example, the key estimate is
+
+$$
+
+|f_n(x)-f_n(y)|
+\le \sup_{t\in[0,2\pi]}|f_n'(t)|\,|x-y|
+= \sup_{t}|\cos(nt)|\,|x-y|
+\le |x-y|.
+
+$$
+So choosing $\delta=\varepsilon$ guarantees $|f_n(x)-f_n(y)|<\varepsilon$ for all $x,y$ and all $n$. Visually, when $\delta\le\varepsilon$, the applet remains green as you move $x$ (this shows the “$\delta$ does not depend on $x$” part of uniform continuity).
