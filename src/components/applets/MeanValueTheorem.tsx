@@ -1,6 +1,13 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    createFunctionGraph,
+    createGlider,
+    createPoint,
+    createSecant,
+    createDashedSegment
+} from "../../utils/jsxgraph";
 
 export default function MeanValueTheoremApplet() {
     return (
@@ -11,65 +18,40 @@ export default function MeanValueTheoremApplet() {
                 const f = (x: number) => 0.2 * x * x * x - 0.5 * x * x + 2;
                 // const fPrime = (x: number) => 0.6 * x * x - x;
 
-                board.create('functiongraph', [f, -10, 10], {
-                    strokeColor: COLORS.blue,
-                    strokeWidth: 3,
-                });
+                createFunctionGraph(board, f, [-10, 10]);
 
                 const intervalABLimits = board.create('segment', [[-6.5, 0], [6.5, 0]], {
                     visible: false,
                     fixed: true,
                 });
 
-                const pointA = board.create('glider', [0.5, 0, intervalABLimits], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
+                const pointA = createGlider(board, [0.5, 0, intervalABLimits], {
                     name: 'a',
-                    face: '<>',
-                    size: 6,
-                    fillColor: COLORS.green,
-                    strokeColor: COLORS.darkGreen,
-                });
+                }, COLORS.green);
 
-                const pointB = board.create('glider', [3.5, 0, intervalABLimits], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
+                const pointB = createGlider(board, [3.5, 0, intervalABLimits], {
                     name: 'b',
-                    face: '<>',
-                    size: 6,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
-                });
+                }, COLORS.red);
 
-                const pointFA = board.create('point', [
-                    () => pointA.X(),
-                    () => f(pointA.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'f(a)',
-                    size: 2,
-                    fillColor: COLORS.green,
-                    strokeColor: COLORS.darkGreen,
-                    fixed: true,
-                });
+                const pointFA = createPoint(board,
+                    [() => pointA.X(), () => f(pointA.X())],
+                    {
+                        name: 'f(a)',
+                        fixed: true,
+                    },
+                    COLORS.green
+                );
 
-                const pointFB = board.create('point', [
-                    () => pointB.X(),
-                    () => f(pointB.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'f(b)',
-                    size: 2,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
-                    fixed: true,
-                });
+                const pointFB = createPoint(board,
+                    [() => pointB.X(), () => f(pointB.X())],
+                    {
+                        name: 'f(b)',
+                        fixed: true,
+                    },
+                    COLORS.red
+                );
 
-                const secant = board.create('line', [pointFA, pointFB], {
-                    strokeColor: COLORS.red,
-                    strokeWidth: 2,
-                    dash: 2,
-                    straightFirst: true,
-                    straightLast: true,
-                });
+                const secant = createSecant(board, [pointFA, pointFB], {}, COLORS.red);
 
                 function findC(): number {
                     const a = pointA.X();
@@ -98,28 +80,23 @@ export default function MeanValueTheoremApplet() {
                     }
                 }
 
-                const pointConX = board.create('point', [
-                    () => findC(),
-                    () => 0
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'c',
-                    size: 2,
-                    fillColor: COLORS.purple,
-                    strokeColor: COLORS.darkPurple,
-                    fixed: true,
-                });
-                const pointC = board.create('point', [
-                    () => findC(),
-                    () => f(findC())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'f(c)',
-                    size: 2,
-                    fillColor: COLORS.purple,
-                    strokeColor: COLORS.darkPurple,
-                    fixed: true,
-                });
+                const pointConX = createPoint(board,
+                    [() => findC(), () => 0],
+                    {
+                        name: 'c',
+                        fixed: true,
+                    },
+                    COLORS.purple
+                );
+
+                const pointC = createPoint(board,
+                    [() => findC(), () => f(findC())],
+                    {
+                        name: 'f(c)',
+                        fixed: true,
+                    },
+                    COLORS.purple
+                );
 
                 board.create('parallel', [secant, pointC], {
                     strokeColor: COLORS.purple,
@@ -128,32 +105,23 @@ export default function MeanValueTheoremApplet() {
                     straightLast: true,
                 });
 
-                board.create('segment', [
-                    [() => pointA.X(), 0],
-                    pointFA
-                ], {
-                    strokeColor: COLORS.green,
-                    strokeWidth: 1,
-                    dash: 2,
-                });
+                createDashedSegment(board,
+                    [() => [pointA.X(), 0], pointFA],
+                    {},
+                    COLORS.green
+                );
 
-                board.create('segment', [
-                    [() => pointB.X(), 0],
-                    pointFB
-                ], {
-                    strokeColor: COLORS.red,
-                    strokeWidth: 1,
-                    dash: 2,
-                });
+                createDashedSegment(board,
+                    [() => [pointB.X(), 0], pointFB],
+                    {},
+                    COLORS.red
+                );
 
-                board.create('segment', [
-                    pointConX,
-                    pointC
-                ], {
-                    strokeColor: COLORS.purple,
-                    strokeWidth: 1,
-                    dash: 2,
-                });
+                createDashedSegment(board,
+                    [pointConX, pointC],
+                    {},
+                    COLORS.purple
+                );
 
             }}
         />

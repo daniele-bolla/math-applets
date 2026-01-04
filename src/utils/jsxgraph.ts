@@ -1,5 +1,12 @@
 import JXG from "jsxgraph";
 
+// Type aliases for coordinates that can be static [number, number] or dynamic [() => number, () => number] or mixed
+type StaticCoord = [number, number];
+type DynamicCoord = [() => number, () => number];
+type MixedCoordX = [number, () => number];  // Static x, dynamic y
+type MixedCoordY = [() => number, number];  // Dynamic x, static y
+type Coord = StaticCoord | DynamicCoord | MixedCoordX | MixedCoordY;
+
 export const COLORS = {
     // Primary colors
     black: "#000000",
@@ -115,7 +122,7 @@ export function createFunctionGraph(
 
 export function createPoint(
     board: JXG.Board,
-    coords: [number, number] | [() => number, () => number],
+    coords: Coord,
     attributes: Partial<JXG.PointAttributes> = {},
     color: string = COLORS.black
 ) {
@@ -157,7 +164,7 @@ export function createLine(
 
 export function createSegment(
     board: JXG.Board,
-    points: [JXG.Point | [number, number] | [() => number, () => number], JXG.Point | [number, number] | [() => number, () => number]],
+    points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
     color: string = COLORS.blue
 ) {
@@ -199,7 +206,7 @@ export function createTangent(
 
 export function createText(
     board: JXG.Board,
-    coords: [number, number] | [() => number, () => number],
+    coords: Coord,
     content: string | (() => string),
     attributes: Partial<JXG.TextAttributes> = {},
     color: string = COLORS.black
@@ -227,20 +234,35 @@ export function createSlider(
 
 export function createDashedSegment(
     board: JXG.Board,
-    points: [JXG.Point | [number, number] | [() => number, () => number], JXG.Point | [number, number] | [() => number, () => number]],
+    points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
     color: string = COLORS.gray
 ) {
-    return board.create('segment', points, {
+    const segment = board.create('segment', points, {
         ...DEFAULT_DASHED_SEGMENT_ATTRIBUTES,
-        strokeColor: color,
         ...attributes,
     });
+    segment.setAttribute({strokeColor: color});
+    return segment;
+}
+
+export function createArrow(
+    board: JXG.Board,
+    points: [JXG.Point | Coord, JXG.Point | Coord],
+    attributes: Partial<JXG.LineAttributes> = {},
+    color: string = COLORS.orange
+) {
+    const arrow = board.create('arrow', points, {
+        ...DEFAULT_ARROW_SEGMENT_ATTRIBUTES,
+        ...attributes,
+    });
+    arrow.setAttribute({strokeColor: color});
+    return arrow;
 }
 
 export function createArrowSegment(
     board: JXG.Board,
-    points: [JXG.Point | [number, number] | [() => number, () => number], JXG.Point | [number, number] | [() => number, () => number]],
+    points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
     color: string = COLORS.orange
 ) {
