@@ -1,4 +1,4 @@
-import JXG from "jsxgraph";
+import JXG, { type AxisAttributes } from "jsxgraph";
 
 // Type aliases for coordinates that can be static [number, number] or dynamic [() => number, () => number] or mixed
 type StaticCoord = [number, number];
@@ -136,7 +136,7 @@ export function createPoint(
 
 export function createGlider(
     board: JXG.Board,
-    coords: [number, number, JXG.GeometryElement],
+    coords: [number, number, JXG.GeometryElement | AxisAttributes | undefined],
     attributes: Partial<JXG.GliderAttributes> = {},
     color: string = COLORS.orange
 ) {

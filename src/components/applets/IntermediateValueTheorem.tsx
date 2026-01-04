@@ -1,6 +1,12 @@
 import JSXGraphBoard from "../JSXGraphBoard";
-import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
+import * as JXG from "jsxgraph";
+import {
+    COLORS,
+    createFunctionGraph,
+    createGlider,
+    createPoint,
+    createSegment
+} from "../../utils/jsxgraph";
 
 export default function IVTApplet() {
     return (
@@ -13,100 +19,67 @@ export default function IVTApplet() {
                     return (x < DISCONTINUITY_X) ? Math.pow(x, 3) - 2 * x - 1 : Math.pow(x, 2) - 1;
                 };
 
-                const graph = board.create(
-                    "functiongraph",
-                    [objectiveFunction],
+                const graph = createFunctionGraph(board, objectiveFunction, [-10, 10]);
+
+                const point_a = createGlider(board, [-1.75, 0, board.defaultAxes.x], {
+                    name: 'a',
+                }, COLORS.green);
+
+                const point_b = createGlider(board, [1.5, 0, board.defaultAxes.x], {
+                    name: 'b',
+                }, COLORS.red);
+
+                const point_fa = createPoint(board,
+                    [() => point_a.X(), () => objectiveFunction(point_a.X())],
                     {
-                        strokeColor: COLORS.blue,
-                        strokeWidth: 2,
-                    }
+                        fixed: true,
+                    },
+                    COLORS.green
                 );
 
-                const point_a = board.create('glider', [-1.75, 0, board.defaultAxes.x], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
-                    name: 'a',
-                    fillColor: COLORS.green,
-                    strokeColor: COLORS.darkGreen,
-                });
+                const point_fb = createPoint(board,
+                    [() => point_b.X(), () => objectiveFunction(point_b.X())],
+                    {
+                        fixed: true,
+                    },
+                    COLORS.red
+                );
 
-                const point_b = board.create('glider', [1.5, 0, board.defaultAxes.x], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
-                    name: 'b',
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
-                });
+                const point_fa_on_y = createPoint(board,
+                    [0, () => objectiveFunction(point_a.X())],
+                    {
+                        name: 'f(a)',
+                        fixed: true,
+                    },
+                    COLORS.green
+                );
 
-                const point_fa = board.create('point', [
-                    () => point_a.X(),
-                    () => objectiveFunction(point_a.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    size: 1,
-                    fillColor: COLORS.green,
-                    strokeColor: COLORS.darkGreen,
-                    fixed: true,
-                });
-
-                const point_fb = board.create('point', [
-                    () => point_b.X(),
-                    () => objectiveFunction(point_b.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    size: 1,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
-                    fixed: true,
-                });
-
-                const point_fa_on_y = board.create('point', [
-                    0,
-                    () => objectiveFunction(point_a.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'f(a)',
-                    size: 1,
-                    fillColor: COLORS.green,
-                    strokeColor: COLORS.darkGreen,
-                    fixed: true,
-                });
-
-                const point_fb_on_y = board.create('point', [
-                    0,
-                    () => objectiveFunction(point_b.X())
-                ], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
-                    name: 'f(b)',
-                    size: 1,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
-                    fixed: true,
-                });
+                const point_fb_on_y = createPoint(board,
+                    [0, () => objectiveFunction(point_b.X())],
+                    {
+                        name: 'f(b)',
+                        fixed: true,
+                    },
+                    COLORS.red
+                );
 
                 // Vertical lines from a and b to f(a) and f(b)
-                board.create('segment', [point_a, point_fa], {
-                    strokeColor: COLORS.green,
-                    strokeWidth: 1,
+                createSegment(board, [point_a, point_fa], {
                     dash: 1,
-                });
+                }, COLORS.green);
 
-                board.create('segment', [point_b, point_fb], {
-                    strokeColor: COLORS.red,
-                    strokeWidth: 1,
+                createSegment(board, [point_b, point_fb], {
                     dash: 1,
-                });
+                }, COLORS.red);
 
                 // Horizontal lines from fa and fb to their projections on y-axis
-                board.create('segment', [point_fa, point_fa_on_y], {
-                    strokeColor: COLORS.green,
-                    strokeWidth: 1,
+                createSegment(board, [point_fa, point_fa_on_y], {
                     dash: 1,
-                });
+                }, COLORS.green);
 
-                board.create('segment', [point_fb, point_fb_on_y], {
-                    strokeColor: COLORS.red,
-                    strokeWidth: 1,
+                createSegment(board, [point_fb, point_fb_on_y], {
                     dash: 1,
-                });
+                }, COLORS.red);
 
                 // Check if interval [a,b] contains discontinuity
                 function hasDiscontinuity() {
@@ -133,96 +106,86 @@ export default function IVTApplet() {
                     return (faValue <= cValue && cValue <= fbValue) || (fbValue <= cValue && cValue <= faValue);
                 }
 
-                const point_c = board.create('glider', [0, initialC, board.defaultAxes.y], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
+                const point_c = createGlider(board, [0, initialC, board.defaultAxes.y], {
                     name: 'c',
-                    fillColor: COLORS.orange,
-                    strokeColor: COLORS.darkOrange,
-                });
+                }, COLORS.orange);
 
                 // CONTINUOUS INTERVAL - Shows when NO discontinuity
-                board.create('segment', [point_fa_on_y, point_fb_on_y], {
-                    strokeColor: COLORS.green,
+                const continuousInterval = board.create('segment', [point_fa_on_y, point_fb_on_y], {
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => !hasDiscontinuity()
                 });
+                continuousInterval.setAttribute({strokeColor: COLORS.green});
 
-                // DISCONTINUOUS INTERVALS 
+                // DISCONTINUOUS INTERVALS
                 // Left segment (from f(a) to discontinuity)
-                const discont_point_left = board.create('point', [
-                    0,
-                    () => getDiscontinuityYLeft()
-                ], {
-                    visible: false,
-                    fixed: true,
-                });
+                const discont_point_left = createPoint(board,
+                    [0, () => getDiscontinuityYLeft()],
+                    {
+                        visible: false,
+                        fixed: true,
+                    }
+                );
 
-                const discont_point_right = board.create('point', [
-                    0,
-                    () => getDiscontinuityYRight()
-                ], {
-                    visible: false,
-                    fixed: true,
-                });
+                const discont_point_right = createPoint(board,
+                    [0, () => getDiscontinuityYRight()],
+                    {
+                        visible: false,
+                        fixed: true,
+                    }
+                );
 
                 // Determine which segments to show based on interval direction
-                board.create('segment', [point_fa_on_y, discont_point_left], {
-                    strokeColor: COLORS.orange,
+                const seg1 = board.create('segment', [point_fa_on_y, discont_point_left], {
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_a.X() < DISCONTINUITY_X
                 });
+                seg1.setAttribute({strokeColor: COLORS.orange});
 
-                board.create('segment', [discont_point_right, point_fb_on_y], {
-                    strokeColor: COLORS.orange,
+                const seg2 = board.create('segment', [discont_point_right, point_fb_on_y], {
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_b.X() > DISCONTINUITY_X
                 });
+                seg2.setAttribute({strokeColor: COLORS.orange});
 
-                board.create('segment', [point_fa_on_y, discont_point_right], {
-                    strokeColor: COLORS.orange,
+                const seg3 = board.create('segment', [point_fa_on_y, discont_point_right], {
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_a.X() > DISCONTINUITY_X
                 });
+                seg3.setAttribute({strokeColor: COLORS.orange});
 
-                board.create('segment', [discont_point_left, point_fb_on_y], {
-                    strokeColor: COLORS.orange,
+                const seg4 = board.create('segment', [discont_point_left, point_fb_on_y], {
                     strokeWidth: 10,
                     opacity: 0.5,
                     fixed: true,
                     visible: () => hasDiscontinuity() && point_b.X() < DISCONTINUITY_X
                 });
+                seg4.setAttribute({strokeColor: COLORS.orange});
 
                 // Gaps
-                board.create('point', [0, () => getDiscontinuityYLeft()], {
-                    size: 3,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
+                createPoint(board, [0, () => getDiscontinuityYLeft()], {
                     visible: false
-                });
+                }, COLORS.red);
 
-                board.create('point', [0, () => getDiscontinuityYRight()], {
-                    size: 3,
-                    fillColor: COLORS.red,
-                    strokeColor: COLORS.darkRed,
+                createPoint(board, [0, () => getDiscontinuityYRight()], {
                     visible: false
-                });
+                }, COLORS.red);
 
                 // HIGHLIGHT X-AXIS INTERVAL from a to b when conditions are met
-                board.create('segment', [point_a, point_b], {
-                    strokeColor: COLORS.cyan,
+                createSegment(board, [point_a, point_b], {
                     strokeWidth: 10,
                     opacity: 0.6,
                     fixed: true,
                     visible: isPointCinBetweenFaFb
-                });
+                }, COLORS.cyan);
 
                 // Horizontal line at y = c
                 const lineC = board.create('line', [
@@ -249,15 +212,15 @@ export default function IVTApplet() {
                 // Create intersection points of lineC with the graph
                 const intersection_0 = board.create('intersection', [graph, lineC, 0], {
                     name: 'x_0',
-                    size: 2,
+                    size: 1,
                     fillColor: COLORS.purple,
                     strokeColor: COLORS.darkPurple,
-                    visible: false // Set to false initially, will be controlled by attribute below
+                    visible: false 
                 });
 
                 const intersection_1 = board.create('intersection', [graph, lineC, 1], {
                     name: 'x_1',
-                    size: 2,
+                    size: 1,
                     fillColor: COLORS.purple,
                     strokeColor: COLORS.darkPurple,
                     visible: false
@@ -265,7 +228,7 @@ export default function IVTApplet() {
 
                 const intersection_2 = board.create('intersection', [graph, lineC, 2], {
                     name: 'x_2',
-                    size: 2,
+                    size: 1,
                     fillColor: COLORS.purple,
                     strokeColor: COLORS.darkPurple,
                     visible: false
@@ -284,63 +247,57 @@ export default function IVTApplet() {
                 });
 
                 // Create projection points on x-axis for each intersection
-                const projection_0 = board.create('point', [
-                    () => intersection_0.X(),
-                    0
-                ], {
-                    size: 2,
-                    fillColor: COLORS.purple,
-                    strokeColor: COLORS.darkPurple,
-                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X()),
-                    fixed: true
-                });
+                const projection_0 = createPoint(board,
+                    [() => intersection_0.X(), 0],
+                    {
+                        visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X()),
+                        fixed: true
+                    },
+                    COLORS.purple
+                );
 
-                const projection_1 = board.create('point', [
-                    () => intersection_1.X(),
-                    0
-                ], {
-                    size: 2,
-                    fillColor: COLORS.purple,
-                    strokeColor: COLORS.darkPurple,
-                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X()),
-                    fixed: true
-                });
+                const projection_1 = createPoint(board,
+                    [() => intersection_1.X(), 0],
+                    {
+                        visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X()),
+                        fixed: true
+                    },
+                    COLORS.purple
+                );
 
-                const projection_2 = board.create('point', [
-                    () => intersection_2.X(),
-                    0
-                ], {
-                    size: 2,
-                    fillColor: COLORS.purple,
-                    strokeColor: COLORS.darkPurple,
-                    visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X()),
-                    fixed: true
-                });
+                const projection_2 = createPoint(board,
+                    [() => intersection_2.X(), 0],
+                    {
+                        visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X()),
+                        fixed: true
+                    },
+                    COLORS.purple
+                );
 
                 // Vertical segments from intersections to x-axis
-                board.create('segment', [intersection_0, projection_0], {
-                    strokeColor: COLORS.darkPurple,
+                const vertSeg0 = board.create('segment', [intersection_0, projection_0], {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_0.X())
                 });
+                vertSeg0.setAttribute({strokeColor: COLORS.darkPurple});
 
-                board.create('segment', [intersection_1, projection_1], {
-                    strokeColor: COLORS.darkPurple,
+                const vertSeg1 = board.create('segment', [intersection_1, projection_1], {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_1.X())
                 });
+                vertSeg1.setAttribute({strokeColor: COLORS.darkPurple});
 
-                board.create('segment', [intersection_2, projection_2], {
-                    strokeColor: COLORS.darkPurple,
+                const vertSeg2 = board.create('segment', [intersection_2, projection_2], {
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
                     visible: () => isPointCinBetweenFaFb() && isPointXCoordInIntervalAB(intersection_2.X())
                 });
+                vertSeg2.setAttribute({strokeColor: COLORS.darkPurple});
 
             }}
         />
