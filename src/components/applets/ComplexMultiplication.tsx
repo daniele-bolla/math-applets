@@ -18,19 +18,11 @@ export default function ComplexMultiplicationApplet() {
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {
-        const TAU = 2 * Math.PI;
 
         const Z1_COLOR = COLORS.green;
         const Z2_COLOR = COLORS.red;
         const Z_COLOR = "#111";       // product
         const PHI_COLOR = "#1565C0";  // φ = arg(z) (blue)
-
-        const arg = (x: number, y: number) => {
-          const a = Math.atan2(y, x);
-          return a < 0 ? a + TAU : a; // [0, 2π)
-        };
-        const mod = (x: number, y: number) => Math.hypot(x, y);
-
 
         createText(board, [3.15, 0.2], "Re(z)", {
           fixed: true,
@@ -79,7 +71,6 @@ export default function ComplexMultiplicationApplet() {
           if (r >= MIN_RADIUS) return;
 
           correcting = true;
-          // If exactly at origin, push to (MIN_RADIUS, 0)
           if (r < 1e-12) {
             p.setPosition(JXG.COORDS_BY_USER, [MIN_RADIUS, 0]);
           } else {
@@ -177,32 +168,6 @@ export default function ComplexMultiplicationApplet() {
           strokeColor: PHI_COLOR,
           fillOpacity: 0.16,
         });
-
-        // ------------------------------------------------------------
-        // Polar-form labels near points: z = r e^{iφ}
-        // ------------------------------------------------------------
-        const polarLabel = (
-          p: JXG.Point,
-          color: string,
-          name: string,
-          dx: number,
-          dy: number
-        ) =>
-          createText(board,
-            [() => p.X() + dx, () => p.Y() + dy],
-            () => {
-              const r = mod(p.X(), p.Y());
-              const phi = arg(p.X(), p.Y());
-              return `${name} = ${r.toFixed(2)} e^{i·${phi.toFixed(2)}}`;
-            },
-            { fontSize: 14 },
-            color
-          );
-
-        polarLabel(z1, Z1_COLOR, "z₁", 0.12, -0.40);
-        polarLabel(z2, Z2_COLOR, "z₂", 0.12, -0.40);
-        polarLabel(z, Z_COLOR, "z", 0.12, -0.40);
-
 
         // Initial constraint enforcement
         enforceMinRadius(z1);

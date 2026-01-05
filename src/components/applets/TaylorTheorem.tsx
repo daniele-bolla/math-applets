@@ -1,6 +1,15 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    createLine,
+    createSlider,
+    createFunctionGraph,
+    createGlider,
+    createSegment,
+    createText,
+    createPoint
+} from "../../utils/jsxgraph";
 
 // Math Helpers
 const factorial = (n: number): number => (n <= 1 ? 1 : n * factorial(n - 1));
@@ -82,38 +91,53 @@ export default function CompleteProofVisualizer() {
                 // 2. SETUP OBJECTS
                 // ===========================================
 
-                board.create('line', [[0, -10], [0, 10]], {
-                    strokeColor: COLORS.lightGray, dash: 2, strokeWidth: 1, fixed: true
-                });
+                createLine(board, [[0, -10], [0, 10]], {
+                    dash: 2,
+                    strokeWidth: 1,
+                    fixed: true
+                }, COLORS.lightGray);
 
-                const nSlider = board.create('slider', [[1, -7], [4, -7], [0, 2, 6]], {
-                    name: 'n', snapWidth: 1, precision: 0,
-                    color: COLORS.green, label: { fontSize: 16, color: COLORS.green }
-                });
+                const nSlider = createSlider(
+                    board,
+                    [1, -7],
+                    [4, -7],
+                    [0, 2, 6],
+                    { name: 'n', snapWidth: 1 }
+                );
 
                 // MAIN FUNCTIONS
-                const curve = board.create('functiongraph', [f, -10, 10], {
-                    strokeColor: COLORS.blue, strokeWidth: 3, name: 'f(x)', 
-                    withLabel: true, label: { position: 'rt', offset: [-10, -10], color: COLORS.blue }
-                });
+                const curve = createFunctionGraph(board, f, [-10, 10], {
+                    strokeWidth: 3,
+                    name: 'f(x)',
+                    withLabel: true,
+                    label: { position: 'rt', offset: [-10, -10], color: COLORS.blue }
+                }, COLORS.blue);
 
-                const P = board.create('glider', [-2, f(-2), curve], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'x₀', color: COLORS.blue, size: 6,
-                });
-                const Q = board.create('glider', [2, f(2), curve], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'x', color: COLORS.orange, size: 6,
-                });
+                const P = createGlider(board, [-2, f(-2), curve], {
+                    name: 'x₀',
+                    size: 6,
+                }, COLORS.blue);
+
+                const Q = createGlider(board, [2, f(2), curve], {
+                    name: 'x',
+                    size: 6,
+                }, COLORS.orange);
 
                 board.create('functiongraph', [
                     (x: number) => TaylorPoly(x, P.X(), Math.floor(nSlider.Value())), -10, 10
                 ], {
-                    strokeColor: COLORS.green, strokeWidth: 2, name: 'Tₙ(x)',
+                    strokeColor: COLORS.green,
+                    strokeWidth: 2,
+                    name: 'Tₙ(x)',
                 });
 
                 // Error Line
-                board.create('segment', [
+                createSegment(board, [
                     Q, [() => Q.X(), () => TaylorPoly(Q.X(), P.X(), Math.floor(nSlider.Value()))]
-                ], { strokeColor: COLORS.red, strokeWidth: 3, dash: 2 });
+                ], {
+                    strokeWidth: 3,
+                    dash: 2
+                }, COLORS.red);
 
 
                 // ===========================================

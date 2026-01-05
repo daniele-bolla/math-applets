@@ -1,7 +1,7 @@
 ---
 title: Roots of Unity
 description: Roots of unity and polygonal approximation of arc length on the unit circle
-visible: false
+visible: true
 approved: false
 category: Complex Numbers and Trigonometric Functions
 ---
@@ -40,6 +40,8 @@ $\ell_n = 2n\sin\!\big(\frac{x}{2n}\big)$ and $\lim_{n\to\infty}\ell_n = x$.
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/ComplexRootsOfUnity.tsx).
 
+*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Figure 5.5 page 89
+
 This applet visualizes the $n$-th roots of unity, i.e. the solutions of $z^n=1$. 
 For a chosen integer $n$ (slider `nSlider`), the points
 $z_k = e^{i\frac{2\pi k}{n}}$ for $k=0,\dots,n-1$
@@ -49,16 +51,25 @@ that the roots of unity form a regular $n$-gon inscribed in the unit circle.
 In the code, the roots are created as points on the unit circle with coordinates
 $\big(\cos(\frac{2\pi k}{n}),\sin(\frac{2\pi k}{n})\big)$, using the expressions
 `Math.cos((TAU * k) / n)` and `Math.sin((TAU * k) / n)` (with `TAU = 2 * Math.PI`). 
-Concretely, the applet creates an array of points `roots` via:
-`roots.push(board.create("point", [() => Math.cos((TAU * k) / Math.floor(nSlider.Value())), () => Math.sin((TAU * k) / Math.floor(nSlider.Value()))], ...))`.
+Concretely, the applet creates an array of points `roots`.
+```ts
+        const roots: JXG.Point[] = [];
+        for (let k = 0; k < MAX_N; k++) {
+          roots.push(
+            createPoint(
+              board,
+              [
+                () => Math.cos((TAU * k) / Math.floor(nSlider.Value())),
+                () => Math.sin((TAU * k) / Math.floor(nSlider.Value())),
+              ],
+              {
+                ...
+              },
+              ...
+            )
+          );
+        }
+```
 This matches exactly $z_k=e^{i\frac{2\pi k}{n}}$.
 
-To connect this with the formula $e^{ix}$, the slider `xSlider` moves the point $e^{ix}$ along the unit circle. 
-
-A suggested way to use the applet (matching the lecture notes) is:
-1. Fix a value of $n$ with the `nSlider`. 
-Observe that the blue points divide the unit circle into $n$ equal angles of size $\frac{2\pi}{n}$.
-2. Move `xSlider` and watch the point $e^{ix}$ travel along the circle. 
-This shows that changing $x$ changes only the angle.
-3. Compare $x$ with the special angles $\frac{2\pi k}{n}$. 
-The applet highlights the closest root $z_k$, so you can visually identify which $k$ corresponds to the current position.
+To connect with Remark 5.11, the slider `xSlider` moves the point $e^{ix}$ along the unit circle. 
