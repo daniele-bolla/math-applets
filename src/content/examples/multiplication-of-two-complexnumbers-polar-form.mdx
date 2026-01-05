@@ -11,11 +11,17 @@ import MathBlock from "../../components/MathBlock";
 # Complex Multiplication
 
 <MathBlock type="definition" title="Complex Multiplication">
-For $z_1, z_2 \in \mathbb{C}$ with
-$z_1 = r_1 \cdot e^{i\varphi_1}$ and $z_2 = r_2 \cdot e^{i\varphi_2}$ with
+Using the polar form of complex numbers we can find a geometric interpretation of the multiplication of two complex numbers. For $z_1, z_2 \in \mathbb{C}$ with  
+$z_1 = r_1 \cdot e^{i\varphi_1}$ and $z_2 = r_2 \cdot e^{i\varphi_2}$ with  
+$r_1, r_2 \in (0,\infty)$ and $\varphi_1, \varphi_2 \in (-\pi,\pi]$, it holds that
 
-$.
+$$
+z := z_1 z_2 = r_1 r_2 e^{i(\varphi_1 + \varphi_2)} = r e^{i\varphi},
+$$
 
+i.e., we obtain the absolute value of $z$ by multiplying the absolute values of $z_1$ and $z_2$, and the angle $\varphi$ by adding the angles $\varphi_1$ and $\varphi_2$. This is illustrated in Figure 5.4.
+
+Note that we may have $\varphi \notin (-\pi,\pi]$, so $\varphi$ may not be the principal value of $\arg(z)$.
 </MathBlock>
 
 
