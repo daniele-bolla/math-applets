@@ -1,14 +1,15 @@
 ---
-title: Pointwise COnvergence of Sequence of mfunctions
-description: Visualization of the Pointwise COnvergence of Sequence of mfunctions.
-visible: false
+title: Pointwise Convergence
+description: Visualization of the Pointwise Convergence.
+visible: true
 approved: false
 category: Convergence of Function Sequences
+ord: 0
 ---
 import MathBlock from "../../components/MathBlock";
-import SequenceOfFunctions from "../../components/applets/SequenceOfFunctions";
+import PointwiseConvergenceXn from "../../components/applets/PointwiseConvergenceXn";
 
-# SequenceOfFunctions
+# Pointwise Convergence
 
 <MathBlock type="Definition" title="Pointwise convergence">
 Let $K$ be an arbitrary set and $f_n : K \to \mathbb{C}$ for $n \in \mathbb{N}$ and
@@ -27,21 +28,28 @@ $
 </MathBlock>
 
 --- 
-<SequenceOfFunctions client:load />
+<PointwiseConvergenceXn client:load />
 --- 
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/SequenceOfFunctions.tsx).
-This applet visualizes the sequence of functions
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/PointwiseConvergenceXn.tsx).
 
+*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Definition8.1 page 144
+
+This applet visualizes pointconvergence using the sequence of functions
 $$
 
 f_n(x)=x^n \qquad (x\in[0,1]).
 
 $$
-The blue solid curve is the current function $f_n$. Faint dashed blue curves show earlier functions $x^k$ (only for $k<n$) to make the trend visible. The pointwise limit is drawn in red: the line $y=0$ (the “zero function”), together with the special point $(1,1)$, since $1^n=1$ for all $n$.
+The blue solid curve is the current function $f_n$. Faint dashed blue curves show earlier functions $x^k$ (only for $k<n$) 
+to make the trend visible. 
+The pointwise limit is drawn in red: the line $y=0$ (the “zero function”), 
+together with the special point $(1,1)$, since $1^n=1$ for all $n$.
 
-Two sliders are used: `n` selects the current index $n$ in $f_n(x)=x^n$, and `ε` selects the tolerance $\varepsilon>0$. A draggable point `x` chooses the evaluation point $x\in[0,1]$. The applet draws the horizontal $\varepsilon$-tube $f(x)\pm\varepsilon$ and highlights the point $(x,f_n(x))$. This point turns green exactly when
+Two sliders are used: `n` selects the current index $n$ in $f_n(x)=x^n$, and `ε` selects the tolerance $\varepsilon>0$. 
+A draggable point `x` chooses the evaluation point $x\in[0,1]$. 
+The applet draws the horizontal $\varepsilon$-tube $f(x)\pm\varepsilon$ and highlights the point $(x,f_n(x))$. This point turns green exactly when
 
 $$
 
@@ -49,12 +57,6 @@ $$
 
 $$
 The displayed value $N_{x,\varepsilon}$ is the first index after which the inequality holds at the chosen $x$ and $\varepsilon$.
-
-In the code, the current graph is drawn with
-```ts
-board.create("functiongraph", [(x) => Math.pow(x, Math.floor(nSlider.Value())), 0, 1], ...);
-```
-The green/orange test uses the condition
 
 ```ts
 const ok = Math.abs(fnx - fx) < eps;
@@ -70,29 +72,3 @@ f_n(1) = 1 \quad \text{for all } n,
 $$
 
 which is why the limit includes the point $(1,1)$.
-
-## Seeing the Definition in Action
-
-Fix a value of $x$ and choose an $\varepsilon$.  
-Now increase $n$ until the point
-
-$$
-(x, f_n(x))
-$$
-
-becomes green. This illustrates that there exists $N_{x,\varepsilon}$ such that for all  
-$n \ge N_{x,\varepsilon}$, we have
-$$
-|f_n(x) - f(x)| < \varepsilon.
-$$
-
-## Key Observation
-
-Finally, move $x$ to a different value and repeat the procedure.  
-You will typically need a different $N_{x,\varepsilon}$, and it may be much larger when $x$ is closer to $1$.
-
-This is the key idea of pointwise convergence:
-
-$$
-N \text{ may depend on } x \text{ (and on } \varepsilon\text{).}
-$$

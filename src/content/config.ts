@@ -8,6 +8,7 @@ const examples = defineCollection({
         description: z.string().optional(),
         visible: z.boolean().default(false),
         approved: z.boolean().default(false),
+        ord: z.number().default(0),
         category: z.enum(EXAMPLE_CATEGORIES_WITH_FALLBACK).default(UNCATEGORIZED),
     }),
 });

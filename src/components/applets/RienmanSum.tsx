@@ -104,9 +104,7 @@ export default function RandomRiemannApplet() {
           return cuts;
         };
 
-        // -----------------------------
-        // 6) Exact sup/inf on subintervals for this cubic
-        // -----------------------------
+
         // For a cubic, maxima/minima on [x1,x2] occur at endpoints and at critical points.
         // f'(x) = 0.75x^2 - 2x - 1  => two critical points (roots of f').
         const criticalPoints = (() => {
@@ -120,7 +118,6 @@ export default function RandomRiemannApplet() {
           return [r1, r2].sort((u, v) => u - v);
         })();
 
-        /* i am using this function multiple time throughout the applets */
         const extremaOnInterval = (x1: number, x2: number) => {
           let minVal = Math.min(f(x1), f(x2));
           let maxVal = Math.max(f(x1), f(x2));
@@ -194,7 +191,6 @@ export default function RandomRiemannApplet() {
             return;
           }
 
-          // Partition depends on [a,b] so it changes continuously while dragging
           const cuts = buildRandomCuts(n, start, end);
 
           const up = computeRectangleCurve(cuts, "upper");
@@ -225,9 +221,6 @@ export default function RandomRiemannApplet() {
           }
         );
 
-        // -----------------------------
-        // 10) Event listeners
-        // -----------------------------
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const attach = (el: JXG.GeometryElement, ev: string) => el.on(ev as any, updateShapes);
 

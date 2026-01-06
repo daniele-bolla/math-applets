@@ -14,6 +14,7 @@ export default function DivergentPSeriesHalf() {
       }}
       setup={(board: JXG.Board) => {
         const MAX_N = 300;
+        const STEP = 10;
 
         // ---- Precompute a_n and s_n
         const A: number[] = new Array(MAX_N + 1);
@@ -134,7 +135,7 @@ export default function DivergentPSeriesHalf() {
 
           const N = Math.max(0, Math.min(MAX_N, Math.floor(nSlider.Value())));
 
-          for (let n = 0; n <= MAX_N; n++) {
+          for (let n = 0; n <= MAX_N; n+= STEP) {
             const vis = n <= N;
             termPts[n].setAttribute({ visible: vis });
             sumPts[n].setAttribute({ visible: vis });

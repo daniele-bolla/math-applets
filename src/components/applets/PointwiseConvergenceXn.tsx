@@ -6,12 +6,7 @@ export default function PointwiseConvergenceXn() {
   return (
     <JSXGraphBoard
       config={{
-        boundingbox: [-0.1, 1.15, 1.1, -0.15],
-        axis: true,
-        keepAspectRatio: true,
-        showZoom: false,
-        showNavigation: false,
-        pan: { enabled: false },
+        boundingbox: [-0., 1.15, 1.1, -0.45],
       }}
       setup={(board: JXG.Board) => {
         const MAX_N = 300;
@@ -22,8 +17,8 @@ export default function PointwiseConvergenceXn() {
         const nSlider = board.create(
           "slider",
           [
-            [0.55, -0.08],
-            [1.05, -0.08],
+            [0.5, -0.2],
+            [1, -0.2],
             [1, 10, MAX_N],
           ],
           { name: "n", snapWidth: 1, precision: 0 }
@@ -32,29 +27,27 @@ export default function PointwiseConvergenceXn() {
         const epsSlider = board.create(
           "slider",
           [
-            [0.05, -0.08],
-            [0.45, -0.08],
+            [0.5, -0.3],
+            [1, -0.3],
             [0.01, 0.08, 0.25],
           ],
           { name: "ε", snapWidth: 0.005, precision: 3 }
         ) as JXG.Slider;
 
-        // --- Minimal labels
-        board.create("text", [0.02, 1.06, "f_n(x)=x^n"], {
-          fixed: true,
-          fontSize: 18,
-          color: COLORS.blue,
-          anchorX: "left",
-        });
+        // board.create("text", [0.02, 1.06, "f_n(x)=x^n"], {
+        //   fixed: true,
+        //   fontSize: 18,
+        //   color: COLORS.blue,
+        //   anchorX: "left",
+        // });
 
-        board.create("text", [0.02, 0.98, "f(x)"], {
-          fixed: true,
-          fontSize: 18,
-          color: COLORS.red,
-          anchorX: "left",
-        });
+        // board.create("text", [0.02, 0.98, "f(x)"], {
+        //   fixed: true,
+        //   fontSize: 18,
+        //   color: COLORS.red,
+        //   anchorX: "left",
+        // });
 
-        // --- x glider on [0,1]
         const xSeg = board.create("segment", [[0, 0], [1, 0]], {
           visible: false,
           fixed: true,
@@ -70,7 +63,6 @@ export default function PointwiseConvergenceXn() {
           label: { fontSize: 14, offset: [8, -12] },
         }) as JXG.Point;
 
-        // --- Background family: x^k (dashed, low opacity), visible iff k < n
         const bgCurves: JXG.Curve[] = [];
         for (let k = 1; k <= BACKGROUND_MAX; k++) {
           const kk = k;
@@ -128,12 +120,12 @@ export default function PointwiseConvergenceXn() {
         }
 
         // Draw y=0 as a full red line (dominant part of the limit)
-        board.create("line", [[0, 0], [1, 0]], {
+        const zeroFunction = board.create("line", [[0, 0], [1, 0]], {
           straightFirst: true,
           straightLast: true,
           fixed: true,
           strokeColor: COLORS.red,
-          strokeWidth: 4,
+          strokeWidth: 2,
           strokeOpacity: 0.85,
           highlight: false,
         });
@@ -148,7 +140,7 @@ export default function PointwiseConvergenceXn() {
           highlight: false,
         });
 
-        // --- ε-tube around f(x): y = f(x) ± ε  (dynamic in x!)
+        // --- ε-tube around f(x): y = f(x) ± ε  
         const tubeUpper = board.create("line", [[0, 0], [1, 0]], {
           straightFirst: true,
           straightLast: true,
@@ -191,13 +183,12 @@ export default function PointwiseConvergenceXn() {
             name: "",
             size: 5,
             fixed: true,
-            strokeColor: COLORS.orange,
-            fillColor: COLORS.orange,
+            strokeColor: COLORS.red,
+            fillColor: COLORS.red,
             highlight: false,
           }
         ) as JXG.Point;
 
-        // Optional: show |f_n(x)-f(x)| as a vertical segment at x (helps definition)
         const Qlim = board.create(
           "point",
           [() => xPoint.X(), () => fLimit(xPoint.X())],
@@ -205,38 +196,38 @@ export default function PointwiseConvergenceXn() {
         ) as JXG.Point;
 
         const errSeg = board.create("segment", [Qlim, Pn], {
-          strokeColor: "#444",
-          strokeWidth: 4,
+          strokeColor: COLORS.gray,
+          strokeWidth: 2,
           strokeOpacity: 0.45,
           highlight: false,
         }) as JXG.Segment;
 
-        // Display N_{x,ε} (small, but directly ties to your definition)
-        board.create(
-          "text",
-          [
-            0.02,
-            0.90,
-            () => {
-              const x = xPoint.X();
-              const eps = epsSlider.Value();
-              const fx = fLimit(x);
+        // // Display N_{x,ε} 
+        // board.create(
+        //   "text",
+        //   [
+        //     0.02,
+        //     0.90,
+        //     () => {
+        //       const x = xPoint.X();
+        //       const eps = epsSlider.Value();
+        //       const fx = fLimit(x);
 
-              // For x=1: f_n(1)=1 for all n so |f_n(1)-f(1)|=0; any n works
-              if (Math.abs(x - 1) < 1e-6) return "N_{x,ε}=1";
+        //       // For x=1: f_n(1)=1 for all n so |f_n(1)-f(1)|=0; any n works
+        //       if (Math.abs(x - 1) < 1e-6) return "N_{x,ε}=1";
 
-              // For x in [0,1): need x^n < eps
-              if (x <= 0) return "N_{x,ε}=1";
+        //       // For x in [0,1): need x^n < eps
+        //       if (x <= 0) return "N_{x,ε}=1";
 
-              // Solve x^n < eps  =>  n > log(eps)/log(x)  (log(x)<0)
-              const Nreq = Math.max(1, Math.ceil(Math.log(eps) / Math.log(x)));
-              return `N_{x,ε}=${Nreq}`;
-            },
-          ],
-          { fixed: true, fontSize: 16, color: "#000", anchorX: "left" }
-        );
+        //       // Solve x^n < eps  =>  n > log(eps)/log(x)  (log(x)<0)
+        //       const Nreq = Math.max(1, Math.ceil(Math.log(eps) / Math.log(x)));
+        //       return `N_{x,ε}=${Nreq}`;
+        //     },
+        //   ],
+        //   { fixed: true, fontSize: 16, color: "#000", anchorX: "left" }
+        // );
 
-        // --- Performance: update only background visibility changes
+        // // --- Performance: update only background visibility changes
         let prevN = Math.floor(nSlider.Value());
 
         function updateBackgroundVisibility(n: number) {
@@ -278,22 +269,33 @@ export default function PointwiseConvergenceXn() {
           xGuide.point1.setPosition(JXG.COORDS_BY_USER, [x, 0]);
           xGuide.point2.setPosition(JXG.COORDS_BY_USER, [x, 1]);
 
-          // color point depending on whether we're inside epsilon
           const n = Math.floor(nSlider.Value());
           const fnx = Math.pow(x, n);
           const ok = Math.abs(fnx - fx) < eps;
 
           Pn.setAttribute({
-            strokeColor: ok ? COLORS.green : COLORS.orange,
-            fillColor: ok ? COLORS.green : COLORS.orange,
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            fillColor: ok ? COLORS.green : COLORS.red,
           });
-
+          tubeUpper.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            strokeOpacity: ok ? 0.55 : 0.45,
+          });
+          tubeLower.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            strokeOpacity: ok ? 0.55 : 0.45,
+          });
+          zeroFunction.setAttribute({
+            strokeColor: ok && xPoint.X() < 1? COLORS.green : COLORS.red,
+            strokeOpacity: ok ? 0.55 : 0.45,
+          });
           // also color error segment
           errSeg.setAttribute({
-            strokeColor: ok ? COLORS.green : "#444",
+            strokeColor: ok ? COLORS.green : COLORS.red,
             strokeOpacity: ok ? 0.55 : 0.45,
           });
         }
+
 
         const update = () => {
           board.suspendUpdate();

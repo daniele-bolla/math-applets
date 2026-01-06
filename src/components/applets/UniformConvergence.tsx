@@ -2,29 +2,25 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
 import { COLORS } from "../../utils/jsxgraph";
 
-export default function UniformContinuitySequenceSinNxOverN() {
+export default function UniformConvergenceSinNxOverN() {
   return (
     <JSXGraphBoard
       config={{
-        boundingbox: [-0.3, 1.05, 2 * Math.PI + 0.3, -1.05],
-        axis: true,
+        boundingbox: [-0.3, 1.05, 2 * Math.PI + 0.3, -0.45],
         keepAspectRatio: false,
-        showZoom: false,
-        showNavigation: false,
-        pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {
         const TAU = 2 * Math.PI;
 
-        const MAX_N = 200;
-        const BACKGROUND_MAX = 60;
+        const MAX_N = 300;
+        const BACKGROUND_MAX = 100;
 
-        // ---- sliders (same style as before)
+        // --- Sliders (same “bottom band” idea as your pointwise applet)
         const nSlider = board.create(
           "slider",
           [
-            [TAU - 2.15, -0.95],
-            [TAU + 0.15, -0.95],
+            [TAU - 2.2, -0.20],
+            [TAU - 0.2, -0.20],
             [1, 10, MAX_N],
           ],
           { name: "n", snapWidth: 1, precision: 0 }
@@ -33,35 +29,33 @@ export default function UniformContinuitySequenceSinNxOverN() {
         const epsSlider = board.create(
           "slider",
           [
-            [0.25, -0.95],
-            [2.05, -0.95],
-            [0.01, 0.15, 0.6],
+            [TAU - 2.2, -0.30],
+            [TAU - 0.2, -0.30],
+            [0.01, 0.08, 0.5],
           ],
           { name: "ε", snapWidth: 0.005, precision: 3 }
         ) as JXG.Slider;
 
-        const deltaSlider = board.create(
-          "slider",
-          [
-            [2.35, -0.95],
-            [4.15, -0.95],
-            [0.01, 0.15, 1.0],
-          ],
-          { name: "δ", snapWidth: 0.005, precision: 3 }
-        ) as JXG.Slider;
+        const fn = (x: number, n: number) => Math.sin(n * x) / n;
+        const fLimit = (_x: number) => 0;
 
-        // Minimal labels (keep it light)
-        board.create("text", [0.1, 0.92, "f_n(x)=sin(nx)/n"], {
+        // --- x glider on [0, 2π]
+        const xSeg = board.create("segment", [[0, 0], [TAU, 0]], {
+          visible: false,
           fixed: true,
-          fontSize: 18,
-          color: COLORS.blue,
-          anchorX: "left",
+          highlight: false,
         });
 
-        // ---- helper
-        const fn = (x: number, n: number) => Math.sin(n * x) / n;
+        const xPoint = board.create("glider", [1.0, 0, xSeg], {
+          name: "x",
+          size: 4,
+          strokeColor: "#000",
+          fillColor: "#000",
+          fixed: false,
+          label: { fontSize: 14, offset: [8, -12] },
+        }) as JXG.Point;
 
-        // ---- dashed family of previous functions (visible iff k < n)
+        // --- Background family: f_k(x) dashed, visible iff k < n
         const bgCurves: JXG.Curve[] = [];
         for (let k = 1; k <= BACKGROUND_MAX; k++) {
           const kk = k;
@@ -76,63 +70,67 @@ export default function UniformContinuitySequenceSinNxOverN() {
           bgCurves.push(c);
         }
 
-        // ---- current function (solid)
+        // --- Current curve (solid)
         const currentCurve = board.create(
           "functiongraph",
           [(x: number) => fn(x, Math.floor(nSlider.Value())), 0, TAU],
           {
             strokeColor: COLORS.blue,
             strokeWidth: 3,
-            dash: 0,
             opacity: 1,
+            dash: 0,
             highlight: false,
           }
         ) as JXG.Curve;
 
-        // ---- x-axis segment for x, and δ-window segment for y
-        const xAxis = board.create("segment", [[0, 0], [TAU, 0]], {
-          visible: false,
+        // --- Limit function f(x)=0 (red line)
+        const zeroFunction = board.create("line", [[0, 0], [1, 0]], {
+          straightFirst: true,
+          straightLast: true,
           fixed: true,
+          strokeColor: COLORS.red,
+          strokeWidth: 2,
+          strokeOpacity: 0.85,
           highlight: false,
-        });
+        }) as JXG.Line;
 
-        const xPoint = board.create("glider", [1.0, 0, xAxis], {
-          name: "x",
-          size: 4,
-          strokeColor: "#000",
-          fillColor: "#000",
-          label: { fontSize: 14, offset: [8, -12] },
-        }) as JXG.Point;
+        // --- ε-tube around f(x)=0: y = ±ε
+        const tubeUpper = board.create("line", [[0, 0], [1, 0]], {
+          straightFirst: true,
+          straightLast: true,
+          fixed: true,
+          strokeColor: COLORS.red,
+          dash: 2,
+          strokeOpacity: 0.45,
+          strokeWidth: 2,
+          highlight: false,
+        }) as JXG.Line;
 
-        const clamp = (t: number) => Math.max(0, Math.min(TAU, t));
+        const tubeLower = board.create("line", [[0, 0], [1, 0]], {
+          straightFirst: true,
+          straightLast: true,
+          fixed: true,
+          strokeColor: COLORS.red,
+          dash: 2,
+          strokeOpacity: 0.45,
+          strokeWidth: 2,
+          highlight: false,
+        }) as JXG.Line;
 
-        // y is constrained to [x-δ, x+δ]
-        const yWindow = board.create(
-          "segment",
-          [
-            [() => clamp(xPoint.X() - deltaSlider.Value()), 0],
-            [() => clamp(xPoint.X() + deltaSlider.Value()), 0],
-          ],
-          {
-            strokeColor: "#666",
-            strokeOpacity: 0.35,
-            strokeWidth: 6,
-            lineCap: "round",
-            fixed: true,
-            highlight: false,
-          }
-        ) as JXG.Segment;
+        // Vertical guide at the chosen x
+        const xGuide = board.create("line", [[0, 0], [0, 1]], {
+          straightFirst: true,
+          straightLast: true,
+          fixed: true,
+          strokeColor: "#666",
+          dash: 1,
+          strokeOpacity: 0.35,
+          strokeWidth: 1,
+          highlight: false,
+        }) as JXG.Line;
 
-        const yPoint = board.create("glider", [1.2, 0, yWindow], {
-          name: "y",
-          size: 4,
-          strokeColor: "#000",
-          fillColor: "#000",
-          label: { fontSize: 14, offset: [8, -12] },
-        }) as JXG.Point;
-
-        // ---- points on the graph: P=(x, f_n(x)), Q=(y, f_n(y))
-        const P = board.create(
+        // Point P_n = (x, f_n(x))
+        const Pn = board.create(
           "point",
           [
             () => xPoint.X(),
@@ -141,105 +139,99 @@ export default function UniformContinuitySequenceSinNxOverN() {
           {
             name: "",
             size: 5,
-            strokeColor: COLORS.blue,
-            fillColor: COLORS.blue,
             fixed: true,
+            strokeColor: COLORS.red,
+            fillColor: COLORS.red,
             highlight: false,
           }
         ) as JXG.Point;
 
-        const Q = board.create(
+        // Point on the limit function at the same x: (x, 0)
+        const Qlim = board.create(
           "point",
-          [
-            () => yPoint.X(),
-            () => fn(yPoint.X(), Math.floor(nSlider.Value())),
-          ],
-          {
-            name: "",
-            size: 5,
-            strokeColor: COLORS.orange,
-            fillColor: COLORS.orange,
-            fixed: true,
-            highlight: false,
-          }
+          [() => xPoint.X(), () => fLimit(xPoint.X())],
+          { visible: false, fixed: true, highlight: false }
         ) as JXG.Point;
 
-        // ---- ε-neighborhood around f_n(x): y = f_n(x) ± ε  (dynamic)
-        const epsUpper = board.create("line", [[0, 0], [1, 0]], {
-          straightFirst: true,
-          straightLast: true,
-          fixed: true,
-          strokeColor: COLORS.red,
-          dash: 2,
-          strokeOpacity: 0.45,
+        // Error segment
+        const errSeg = board.create("segment", [Qlim, Pn], {
+          strokeColor: COLORS.gray,
           strokeWidth: 2,
-          highlight: false,
-        }) as JXG.Line;
-
-        const epsLower = board.create("line", [[0, 0], [1, 0]], {
-          straightFirst: true,
-          straightLast: true,
-          fixed: true,
-          strokeColor: COLORS.red,
-          dash: 2,
           strokeOpacity: 0.45,
-          strokeWidth: 2,
-          highlight: false,
-        }) as JXG.Line;
-
-        // optional vertical segment showing |f_n(x)-f_n(y)|
-        const diffSeg = board.create("segment", [P, Q], {
-          strokeColor: "#444",
-          strokeWidth: 4,
-          strokeOpacity: 0.35,
           highlight: false,
         }) as JXG.Segment;
 
-        // ---- performance: update only bg visibility deltas
+        // --- Performance: update only bg visibility changes
         let prevN = Math.floor(nSlider.Value());
 
         function updateBackgroundVisibility(n: number) {
           const showUpTo = Math.min(BACKGROUND_MAX, n - 1);
           const prevShowUpTo = Math.min(BACKGROUND_MAX, prevN - 1);
 
-          if (showUpTo === prevShowUpTo) return;
-
-          if (showUpTo > prevShowUpTo) {
-            for (let k = prevShowUpTo + 1; k <= showUpTo; k++) {
-              if (k >= 1) bgCurves[k - 1].setAttribute({ visible: true });
-            }
-          } else {
-            for (let k = showUpTo + 1; k <= prevShowUpTo; k++) {
-              if (k >= 1) bgCurves[k - 1].setAttribute({ visible: false });
+          if (showUpTo !== prevShowUpTo) {
+            if (showUpTo > prevShowUpTo) {
+              for (let k = prevShowUpTo + 1; k <= showUpTo; k++) {
+                if (k >= 1) bgCurves[k - 1].setAttribute({ visible: true });
+              }
+            } else {
+              for (let k = showUpTo + 1; k <= prevShowUpTo; k++) {
+                if (k >= 1) bgCurves[k - 1].setAttribute({ visible: false });
+              }
             }
           }
         }
 
-        function updateEpsTubeAndColors() {
-          const n = Math.floor(nSlider.Value());
+        function updateDynamicLinesAndColor() {
+          const x = xPoint.X();
           const eps = epsSlider.Value();
+          const fx = fLimit(x); // =0
 
-          const fx = fn(xPoint.X(), n);
-          const fy = fn(yPoint.X(), n);
+          // ε-tube around f(x)
+          const yU = fx + eps;
+          const yL = fx - eps;
 
-          // ε-tube around f_n(x)
-          epsUpper.point1.setPosition(JXG.COORDS_BY_USER, [0, fx + eps]);
-          epsUpper.point2.setPosition(JXG.COORDS_BY_USER, [1, fx + eps]);
-          epsLower.point1.setPosition(JXG.COORDS_BY_USER, [0, fx - eps]);
-          epsLower.point2.setPosition(JXG.COORDS_BY_USER, [1, fx - eps]);
+          tubeUpper.point1.setPosition(JXG.COORDS_BY_USER, [0, yU]);
+          tubeUpper.point2.setPosition(JXG.COORDS_BY_USER, [1, yU]);
+          tubeLower.point1.setPosition(JXG.COORDS_BY_USER, [0, yL]);
+          tubeLower.point2.setPosition(JXG.COORDS_BY_USER, [1, yL]);
 
-          // Condition for uniform continuity test at chosen x,y:
-          const ok = Math.abs(fy - fx) < eps;
+          // vertical guide x = chosen x
+          xGuide.point1.setPosition(JXG.COORDS_BY_USER, [x, -10]);
+          xGuide.point2.setPosition(JXG.COORDS_BY_USER, [x, 10]);
 
-          Q.setAttribute({
-            strokeColor: ok ? COLORS.green : COLORS.orange,
-            fillColor: ok ? COLORS.green : COLORS.orange,
+          const n = Math.floor(nSlider.Value());
+          const fnx = fn(x, n);
+
+          // Pointwise-style local check (same as your pointwise applet)
+          const ok = Math.abs(fnx - fx) < eps;
+
+          Pn.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            fillColor: ok ? COLORS.green : COLORS.red,
           });
 
-          diffSeg.setAttribute({ strokeColor: ok ? COLORS.green : "#444", strokeOpacity: ok ? 0.55 : 0.35 });
+          errSeg.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            strokeOpacity: ok ? 0.55 : 0.45,
+          });
 
-          // Optionally color the whole current curve (nice feedback)
-          currentCurve.setAttribute({ strokeColor: ok ? COLORS.green : COLORS.blue });
+          // Uniform check: sup_x |sin(nx)/n| = 1/n
+          const okUniform = 1 / n < eps;
+
+          // currentCurve.setAttribute({ strokeColor: okUniform ? COLORS.green : COLORS.blue });
+
+          tubeUpper.setAttribute({
+            strokeColor: okUniform ? COLORS.green : COLORS.red,
+            strokeOpacity: okUniform ? 0.55 : 0.45,
+          });
+          tubeLower.setAttribute({
+            strokeColor: okUniform ? COLORS.green : COLORS.red,
+            strokeOpacity: okUniform ? 0.55 : 0.45,
+          });
+          zeroFunction.setAttribute({
+            strokeColor: okUniform ? COLORS.green : COLORS.red,
+            strokeOpacity: okUniform ? 0.55 : 0.45,
+          });
         }
 
         const update = () => {
@@ -249,11 +241,11 @@ export default function UniformContinuitySequenceSinNxOverN() {
           updateBackgroundVisibility(n);
           prevN = n;
 
-          // keep x,y inside [0,2π]
-          xPoint.setPosition(JXG.COORDS_BY_USER, [clamp(xPoint.X()), 0]);
-          yPoint.setPosition(JXG.COORDS_BY_USER, [clamp(yPoint.X()), 0]);
+          // keep x in [0,2π]
+          const xx = Math.max(0, Math.min(TAU, xPoint.X()));
+          xPoint.setPosition(JXG.COORDS_BY_USER, [xx, 0]);
 
-          updateEpsTubeAndColors();
+          updateDynamicLinesAndColor();
 
           board.unsuspendUpdate();
           board.update();
@@ -263,10 +255,8 @@ export default function UniformContinuitySequenceSinNxOverN() {
         nSlider.on("up", update);
         epsSlider.on("drag", update);
         epsSlider.on("up", update);
-        deltaSlider.on("drag", update);
-        deltaSlider.on("up", update);
         xPoint.on("drag", update);
-        yPoint.on("drag", update);
+        xPoint.on("up", update);
 
         update();
       }}

@@ -22,8 +22,8 @@ export default function LeibnizAlternatingSeries() {
         const nSlider = board.create(
           "slider",
           [
-            [13.5, -0.58],
-            [21.5, -0.58],
+            [10, -0.6],
+            [19, -0.6],
             [0, 30, MAX_N],
           ],
           { name: "N", snapWidth: 1, precision: 0 }
@@ -32,14 +32,13 @@ export default function LeibnizAlternatingSeries() {
         const pSlider = board.create(
           "slider",
           [
-            [13.5, -0.44],
-            [21.5, -0.44],
+            [10, -0.4],
+            [19, -0.4],
             [0.2, 1.0, 2.5],
           ],
           { name: "p", snapWidth: 0.01, precision: 2 }
         ) as JXG.Slider;
 
-        // --- Minimal labels only
         board.create("text", [0.2, 1.10, "a_n"], {
           fixed: true,
           fontSize: 18,
@@ -61,7 +60,6 @@ export default function LeibnizAlternatingSeries() {
           anchorX: "left",
         });
 
-        // Optional: y=0 line (visual target for a_n)
         board.create("line", [[0, 0], [1, 0]], {
           straightFirst: true,
           straightLast: true,
@@ -73,7 +71,6 @@ export default function LeibnizAlternatingSeries() {
           highlight: false,
         });
 
-        // --- Precreate points (smaller size since there are more)
         const aPts: JXG.Point[] = [];
         const sPts: JXG.Point[] = [];
 
@@ -168,16 +165,17 @@ export default function LeibnizAlternatingSeries() {
 
         // --- Gap segment
         const gapSeg = board.create("segment", [[0, 0], [0, 0]], {
-          strokeColor: "#444",
-          strokeWidth: 4,
+          strokeColor: COLORS.gray,
+          strokeWidth: 2,
           strokeOpacity: 0.55,
+          dashed: 2,
           fixed: true,
           highlight: false,
         }) as JXG.Segment;
 
-        // --- Math
         function a(n: number, p: number) {
           return 1 / Math.pow(n + 1, p);
+          //return 1 /(2*n + 1);
         }
 
         function computeArrays(p: number) {
@@ -202,7 +200,7 @@ export default function LeibnizAlternatingSeries() {
         function update() {
           board.suspendUpdate();
 
-          const N = Math.max(0, Math.min(MAX_N, Math.floor(nSlider.Value())));
+          const N = Math.min(MAX_N, Math.floor(nSlider.Value()));
           const p = pSlider.Value();
 
           if (p !== cachedP) {

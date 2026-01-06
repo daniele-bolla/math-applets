@@ -5,6 +5,7 @@ interface SidebarLayoutProps {
   examples: {
     slug: string;
     data: {
+      ord: number;
       title: string;
       category?: string;
       approved?: boolean;
@@ -24,6 +25,18 @@ export default function SidebarLayout({ examples, title, children }: SidebarLayo
       return acc;
     }, {});
   }, [examples]);
+
+  const sortedGrouped = useMemo(() => {
+    const result: Record<string, SidebarLayoutProps["examples"]> = {};
+    Object.keys(grouped).forEach(category => {
+      result[category] = [...grouped[category]].sort((a, b) => {
+        const ordA = a.data.ord ?? Infinity;
+        const ordB = b.data.ord ?? Infinity;
+        return ordA - ordB;
+      });
+    });
+    return result;
+  }, [grouped]);
 
   const categories = useMemo(() => orderedCategoryKeys(grouped), [grouped]);
 
@@ -80,7 +93,7 @@ export default function SidebarLayout({ examples, title, children }: SidebarLayo
               </h3>
 
               <div className="space-y-1">
-                {grouped[category].map((ex) => (
+                {sortedGrouped[category].map((ex) => (
                   <a
                     key={ex.slug}
                     href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}

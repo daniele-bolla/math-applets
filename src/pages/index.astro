@@ -16,6 +16,16 @@ const grouped = examples.reduce((acc, ex) => {
   return acc;
 }, {} as Record<string, CollectionEntry<"examples">[]>);
 
+// Sort examples within each category by the ord property
+const sortedGrouped: Record<string, CollectionEntry<"examples">[]> = {};
+Object.keys(grouped).forEach(category => {
+  sortedGrouped[category] = [...grouped[category]].sort((a, b) => {
+    const ordA = a.data.ord ?? Infinity; // Treat undefined ord as last
+    const ordB = b.data.ord ?? Infinity;
+    return ordA - ordB;
+  });
+});
+
 const categories = orderedCategoryKeys(grouped);
 ---
 
@@ -30,7 +40,7 @@ const categories = orderedCategoryKeys(grouped);
 
           <ul class="space-y-1 list-none">
             {
-              grouped[category].map((ex) => (
+              sortedGrouped[category].map((ex) => (
                 <li>
                   <a
                     href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
