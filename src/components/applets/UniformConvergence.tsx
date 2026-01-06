@@ -71,7 +71,7 @@ export default function UniformConvergenceSinNxOverN() {
         }
 
         // --- Current curve (solid)
-        const currentCurve = board.create(
+         board.create(
           "functiongraph",
           [(x: number) => fn(x, Math.floor(nSlider.Value())), 0, TAU],
           {

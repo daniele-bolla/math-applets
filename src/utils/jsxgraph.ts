@@ -111,48 +111,50 @@ export function createFunctionGraph(
     f: (x: number) => number,
     interval: [number, number],
     attributes: Partial<JXG.FunctiongraphAttributes> = {},
-    color: string = COLORS.blue
+    color: string | (() => string) = COLORS.blue
 ) {
     return board.create('functiongraph', [f, ...interval], {
         ...DEFAULT_FUNCTION_GRAPH_ATTRIBUTES,
         strokeColor: color,
         ...attributes,
-    });
+    }) as JXG.Functiongraph;
 }
 
 export function createPoint(
     board: JXG.Board,
     coords: Coord,
     attributes: Partial<JXG.PointAttributes> = {},
-    color: string = COLORS.black
+    color: string | (() => string) = COLORS.black
 ) {
     const point = board.create('point', coords, {
         ...DEFAULT_POINT_ATTRIBUTES,
+        strokeColor: color, 
+        fillColor: color,
         ...attributes,
+
     });
-    point.setAttribute({strokeColor: color, fillColor: color});
-    return point;
+    return point as JXG.Point;
 }
 
 export function createGlider(
     board: JXG.Board,
     coords: [number, number, JXG.GeometryElement | AxisAttributes | undefined],
     attributes: Partial<JXG.GliderAttributes> = {},
-    color: string = COLORS.orange
+    color: string | (() => string) = COLORS.orange
 ) {
     return board.create('glider', coords, {
         ...DEFAULT_GLIDER_ATTRIBUTES,
         strokeColor: color,
         fillColor: color,
         ...attributes,
-    });
+    }) as JXG.Glider
 }
 
 export function createLine(
     board: JXG.Board,
     points: [JXG.Point, JXG.Point],
     attributes: Partial<JXG.LineAttributes> = {},
-    color: string = COLORS.blue
+     color: string | (() => string) = COLORS.blue
 ) {
     const line = board.create('line', points, {
         ...DEFAULT_LINE_ATTRIBUTES,
@@ -166,7 +168,7 @@ export function createSegment(
     board: JXG.Board,
     points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
-    color: string = COLORS.blue
+    color: string | (() => string) = COLORS.blue
 ) {
     const segment = board.create('segment', points, {
         ...DEFAULT_SEGMENT_ATTRIBUTES,
@@ -176,11 +178,12 @@ export function createSegment(
     return segment;
 }
 
+
 export function createSecant(
     board: JXG.Board,
     points: [JXG.Point, JXG.Point],
     attributes: Partial<JXG.LineAttributes> = {},
-    color: string = COLORS.red
+    color: string | (() => string) = COLORS.red
 ) {
     const line = board.create('line', points, {
         ...DEFAULT_SECANT_ATTRIBUTES,
@@ -194,13 +197,13 @@ export function createTangent(
     board: JXG.Board,
     points: [JXG.Point, JXG.Point],
     attributes: Partial<JXG.LineAttributes> = {},
-    color: string = COLORS.purple
+    color: string | (() => string) = COLORS.purple
 ) {
     const line = board.create('line', points, {
         ...DEFAULT_TANGENT_ATTRIBUTES,
+        strokeColor: color,
         ...attributes,
     });
-    line.setAttribute({strokeColor: color});
     return line;
 }
 
@@ -209,13 +212,13 @@ export function createText(
     coords: Coord,
     content: string | (() => string),
     attributes: Partial<JXG.TextAttributes> = {},
-    color: string = COLORS.black
+    color: string | (() => string) = COLORS.black
 ) {
     const text = board.create('text', [coords[0], coords[1], content], {
         ...DEFAULT_TEXT_ATTRIBUTES,
+        color: color,
         ...attributes,
     });
-    text.setAttribute({color: color});
     return text;
 }
 
@@ -236,13 +239,13 @@ export function createDashedSegment(
     board: JXG.Board,
     points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
-    color: string = COLORS.gray
+    color: string | (() => string) = COLORS.gray
 ) {
     const segment = board.create('segment', points, {
         ...DEFAULT_DASHED_SEGMENT_ATTRIBUTES,
+        strokeColor: color,
         ...attributes,
     });
-    segment.setAttribute({strokeColor: color});
     return segment;
 }
 
@@ -250,13 +253,13 @@ export function createArrow(
     board: JXG.Board,
     points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.LineAttributes> = {},
-    color: string = COLORS.orange
+    color: string | (() => string) =COLORS.orange
 ) {
     const arrow = board.create('arrow', points, {
         ...DEFAULT_ARROW_SEGMENT_ATTRIBUTES,
+        strokeColor: color,
         ...attributes,
     });
-    arrow.setAttribute({strokeColor: color});
     return arrow;
 }
 
@@ -264,12 +267,12 @@ export function createArrowSegment(
     board: JXG.Board,
     points: [JXG.Point | Coord, JXG.Point | Coord],
     attributes: Partial<JXG.SegmentAttributes> = {},
-    color: string = COLORS.orange
+    color: string | (() => string) = COLORS.orange
 ) {
     const segment = board.create('segment', points, {
         ...DEFAULT_ARROW_SEGMENT_ATTRIBUTES,
+        strokeColor: color,
         ...attributes,
     });
-    segment.setAttribute({strokeColor: color});
     return segment;
 }

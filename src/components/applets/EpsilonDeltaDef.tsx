@@ -249,17 +249,14 @@ export default function EpsilonDeltaDefApplet() {
                 }, COLORS.blue);
 
                 // |f(x) - f(a)| line (changes color)
-                const conditionLine = board.create('line', [pointYfpointA, point0fx], {
+                createLine(board, [pointYfpointA, point0fx], {
                     straightFirst: false,
                     straightLast: false,
                     strokeWidth: 3,
-                });
-                conditionLine.setAttribute({
-                    strokeColor: () => {
-                        const epsilon = getEpsilon();
-                        const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
-                        return dist < epsilon ? COLORS.green : COLORS.red;
-                    }
+                }, () => {
+                    const epsilon = getEpsilon();
+                    const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
+                    return dist < epsilon ? COLORS.green : COLORS.red;
                 });
 
             }}

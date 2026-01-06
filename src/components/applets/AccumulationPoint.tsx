@@ -1,6 +1,13 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    DEFAULT_GLIDER_ATTRIBUTES,
+    DEFAULT_POINT_ATTRIBUTES,
+    createGlider,
+    createPoint,
+    createSegment
+} from "../../utils/jsxgraph";
 
 export default function AccumulationPointApplet() {
     return (
@@ -41,26 +48,24 @@ export default function AccumulationPointApplet() {
                 };
 
                 const updateColors = () => {
-                    const newColor = isIntercepting() ? COLORS.green : COLORS.orange;
+                    const newColor = isIntercepting() ? COLORS.green : COLORS.red;
                     p.setAttribute({ color: newColor });
                 };
 
                 // JSXGraph Elements
-                const xAxisPositive = board.create('segment', [[0, 0], [1.0, 0]], { visible: false });
+                const xAxisPositive = createSegment(board, [[0, 0], [1.0, 0]], { visible: false });
 
-                const p = board.create('glider', [1, 0, xAxisPositive], {
+                const p = createGlider(board, [1, 0, xAxisPositive], {
                     ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: '',
                     layer: 100,
-                    strokeOpacity: 0.4,
-                    fillOpacity: 0.4,
-                    color: COLORS.orange
-                });
+                    highlight: false,
+                }, COLORS.green);
 
                 const sequencePoints: JXG.Point[] = [];
                 for (let i = 1; i < MAX_POINTS_HARD_CAP; i++) {
                     if (i > 0) {
-                        const pt = board.create('point', [1 / i, 0], {
+                        const pt = createPoint(board, [1 / i, 0], {
                             ...DEFAULT_POINT_ATTRIBUTES,
                             name: ``,
                             fixed: true
@@ -69,21 +74,20 @@ export default function AccumulationPointApplet() {
                     }
                 }
 
-                board.create('point', [0, 0], {
+                createPoint(board, [0, 0], {
                     ...DEFAULT_POINT_ATTRIBUTES,
                     name: '',
-                    color: COLORS.pink,
                     fixed: true
-                });
+                }, COLORS.pink);
 
-                board.create('segment', [
+                createSegment(board, [
                     [() => p.X() - getRadius(), 0],
                     [() => p.X() + getRadius(), 0]
                 ], {
-                    strokeColor: () => isIntercepting() ? COLORS.green : COLORS.orange,
                     strokeWidth: 4,
-                    strokeOpacity: 0.6
-                });
+                    strokeOpacity: 0.6,
+                    highlight: false,
+                }, () => isIntercepting() ? COLORS.green : COLORS.red);
 
                 // Event Listeners
                 p.on('drag', () => {
