@@ -2,8 +2,13 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import {
   COLORS,
-  DEFAULT_FUNCTION_GRAPH_ATTRIBUTES,
-  DEFAULT_GLIDER_ATTRIBUTES,
+  createFunctionGraph,
+  createGlider,
+  createPoint,
+  createSegment,
+  createSlider,
+  createText,
+  createCurve,
 } from "../../utils/jsxgraph";
 
 export default function IntegrabilityProofApplet() {
@@ -18,104 +23,87 @@ export default function IntegrabilityProofApplet() {
         // ============================================================
         const f = (x: number) => 0.5 * Math.sin(x) * x + 2.5;
 
-        board.create("functiongraph", [f, -10, 10], {
-          ...DEFAULT_FUNCTION_GRAPH_ATTRIBUTES,
-        });
+        createFunctionGraph(board, f, [-10, 10]);
 
         // ============================================================
         // STEP 0: Controls (ε, n, interval endpoints a,b)
         // ============================================================
-        const epsSlider = board.create(
-          "slider",
-          [
-            [5, -2],
-            [8, -2],
-            [0.1, 1.5, 5.0],
-          ],
+        const epsSlider = createSlider(
+          board,
+          [5, -2],
+          [8, -2],
+          [0.1, 1.5, 5.0],
           { name: "&epsilon;", snapWidth: 0.1 }
-        ) as JXG.Slider;
+        );
 
-        const nSlider = board.create(
-          "slider",
-          [
-            [5, -3.5],
-            [8, -3.5],
-            [1, 10, 200],
-          ],
+        const nSlider = createSlider(
+          board,
+          [5, -3.5],
+          [8, -3.5],
+          [1, 10, 200],
           { name: "n", snapWidth: 1, precision: 0 }
-        ) as JXG.Slider;
+        );
 
-        const gliderA = board.create("glider", [1, 0, board.defaultAxes.x], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const gliderA = createGlider(board, [1, 0, board.defaultAxes.x], {
           name: "a",
-          color: COLORS.blue,
-        });
+        }, COLORS.blue);
 
-        const gliderB = board.create("glider", [6, 0, board.defaultAxes.x], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const gliderB = createGlider(board, [6, 0, board.defaultAxes.x], {
           name: "b",
-          color: COLORS.blue,
-        });
+        }, COLORS.blue);
 
         // ============================================================
         // Graphics objects
         // ============================================================
-        const upperStep = board.create("curve", [[0], [0]], {
+        const upperStep = createCurve(board, [[0], [0]], {
           strokeWidth: 2,
-          strokeColor: COLORS.orange,
           fillOpacity: 0,
           withLabel: false,
           layer: 7,
-        });
+        }, COLORS.orange);
 
-        const lowerStep = board.create("curve", [[0], [0]], {
+        const lowerStep = createCurve(board, [[0], [0]], {
           strokeWidth: 2,
-          strokeColor: "#800080",
           fillOpacity: 0,
           withLabel: false,
           layer: 7,
-        });
+        }, "#800080");
 
-        const bandPoly = board.create("curve", [[0], [0]], {
+        const bandPoly = createCurve(board, [[0], [0]], {
           strokeWidth: 0,
           fillOpacity: 0.42,
-          fillColor: COLORS.green,
           withLabel: false,
           layer: 3,
-        });
+        }, COLORS.green);
 
         // Partition lines (orange for φ, purple for ψ)
-        const phiLines = board.create("curve", [[0], [0]], {
-          strokeColor: COLORS.orange,
+        const phiLines = createCurve(board, [[0], [0]], {
           strokeWidth: .5,
           strokeOpacity: 0.6,
           dash: 3,
           layer: 9,
-        });
+        }, COLORS.orange);
 
-        const psiLines = board.create("curve", [[0], [0]], {
-          strokeColor: "#800080",
+        const psiLines = createCurve(board, [[0], [0]], {
           strokeWidth: .5,
           strokeOpacity: 0.6,
           dash: 3,
           layer: 9,
-        });
+        }, "#800080");
 
-        const labelPhi = board.create("text", [0, 0, "&phi;"], {
-          color: COLORS.orange,
+        const labelPhi = createText(board, [0, 0], "&phi;", {
           anchorX: "left",
           fontSize: 16,
           fixed: true,
           layer: 10,
-        });
+        }, COLORS.orange);
 
-        const labelPsi = board.create("text", [0, 0, "&psi;"], {
-          color: "#800080",
+        const labelPsi = createText(board, [0, 0], "&psi;", {
           anchorX: "left",
           fontSize: 16,
           fixed: true,
           layer: 10,
-        });
+        }, "#800080");
 
         // ============================================================
         // ε~-bracket at x=b (length 2ε~)
@@ -124,37 +112,32 @@ export default function IntegrabilityProofApplet() {
         let currentETilde = 0.2;
         let deltaCopndition = true; // updated in update()
 
-        const epsP1 = board.create(
-          "point",
+        const epsP1 = createPoint(
+          board,
           [() => currentB, () => f(currentB) - currentETilde],
-          { visible: false, fixed: true }
+          { visible: false, fixed: true },
+          COLORS.black
         );
-        const epsP2 = board.create(
-          "point",
+        const epsP2 = createPoint(
+          board,
           [() => currentB, () => f(currentB) + currentETilde],
-          { visible: false, fixed: true }
+          { visible: false, fixed: true },
+          COLORS.black
         );
 
-        const epsBracket = board.create("segment", [epsP1, epsP2], {
-          strokeColor: COLORS.green,
-          strokeWidth: 2,
-          dash: 2,
-          fixed: true,
-          highlight: false,
+        const epsBracket = createSegment(board, [epsP1, epsP2], {
           layer: 10,
-        });
+        }, COLORS.green);
 
-        const epsBracketLabel = board.create(
-          "text",
-          [
-            () => currentB + 0.45,
-            () => f(currentB),
-            () =>
-              `2ε~ (${
-                deltaCopndition ? "(b-a)/n < δ" : "(b-a)/n ≥ δ"
-              })`,
-          ],
-          { fixed: true, anchorX: "left", fontSize: 12, color: COLORS.green, layer: 10 }
+        const epsBracketLabel = createText(
+          board,
+          [() => currentB + 0.45, () => f(currentB)],
+          () =>
+            `2ε~ (${
+              deltaCopndition ? "(b-a)/n < δ" : "(b-a)/n ≥ δ"
+            })`,
+          { fixed: true, anchorX: "left", fontSize: 12, layer: 10 },
+          COLORS.green
         );
 
 

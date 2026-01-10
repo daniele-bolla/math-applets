@@ -1,6 +1,16 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+  COLORS,
+  createFunctionGraph,
+  createGlider,
+  createPoint,
+  createLine,
+  createIntegral,
+  createPolygon,
+  createSegment,
+  createDashedSegment
+} from "../../utils/jsxgraph";
 
 export default function IntegralMeanValueTheorem() {
   return (
@@ -13,7 +23,7 @@ export default function IntegralMeanValueTheorem() {
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {
-        
+
         // f(x) = 0.1 * x^3 + 1
         const f = (x: number) => 0.1 * Math.pow(x, 3) + 1;
 
@@ -23,34 +33,23 @@ export default function IntegralMeanValueTheorem() {
         // Inverse Function: f^-1(y) = cbrt(10 * (y - 1))
         const fInverse = (y: number) => Math.cbrt(10 * (y - 1));
 
-        const curve = board.create("functiongraph", [f, -10, 10], {
-          strokeColor: COLORS.blue,
-          strokeWidth: 3,
+        const curve = createFunctionGraph(board, f, [-10, 10], {
           name: "f(x)",
           withLabel: true,
           label: { position: "rt", offset: [-10, 10], color: COLORS.blue },
-        });
+        }, COLORS.blue);
 
-        const xAxis = board.create("line", [[0, 0], [1, 0]], { visible: false });
+        const xAxisPoint1 = board.create('point', [0, 0], { visible: false });
+        const xAxisPoint2 = board.create('point', [1, 0], { visible: false });
+        const xAxis = createLine(board, [xAxisPoint1, xAxisPoint2], { visible: false }, COLORS.black);
 
-        const A = board.create("glider", [1, 0, xAxis], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const A = createGlider(board, [1, 0, xAxis], {
           name: "a",
-          color: COLORS.blue,
-        });
+        }, COLORS.blue);
 
-        const B = board.create("glider", [4, 0, xAxis], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const B = createGlider(board, [4, 0, xAxis], {
           name: "b",
-          color: COLORS.blue,
-        });
-
-        /* TODO replace interval with
-        const a = () => Math.min(A.X(), B.X());
-        const b = () => Math.max(A.X(), B.X());
-
-        */
-
+        }, COLORS.blue);
 
         const interval = () => {
           const a = A.X();
@@ -66,79 +65,60 @@ export default function IntegralMeanValueTheorem() {
 
         const extrema = () => {
           const { start, end } = interval();
-          return { 
-            min: f(start), 
-            max: f(end) 
+          return {
+            min: f(start),
+            max: f(end)
           };
         };
 
-        board.create("integral", [[() => interval().start, () => interval().end], curve], {
-          color: COLORS.blue,
-          fillOpacity: 0.1,
-          label: { visible: false },
-        });
+        createIntegral(board, [() => interval().start, () => interval().end], curve, {
+        }, COLORS.blue);
+
         // labeled points m and M
-        board.create("point", [
+        createPoint(board, [
           () => interval().start,
           () => extrema().min,
         ], {
-          ...DEFAULT_POINT_ATTRIBUTES,
           name: "m",
-          color: "gray",
-          fixed: true,
           label: { offset: [-10, -10], color: "gray" },
-        });
+        }, "gray");
 
-        board.create("point", [
+        createPoint(board, [
           () => interval().end,
           () => extrema().max,
         ], {
-          ...DEFAULT_POINT_ATTRIBUTES,
           name: "M",
-          color: "gray",
-          fixed: true,
           label: { offset: [-10, 10], color: "gray" },
-        });
+        }, "gray");
+
         // Horizontal Min/Max Lines
-        board.create("line",
-          [[() => interval().start, () => extrema().min], [() => interval().end, () => extrema().min]],
-          { strokeColor: "gray", dash: 2, strokeWidth: 0.5 }
-        );
-        board.create("line",
-          [[() => interval().start, () => extrema().max], [() => interval().end, () => extrema().max]],
-          { strokeColor: "gray", dash: 2, strokeWidth: 0.5 }
-        );
+        const minLinePoint1 = board.create('point', [() => interval().start, () => extrema().min], { visible: false });
+        const minLinePoint2 = board.create('point', [() => interval().end, () => extrema().min], { visible: false });
+        createLine(board, [minLinePoint1, minLinePoint2], { dash: 2, strokeWidth: 0.5 }, "gray");
+
+        const maxLinePoint1 = board.create('point', [() => interval().start, () => extrema().max], { visible: false });
+        const maxLinePoint2 = board.create('point', [() => interval().end, () => extrema().max], { visible: false });
+        createLine(board, [maxLinePoint1, maxLinePoint2], { dash: 2, strokeWidth: 0.5 }, "gray");
 
         // Mean Value Rectangle
-        board.create("polygon", [
+        createPolygon(board, [
           [() => interval().start, 0],
           [() => interval().end, 0],
           [() => interval().end, meanValue],
           [() => interval().start, meanValue],
         ], {
-          fillColor: COLORS.red,
-          fillOpacity: 0.2,
-          borders: { strokeWidth: 2, strokeColor: COLORS.red },
-          vertices: { visible: false },
-        });
+          borders: {  strokeColor: COLORS.red },
+        }, COLORS.red);
 
-        // --- 3. ZERO Numerical Methods ---
-        // We find Xi using the analytical inverse function!
         const getXi = () => fInverse(meanValue());
 
-        const xiPoint = board.create("point", [getXi, meanValue], {
-          ...DEFAULT_POINT_ATTRIBUTES,
+        const xiPoint = createPoint(board, [getXi, meanValue], {
           name: "f(ξ)",
-          color: COLORS.green,
-          fixed: true,
           label: { offset: [0, 10], fontSize: 14, color: COLORS.green },
-        });
+        }, COLORS.green);
 
-        board.create("segment", [xiPoint, [() => xiPoint.X(), 0]], {
-          strokeColor: COLORS.green,
-          dash: 2,
-          strokeWidth: 1,
-        });
+        createDashedSegment(board, [xiPoint, [() => xiPoint.X(), 0]], {
+        }, COLORS.green);
       }}
     />
   );

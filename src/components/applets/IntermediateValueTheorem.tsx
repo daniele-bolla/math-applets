@@ -32,7 +32,6 @@ export default function IVTApplet() {
                 const point_fa = createPoint(board,
                     [() => point_a.X(), () => objectiveFunction(point_a.X())],
                     {
-                        fixed: true,
                     },
                     COLORS.green
                 );
@@ -40,7 +39,6 @@ export default function IVTApplet() {
                 const point_fb = createPoint(board,
                     [() => point_b.X(), () => objectiveFunction(point_b.X())],
                     {
-                        fixed: true,
                     },
                     COLORS.red
                 );
@@ -49,7 +47,6 @@ export default function IVTApplet() {
                     [0, () => objectiveFunction(point_a.X())],
                     {
                         name: 'f(a)',
-                        fixed: true,
                     },
                     COLORS.green
                 );
@@ -58,7 +55,6 @@ export default function IVTApplet() {
                     [0, () => objectiveFunction(point_b.X())],
                     {
                         name: 'f(b)',
-                        fixed: true,
                     },
                     COLORS.red
                 );

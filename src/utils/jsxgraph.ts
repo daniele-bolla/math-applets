@@ -47,24 +47,34 @@ export const DEFAULT_GLIDER_ATTRIBUTES: JXG.GliderAttributes = {
     face: "<>",
     size: 6,
     strokeWidth: 2,
+    highlight: false,
 };
 
 export const DEFAULT_POINT_ATTRIBUTES: JXG.PointAttributes = {
+    name: "",
     size: 1,
     strokeWidth: 1,
+    fixed: true,
+        highlight: false,
+
 };
 
 export const DEFAULT_LINE_ATTRIBUTES: JXG.LineAttributes = {
-    strokeWidth: 2,
+    strokeWidth: 1,
+        highlight: false,
+
 };
 
 export const DEFAULT_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
-    strokeWidth: 2,
+    strokeWidth: 1,    highlight: false,
+
 };
 
 export const DEFAULT_FUNCTION_GRAPH_ATTRIBUTES: JXG.FunctiongraphAttributes = {
     strokeColor: COLORS.blue,
-    strokeWidth: 3,
+    strokeWidth: 2,
+        highlight: false,
+
 };
 
 export const DEFAULT_SECANT_ATTRIBUTES: JXG.LineAttributes = {
@@ -73,31 +83,57 @@ export const DEFAULT_SECANT_ATTRIBUTES: JXG.LineAttributes = {
     dash: 2,
     straightFirst: true,
     straightLast: true,
+        highlight: false,
+
 };
 
 export const DEFAULT_TANGENT_ATTRIBUTES: JXG.LineAttributes = {
     strokeColor: COLORS.purple,
-    strokeWidth: 3,
+    strokeWidth: 2,
     straightFirst: true,
     straightLast: true,
+        highlight: false,
+
 };
 
 export const DEFAULT_DASHED_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeColor: COLORS.gray,
     strokeWidth: 1,
     dash: 2,
+        highlight: false,
+
 };
 
 export const DEFAULT_ARROW_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeColor: COLORS.orange,
-    strokeWidth: 2,
+    strokeWidth: 1,
     lastArrow: true,
+        highlight: false,
+
+};
+
+export const DEFAULT_POLYGON_ATTRIBUTES: JXG.PolygonAttributes = {
+    fillColor: COLORS.blue,
+    fillOpacity: 0.2,
+    borders: { strokeWidth: 1 },
+    vertices: { visible: false },
+        highlight: false,
+
+};
+
+export const DEFAULT_INTEGRAL_ATTRIBUTES: JXG.IntegralAttributes = {
+    color: COLORS.blue,
+    fillOpacity: 0.2,
+    isLabel: false,
+    highlight: false,
+
 };
 
 export const DEFAULT_TEXT_ATTRIBUTES: JXG.TextAttributes = {
     fontSize: 12,
     color: COLORS.black,
-    fixed: true,
+    fixed: true
+
 };
 
 export const DEFAULT_SLIDER_ATTRIBUTES: JXG.SliderAttributes = {
@@ -275,4 +311,52 @@ export function createArrowSegment(
         ...attributes,
     });
     return segment;
+}
+
+export function createPolygon(
+    board: JXG.Board,
+    points: (JXG.Point | Coord)[],
+    attributes: Partial<JXG.PolygonAttributes> = {},
+    color: string | (() => string) = COLORS.blue
+) {
+    const polygon = board.create('polygon', points, {
+        ...DEFAULT_POLYGON_ATTRIBUTES,
+        fillColor: color,
+        ...attributes,
+    });
+    return polygon;
+}
+
+export function createIntegral(
+    board: JXG.Board,
+    interval: [number | (() => number), number | (() => number)],
+    functionGraph: JXG.Functiongraph,
+    attributes: Partial<JXG.IntegralAttributes> = {},
+    color: string | (() => string) = COLORS.blue
+) {
+    const integral = board.create('integral', [interval, functionGraph], {
+        ...DEFAULT_INTEGRAL_ATTRIBUTES,
+        color: color,
+        ...attributes,
+    });
+    return integral;
+}
+
+export const DEFAULT_CURVE_ATTRIBUTES: JXG.CurveAttributes = {
+    strokeWidth: 2,
+    highlight: false,
+};
+
+export function createCurve(
+    board: JXG.Board,
+    dataFunction: [(() => number[]), (() => number[])],
+    attributes: Partial<JXG.CurveAttributes> = {},
+    color?: string | (() => string)
+) {
+    const curve = board.create('curve', dataFunction, {
+        ...DEFAULT_CURVE_ATTRIBUTES,
+        ...(color ? { strokeColor: color } : {}),
+        ...attributes,
+    });
+    return curve;
 }

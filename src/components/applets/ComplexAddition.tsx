@@ -39,7 +39,7 @@ export default function ComplexAdditionApplet() {
 
         const z3 = createPoint(board,
           [() => z1.X() + z2.X(), () => z1.Y() + z2.Y()],
-          {},
+          {name: "" },
           COLORS.red
         );
 

@@ -1,6 +1,15 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    DEFAULT_GLIDER_ATTRIBUTES,
+    createLine,
+    createGlider,
+    createSegment,
+    createText,
+    createFunctionGraph,
+    createPoint
+} from "../../utils/jsxgraph";
 
 export default function CauchyMVTApplet() {
     return (
@@ -30,22 +39,22 @@ export default function CauchyMVTApplet() {
                 // 2. SLIDERS
                 // ===========================================
                 
-                const xAxis = board.create('line', [[0,0], [1,0]], { visible: false });
+                const xAxis = createLine(board, [[0,0], [1,0]], { visible: false });
 
-                const aGlider = board.create('glider', [-1, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'a', color: COLORS.blue, size: 5,
+                const aGlider = createGlider(board, [-1, 0, xAxis], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'a', size: 5,
                     label: { offset: [0, -20], color: COLORS.blue }
-                });
+                }, COLORS.blue);
 
-                const bGlider = board.create('glider', [3, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'b', color: COLORS.blue, size: 5,
+                const bGlider = createGlider(board, [3, 0, xAxis], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'b', size: 5,
                     label: { offset: [0, -20], color: COLORS.blue }
-                });
+                }, COLORS.blue);
 
-                const cGlider = board.create('glider', [0.5, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'c', color: COLORS.orange, size: 6,
+                const cGlider = createGlider(board, [0.5, 0, xAxis], {
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'c', size: 6,
                     label: { offset: [0, 20], color: COLORS.orange, fontSize: 16 }
-                });
+                }, COLORS.orange);
 
                 const getA = () => Math.min(aGlider.X(), bGlider.X());
                 const getB = () => Math.max(aGlider.X(), bGlider.X());
@@ -81,36 +90,36 @@ export default function CauchyMVTApplet() {
 
                 // Bar 1: Δg * f'(c)
                 // Represents the Left Hand Side of the simplified equation
-                board.create('segment', [[BAR_X, BASE_Y], [BAR_X, () => getTerm1()]], {
-                    strokeColor: COLORS.blue, strokeWidth: 10,
+                createSegment(board, [[BAR_X, BASE_Y], [BAR_X, () => getTerm1()]], {
+                    strokeWidth: 10,
                     name: '', withLabel: false
-                });
-                board.create('text', [BAR_X, () => getTerm1() + (getTerm1()>0?1:-1), "Δg · f '(c)"], {
-                    anchorX: 'middle', color: COLORS.blue, fontSize: 14
-                });
+                }, COLORS.blue);
+                createText(board, [BAR_X, () => getTerm1() + (getTerm1()>0?1:-1), "Δg · f '(c)"], {
+                    anchorX: 'middle', fontSize: 14
+                }, COLORS.blue);
 
                 // Bar 2: Δf * g'(c)
                 // Represents the Right Hand Side
-                board.create('segment', [[BAR_X + 1.5, BASE_Y], [BAR_X + 1.5, () => getTerm2()]], {
-                    strokeColor: 'purple', strokeWidth: 10,
+                createSegment(board, [[BAR_X + 1.5, BASE_Y], [BAR_X + 1.5, () => getTerm2()]], {
+                    strokeWidth: 10,
                     name: '', withLabel: false
-                });
-                board.create('text', [BAR_X + 1.5, () => getTerm2() + (getTerm2()>0?1:-1), "Δf · g'(c)"], {
-                    anchorX: 'middle', color: 'purple', fontSize: 14
-                });
+                }, 'purple');
+                createText(board, [BAR_X + 1.5, () => getTerm2() + (getTerm2()>0?1:-1), "Δf · g'(c)"], {
+                    anchorX: 'middle', fontSize: 14
+                }, 'purple');
 
                 // Equality Indicator (A horizontal line connecting the tops)
-                board.create('segment', [
+                createSegment(board, [
                     [BAR_X, () => getTerm1()],
                     [BAR_X + 1.5, () => getTerm2()]
                 ], {
-                    strokeColor: statusColor, strokeWidth: 2, dash: 2
-                });
-                
+                    strokeWidth: 2, dash: 2
+                }, statusColor);
+
                 // Label "MATCH" or "DIFF"
-                board.create('text', [BAR_X + 0.75, () => (getTerm1()+getTerm2())/2, () => isMatch() ? "EQUAL" : "≠"], {
-                    anchorX: 'middle', color: statusColor, fontSize: 16, fontWeight: 'bold'
-                });
+                createText(board, [BAR_X + 0.75, () => (getTerm1()+getTerm2())/2, () => isMatch() ? "EQUAL" : "≠"], {
+                    anchorX: 'middle', fontSize: 16, fontWeight: 'bold'
+                }, statusColor);
 
 
                 // ===========================================
@@ -137,40 +146,41 @@ export default function CauchyMVTApplet() {
                 };
 
                 // h(x) Graph
-                board.create('functiongraph', [visH, -10, 10], {
-                    strokeColor: '#D32F2F', strokeWidth: 2,
+                createFunctionGraph(board, visH, [-10, 10], {
+                    strokeWidth: 2,
                     name: 'h(x)', withLabel: true, label: {position:'rt', offset:[-20,10], color:'#D32F2F'}
-                });
+                }, '#D32F2F');
 
                 // Rolle's Points (h(a)=0, h(b)=0)
-                board.create('point', [getA, 0], { size: 3, color: '#D32F2F', fixed: true, name: '', showInfobox:false });
-                board.create('point', [getB, 0], { size: 3, color: '#D32F2F', fixed: true, name: '', showInfobox:false });
+                createPoint(board, [getA, 0], { size: 3, fixed: true, name: '', showInfobox:false }, '#D32F2F');
+                createPoint(board, [getB, 0], { size: 3, fixed: true, name: '', showInfobox:false }, '#D32F2F');
 
                 // Tangent on h(x)
-                board.create('functiongraph', [
-                    (x: number) => visH(getC()) + (getRawH_prime(getC())*SCALE) * (x - getC()), -10, 10
-                ], {
-                    strokeColor: statusColor, strokeWidth: 3, dash: 0
-                });
-                
-                board.create('point', [getC, () => visH(getC())], {
-                    size: 4, color: COLORS.orange, strokeColor: '#D32F2F', name: '', fixed: true
-                });
+                createFunctionGraph(board,
+                    (x: number) => visH(getC()) + (getRawH_prime(getC())*SCALE) * (x - getC()),
+                    [-10, 10],
+                    { strokeWidth: 3, dash: 0 },
+                    statusColor
+                );
+
+                createPoint(board, [getC, () => visH(getC())], {
+                    size: 4, fixed: true, name: '',
+                }, COLORS.orange);
 
                 // ===========================================
                 // 6. REFERENCE GRAPHS f(x) & g(x)
                 // ===========================================
                 
                 // f(x) Top
-                board.create('functiongraph', [f, -10, 10], { strokeColor: COLORS.blue, strokeWidth: 3, name: 'f(x)', withLabel: true });
-                board.create('point', [getC, () => f(getC())], { size: 2, color: COLORS.orange, name: '', fixed: true });
+                createFunctionGraph(board, f, [-10, 10], { strokeWidth: 3, name: 'f(x)', withLabel: true }, COLORS.blue);
+                createPoint(board, [getC, () => f(getC())], { size: 2, name: '', fixed: true }, COLORS.orange);
 
                 // g(x) Bottom
-                board.create('functiongraph', [g, -10, 10], { strokeColor: 'purple', strokeWidth: 3, name: 'g(x)', withLabel: true });
-                board.create('point', [getC, () => g(getC())], { size: 2, color: COLORS.orange, name: '', fixed: true });
+                createFunctionGraph(board, g, [-10, 10], { strokeWidth: 3, name: 'g(x)', withLabel: true }, 'purple');
+                createPoint(board, [getC, () => g(getC())], { size: 2, name: '', fixed: true }, COLORS.orange);
 
                 // Vertical dashed line
-                board.create('line', [[getC, -15], [getC, 15]], { strokeColor: COLORS.gray, strokeWidth: 1, dash: 3 });
+                createLine(board, [[getC, -15], [getC, 15]], { strokeWidth: 1, dash: 3 }, COLORS.gray);
 
             }}
         />

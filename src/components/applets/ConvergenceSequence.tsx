@@ -1,6 +1,12 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
-import { COLORS, DEFAULT_GLIDER_ATTRIBUTES, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
+import {
+    COLORS,
+    createSegment,
+    createGlider,
+    createLine,
+    createPoint
+} from "../../utils/jsxgraph";
 
 export default function ConvergenceSequenceApplet() {
     return (
@@ -17,7 +23,7 @@ export default function ConvergenceSequenceApplet() {
                 }
 
                 // Create a constrained segment for epsilon glider
-                const epsilonSegment = board.create('segment', [
+                const epsilonSegment = createSegment(board, [
                     [0, 0.05],
                     [0, 1]
                 ], {
@@ -26,52 +32,44 @@ export default function ConvergenceSequenceApplet() {
                 });
 
                 // Draggable epsilon point
-                const epsilonPoint = board.create('glider', [0, 0.3, epsilonSegment], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES,
+                const epsilonPoint = createGlider(board, [0, 0.3, epsilonSegment], {
                     name: 'ε',
-                    fillColor: COLORS.orange,
-                    strokeColor: COLORS.darkOrange,
-                });
+                }, COLORS.green);
 
                 // Limit line
-                board.create('line', [
+                createLine(board, [
                     [0, limit],
                     [1, limit]
                 ], {
-                    strokeColor: COLORS.blue,
                     strokeWidth: 2,
                     fixed: true,
-                });
+                }, COLORS.blue);
+
                 // Limit point
-                board.create('point', [0, limit], {
-                    ...DEFAULT_POINT_ATTRIBUTES,
+                createPoint(board, [0, limit], {
                     name: 'a',
-                    fillColor: COLORS.blue,
-                    strokeColor: COLORS.darkBlue,
                     fixed: true,
-                });
+                }, COLORS.blue);
 
                 // Upper boundary (a + ε)
-                board.create('line', [
+                createLine(board, [
                     [0, () => limit + epsilonPoint.Y()],
                     [1, () => limit + epsilonPoint.Y()]
                 ], {
-                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                });
+                }, COLORS.green);
 
                 // Lower boundary (a - ε)
-                board.create('line', [
+                createLine(board, [
                     [0, () => limit - epsilonPoint.Y()],
                     [1, () => limit - epsilonPoint.Y()]
                 ], {
-                    strokeColor: COLORS.green,
                     strokeWidth: 2,
                     dash: 2,
                     fixed: true,
-                });
+                }, COLORS.green);
 
 
                 // Sequence points with spacing
@@ -91,13 +89,10 @@ export default function ConvergenceSequenceApplet() {
                     for (let n = 1; n <= maxPoints; n++) {
                         const an = sequence(n);
                         const isAfterN = n >= N;
-                        const point = board.create('point', [n, an], {
-                            ...DEFAULT_POINT_ATTRIBUTES,
+                        const point = createPoint(board, [n, an], {
                             name: '',
-                            fillColor: isAfterN ? COLORS.purple : COLORS.red,
-                            strokeColor: isAfterN ? COLORS.darkPurple : COLORS.darkRed,
                             fixed: true,
-                        });
+                        }, isAfterN ? COLORS.purple : COLORS.red);
                         sequencePoints.push(point);
                     }
                 }
@@ -112,26 +107,22 @@ export default function ConvergenceSequenceApplet() {
                     const epsilon = epsilonPoint.Y();
                     const N = findN(epsilon);
 
-                    NLine = board.create('line', [
+                    NLine = createLine(board, [
                         [N, -1],
                         [N, 1]
                     ], {
-                        strokeColor: COLORS.purple,
                         strokeWidth: 3,
                         straightFirst: true,
                         straightLast: true,
                         dash: 1,
                         fixed: true,
-                    });
+                    }, COLORS.purple);
 
-                    NPoint = board.create('point', [N, 0], {
-                        ...DEFAULT_POINT_ATTRIBUTES,
+                    NPoint = createPoint(board, [N, 0], {
                         name: `N_ε`,
-                        fillColor: COLORS.purple,
-                        strokeColor: COLORS.darkPurple,
                         fixed: true,
                         label: { offset: [5, -15], fontSize: 12 }
-                    });
+                    }, COLORS.purple);
                 }
 
                 // Initialize

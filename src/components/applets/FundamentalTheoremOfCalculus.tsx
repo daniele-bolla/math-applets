@@ -2,8 +2,13 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import JXG from "jsxgraph";
 import {
   COLORS,
-  DEFAULT_GLIDER_ATTRIBUTES,
-  DEFAULT_POINT_ATTRIBUTES,
+  createFunctionGraph,
+  createGlider,
+  createPoint,
+  createSegment,
+  createDashedSegment,
+  createPolygon,
+  createIntegral,
 } from "../../utils/jsxgraph";
 
 export default function FundamentalTheoremOfCalculs() {
@@ -28,51 +33,35 @@ export default function FundamentalTheoremOfCalculs() {
         const fInverse = (y: number) => Math.cbrt(10 * (y - 1));
 
 
-        const px = board.create("glider", [2, 0, board.defaultAxes.x], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const px = createGlider(board, [2, 0, board.defaultAxes.x], {
           name: "x",
-          color: COLORS.green,
-        });
+        }, COLORS.green);
 
-        const pxh = board.create("glider", [3.5, 0, board.defaultAxes.x], {
-          ...DEFAULT_GLIDER_ATTRIBUTES,
+        const pxh = createGlider(board, [3.5, 0, board.defaultAxes.x], {
           name: "x+h",
-          color: COLORS.purple,
-        });
+        }, COLORS.purple);
 
         const h = () => Math.abs(pxh.X() - px.X());
 
 
-        const graphf = board.create("functiongraph", [f, -2, 10], {
-          strokeColor: COLORS.blue,
-          strokeWidth: 2,
+        const graphf = createFunctionGraph(board, f, [-2, 10], {
           name: "f(t)",
           withLabel: true,
           label: { position: "rt", color: COLORS.blue },
-        });
+        }, COLORS.blue);
 
-        board.create("functiongraph", [F, -2, 10], {
-          strokeColor: COLORS.red,
-          strokeWidth: 3,
+        createFunctionGraph(board, F, [-2, 10], {
           name: "F(x)",
           withLabel: true,
           label: { position: "rt", color: COLORS.red },
-        });
+        }, COLORS.red);
 
 
         // Blue area: F(x) = ∫₀ˣ f(t) dt
-        board.create("integral", [[0, () => px.X()], graphf], {
-          color: COLORS.blue,
-          fillOpacity: 0.2,
-          label: { visible: false },
-        });
+        createIntegral(board, [0, () => px.X()], graphf, {}, COLORS.blue);
 
         // Orange slice: ∫ₓ^{x+h} f(t) dt
-        board.create("integral", [[() => px.X(), () => pxh.X()], graphf], {
-          color: COLORS.orange,
-          fillOpacity: 0.35,
-          label: { visible: false },
-        });
+        createIntegral(board, [() => px.X(), () => pxh.X()], graphf, {}, COLORS.orange);
 
 
         const averageValue = () => {
@@ -83,60 +72,52 @@ export default function FundamentalTheoremOfCalculs() {
 
         const xi = () => fInverse(averageValue());
 
-        const xiPoint = board.create("point", [xi, averageValue], {
-          ...DEFAULT_POINT_ATTRIBUTES,
+        const xiPoint = createPoint(board, [xi, averageValue], {
           name: "f(ξₕ)",
-          color: COLORS.green,
           fixed: true,
           label: { offset: [0, 12], color: COLORS.green },
-        });
+        }, COLORS.green);
 
-        board.create("segment", [xiPoint, [xi, 0]], {
-          strokeColor: COLORS.green,
+        createDashedSegment(board, [xiPoint, [xi, 0]], {
           dash: 2,
-          strokeWidth: 1,
-        });
+        }, COLORS.green);
 
-        board.create("point", [xi, 0], {
+        createPoint(board, [xi, 0], {
           name: "ξₕ",
-          size: 0,
           label: { offset: [0, -10], color: COLORS.green },
-        });
+        }, COLORS.green);
 
 
-        board.create("polygon", [
+        createPolygon(board, [
           [() => px.X(), 0],
           [() => pxh.X(), 0],
           [() => pxh.X(), averageValue],
           [() => px.X(), averageValue],
         ], {
-          fillColor: COLORS.green,
           fillOpacity: 0.15,
-          borders: { dash: 2, strokeWidth: 2 },
+          borders: { dash: 1, strokeWidth: 1 },
           vertices: { visible: false },
-        });
+        }, COLORS.green);
 
-        const Fx = board.create("point", [
+        const Fx = createPoint(board, [
           () => px.X(),
           () => F(px.X()),
         ], {
           name: "F(x)",
           size: 3,
-          color: COLORS.red,
           fixed: true,
           label: { offset: [6, 6], color: COLORS.red },
-        });
+        }, COLORS.red);
 
-        const Fxh = board.create("point", [
+        const Fxh = createPoint(board, [
           () => pxh.X(),
           () => F(pxh.X()),
         ], {
           name: "F(x+h)",
           size: 3,
-          color: COLORS.red,
           fixed: true,
           label: { offset: [6, 6], color: COLORS.red },
-        });
+        }, COLORS.red);
 
         board.create("line", [Fx, Fxh], {
             strokeColor:()=> h() < 0.1 ? COLORS.purple : COLORS.red,

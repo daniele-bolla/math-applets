@@ -1,6 +1,17 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import { COLORS } from "../../utils/jsxgraph";
+import {
+  COLORS,
+  createSlider,
+  createSegment,
+  createGlider,
+  createFunctionGraph,
+  createLine,
+  createPoint,
+  createDashedSegment,
+  createText,
+  DEFAULT_LINE_ATTRIBUTES
+} from "../../utils/jsxgraph";
 
 export default function PointwiseConvergenceXn() {
   return (
@@ -14,25 +25,21 @@ export default function PointwiseConvergenceXn() {
         const LABEL_MAX = 5;
 
         // --- Sliders
-        const nSlider = board.create(
-          "slider",
-          [
-            [0.5, -0.2],
-            [1, -0.2],
-            [1, 10, MAX_N],
-          ],
+        const nSlider = createSlider(
+          board,
+          [0.5, -0.2],
+          [1, -0.2],
+          [1, 10, MAX_N],
           { name: "n", snapWidth: 1, precision: 0 }
-        ) as JXG.Slider;
+        );
 
-        const epsSlider = board.create(
-          "slider",
-          [
-            [0.5, -0.3],
-            [1, -0.3],
-            [0.01, 0.08, 0.25],
-          ],
+        const epsSlider = createSlider(
+          board,
+          [0.5, -0.3],
+          [1, -0.3],
+          [0.01, 0.08, 0.25],
           { name: "ε", snapWidth: 0.005, precision: 3 }
-        ) as JXG.Slider;
+        );
 
         // board.create("text", [0.02, 1.06, "f_n(x)=x^n"], {
         //   fixed: true,
@@ -48,32 +55,32 @@ export default function PointwiseConvergenceXn() {
         //   anchorX: "left",
         // });
 
-        const xSeg = board.create("segment", [[0, 0], [1, 0]], {
+        const xSeg = createSegment(board, [[0, 0], [1, 0]], {
           visible: false,
           fixed: true,
           highlight: false,
         });
 
-        const xPoint = board.create("glider", [0.7, 0, xSeg], {
+        const xPoint = createGlider(board, [0.7, 0, xSeg], {
           name: "x",
           size: 4,
           strokeColor: "#000",
           fillColor: "#000",
           fixed: false,
           label: { fontSize: 14, offset: [8, -12] },
-        }) as JXG.Point;
+        });
 
         const bgCurves: JXG.Curve[] = [];
         for (let k = 1; k <= BACKGROUND_MAX; k++) {
           const kk = k;
-          const c = board.create("functiongraph", [(x: number) => Math.pow(x, kk), 0, 1], {
+          const c = createFunctionGraph(board, (x: number) => Math.pow(x, kk), [0, 1], {
             strokeColor: COLORS.blue,
             strokeWidth: 2,
             dash: 2,
             opacity: 0.14,
             highlight: false,
             visible: kk < Math.floor(nSlider.Value()),
-          }) as JXG.Curve;
+          });
           bgCurves.push(c);
         }
 
@@ -82,13 +89,10 @@ export default function PointwiseConvergenceXn() {
         const curveLabels: JXG.Text[] = [];
         for (let k = 1; k <= LABEL_MAX; k++) {
           const kk = k;
-          const t = board.create(
-            "text",
-            [
-              () => labelX + 0.01,
-              () => Math.pow(labelX, kk) + 0.02,
-              () => `x^{${kk}}`,
-            ],
+          const t = createText(
+            board,
+            [() => labelX + 0.01, () => Math.pow(labelX, kk) + 0.02],
+            () => `x^{${kk}}`,
             {
               fontSize: 14,
               color: COLORS.blue,
@@ -96,14 +100,15 @@ export default function PointwiseConvergenceXn() {
               fixed: true,
               anchorX: "left",
             }
-          ) as JXG.Text;
+          );
           curveLabels.push(t);
         }
 
         // --- Current curve (solid)
-        board.create(
-          "functiongraph",
-          [(x: number) => Math.pow(x, Math.floor(nSlider.Value())), 0, 1],
+        createFunctionGraph(
+          board,
+          (x: number) => Math.pow(x, Math.floor(nSlider.Value())),
+          [0, 1],
           {
             strokeColor: COLORS.blue,
             strokeWidth: 3,
@@ -121,6 +126,7 @@ export default function PointwiseConvergenceXn() {
 
         // Draw y=0 as a full red line (dominant part of the limit)
         const zeroFunction = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -131,7 +137,7 @@ export default function PointwiseConvergenceXn() {
         });
 
         // Special limit value at x=1
-        board.create("point", [1, 1], {
+        createPoint(board, [1, 1], {
           name: "",
           size: 5,
           strokeColor: COLORS.red,
@@ -140,8 +146,9 @@ export default function PointwiseConvergenceXn() {
           highlight: false,
         });
 
-        // --- ε-tube around f(x): y = f(x) ± ε  
+        // --- ε-tube around f(x): y = f(x) ± ε
         const tubeUpper = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -153,6 +160,7 @@ export default function PointwiseConvergenceXn() {
         }) as JXG.Line;
 
         const tubeLower = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -165,6 +173,7 @@ export default function PointwiseConvergenceXn() {
 
         // Vertical guide at the chosen x
         const xGuide = board.create("line", [[0, 0], [0, 1]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -176,8 +185,8 @@ export default function PointwiseConvergenceXn() {
         }) as JXG.Line;
 
         // Point P_n = (x, x^n)
-        const Pn = board.create(
-          "point",
+        const Pn = createPoint(
+          board,
           [() => xPoint.X(), () => Math.pow(xPoint.X(), Math.floor(nSlider.Value()))],
           {
             name: "",
@@ -187,22 +196,22 @@ export default function PointwiseConvergenceXn() {
             fillColor: COLORS.red,
             highlight: false,
           }
-        ) as JXG.Point;
+        );
 
-        const Qlim = board.create(
-          "point",
+        const Qlim = createPoint(
+          board,
           [() => xPoint.X(), () => fLimit(xPoint.X())],
           { visible: false, fixed: true, highlight: false }
-        ) as JXG.Point;
+        );
 
-        const errSeg = board.create("segment", [Qlim, Pn], {
+        const errSeg = createDashedSegment(board, [Qlim, Pn], {
           strokeColor: COLORS.gray,
           strokeWidth: 2,
           strokeOpacity: 0.45,
           highlight: false,
-        }) as JXG.Segment;
+        });
 
-        // // Display N_{x,ε} 
+        // // Display N_{x,ε}
         // board.create(
         //   "text",
         //   [

@@ -1,6 +1,16 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import { COLORS } from "../../utils/jsxgraph";
+import {
+  COLORS,
+  createSlider,
+  createSegment,
+  createGlider,
+  createFunctionGraph,
+  createLine,
+  createPoint,
+  createDashedSegment,
+  DEFAULT_LINE_ATTRIBUTES
+} from "../../utils/jsxgraph";
 
 export default function UniformConvergenceSinNxOverN() {
   return (
@@ -16,64 +26,61 @@ export default function UniformConvergenceSinNxOverN() {
         const BACKGROUND_MAX = 100;
 
         // --- Sliders (same “bottom band” idea as your pointwise applet)
-        const nSlider = board.create(
-          "slider",
-          [
-            [TAU - 2.2, -0.20],
-            [TAU - 0.2, -0.20],
-            [1, 10, MAX_N],
-          ],
+        const nSlider = createSlider(
+          board,
+          [TAU - 2.2, -0.20],
+          [TAU - 0.2, -0.20],
+          [1, 10, MAX_N],
           { name: "n", snapWidth: 1, precision: 0 }
-        ) as JXG.Slider;
+        );
 
-        const epsSlider = board.create(
-          "slider",
-          [
-            [TAU - 2.2, -0.30],
-            [TAU - 0.2, -0.30],
-            [0.01, 0.08, 0.5],
-          ],
+        const epsSlider = createSlider(
+          board,
+          [TAU - 2.2, -0.30],
+          [TAU - 0.2, -0.30],
+          [0.01, 0.08, 0.5],
           { name: "ε", snapWidth: 0.005, precision: 3 }
-        ) as JXG.Slider;
+        );
 
         const fn = (x: number, n: number) => Math.sin(n * x) / n;
         const fLimit = (_x: number) => 0;
 
         // --- x glider on [0, 2π]
-        const xSeg = board.create("segment", [[0, 0], [TAU, 0]], {
+        const xSeg = createSegment(board, [[0, 0], [TAU, 0]], {
           visible: false,
           fixed: true,
           highlight: false,
         });
 
-        const xPoint = board.create("glider", [1.0, 0, xSeg], {
+        const xPoint = createGlider(board, [1.0, 0, xSeg], {
           name: "x",
           size: 4,
           strokeColor: "#000",
           fillColor: "#000",
           fixed: false,
           label: { fontSize: 14, offset: [8, -12] },
-        }) as JXG.Point;
+        });
 
         // --- Background family: f_k(x) dashed, visible iff k < n
         const bgCurves: JXG.Curve[] = [];
         for (let k = 1; k <= BACKGROUND_MAX; k++) {
           const kk = k;
-          const c = board.create("functiongraph", [(x: number) => fn(x, kk), 0, TAU], {
+          const c = createFunctionGraph(board, (x: number) => fn(x, kk), [0, TAU], {
             strokeColor: COLORS.blue,
             strokeWidth: 2,
             dash: 2,
             opacity: 0.14,
             highlight: false,
             visible: kk < Math.floor(nSlider.Value()),
-          }) as JXG.Curve;
+          });
           bgCurves.push(c);
         }
 
         // --- Current curve (solid)
-         board.create(
-          "functiongraph",
-          [(x: number) => fn(x, Math.floor(nSlider.Value())), 0, TAU],
+        createFunctionGraph(
+          board,
+          (x: number) => fn(x, Math.floor(nSlider.Value())),
+          [0, TAU],
           {
             strokeColor: COLORS.blue,
             strokeWidth: 3,
@@ -81,10 +88,11 @@ export default function UniformConvergenceSinNxOverN() {
             dash: 0,
             highlight: false,
           }
-        ) as JXG.Curve;
+        );
 
         // --- Limit function f(x)=0 (red line)
         const zeroFunction = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -96,6 +104,7 @@ export default function UniformConvergenceSinNxOverN() {
 
         // --- ε-tube around f(x)=0: y = ±ε
         const tubeUpper = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -107,6 +116,7 @@ export default function UniformConvergenceSinNxOverN() {
         }) as JXG.Line;
 
         const tubeLower = board.create("line", [[0, 0], [1, 0]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -119,6 +129,7 @@ export default function UniformConvergenceSinNxOverN() {
 
         // Vertical guide at the chosen x
         const xGuide = board.create("line", [[0, 0], [0, 1]], {
+          ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
           fixed: true,
@@ -130,8 +141,8 @@ export default function UniformConvergenceSinNxOverN() {
         }) as JXG.Line;
 
         // Point P_n = (x, f_n(x))
-        const Pn = board.create(
-          "point",
+        const Pn = createPoint(
+          board,
           [
             () => xPoint.X(),
             () => fn(xPoint.X(), Math.floor(nSlider.Value())),
@@ -144,22 +155,22 @@ export default function UniformConvergenceSinNxOverN() {
             fillColor: COLORS.red,
             highlight: false,
           }
-        ) as JXG.Point;
+        );
 
         // Point on the limit function at the same x: (x, 0)
-        const Qlim = board.create(
-          "point",
+        const Qlim = createPoint(
+          board,
           [() => xPoint.X(), () => fLimit(xPoint.X())],
           { visible: false, fixed: true, highlight: false }
-        ) as JXG.Point;
+        );
 
         // Error segment
-        const errSeg = board.create("segment", [Qlim, Pn], {
+        const errSeg = createDashedSegment(board, [Qlim, Pn], {
           strokeColor: COLORS.gray,
           strokeWidth: 2,
           strokeOpacity: 0.45,
           highlight: false,
-        }) as JXG.Segment;
+        });
 
         // --- Performance: update only bg visibility changes
         let prevN = Math.floor(nSlider.Value());
