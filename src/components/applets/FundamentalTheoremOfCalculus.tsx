@@ -5,7 +5,6 @@ import {
   createFunctionGraph,
   createGlider,
   createPoint,
-  createSegment,
   createDashedSegment,
   createPolygon,
   createIntegral,

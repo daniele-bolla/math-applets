@@ -42,17 +42,17 @@ export default function CauchyMVTApplet() {
                 const xAxis = createLine(board, [[0,0], [1,0]], { visible: false });
 
                 const aGlider = createGlider(board, [-1, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'a', size: 5,
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'a',
                     label: { offset: [0, -20], color: COLORS.blue }
                 }, COLORS.blue);
 
                 const bGlider = createGlider(board, [3, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'b', size: 5,
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'b', 
                     label: { offset: [0, -20], color: COLORS.blue }
                 }, COLORS.blue);
 
                 const cGlider = createGlider(board, [0.5, 0, xAxis], {
-                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'c', size: 6,
+                    ...DEFAULT_GLIDER_ATTRIBUTES, name: 'c', 
                     label: { offset: [0, 20], color: COLORS.orange, fontSize: 16 }
                 }, COLORS.orange);
 

@@ -43,7 +43,6 @@ export default function RandomRiemannApplet() {
 
         const gliderA = board.create("glider", [-2, 0, xAxis], {
           ...DEFAULT_GLIDER_ATTRIBUTES,
-          size: 4,
           color: COLORS.blue,
           withLabel: false,
           name: "",
@@ -51,7 +50,6 @@ export default function RandomRiemannApplet() {
 
         const gliderB = board.create("glider", [5, 0, xAxis], {
           ...DEFAULT_GLIDER_ATTRIBUTES,
-          size: 4,
           color: COLORS.blue,
           withLabel: false,
           name: "",

@@ -2,16 +2,13 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
 import {
   COLORS,
-  DEFAULT_GLIDER_ATTRIBUTES,
   createFunctionGraph,
   createGlider,
   createSlider,
   createSegment,
 } from "../../utils/jsxgraph";
 
-// --------------------
-// Helpers
-// --------------------
+
 const factorial = (n: number) => {
   let r = 1;
   for (let k = 2; k <= n; k++) r *= k;
@@ -27,34 +24,31 @@ const fallingFactorial = (n: number, k: number) => {
 };
 
 // --------------------
-// Failure example: g(x) = x^5 |x|
-// = sign(x) * x^6
+// Failure example: g(x) = x^5 |x| = sign(x)*x^6
 // g is 5x differentiable at 0 but NOT 6x differentiable at 0
 // --------------------
 const g = (x: number) => Math.pow(x, 5) * Math.abs(x);
 
-// k-th derivative of g at x0 (only needs to be correct at the expansion point)
+// k-th derivative of g at x0 
 const gDerivAt = (k: number, x0: number) => {
-  const EPS = 1e-6;
+  const EPS0 = 1e-8;
 
-  // At x0 = 0: derivatives exist for k<=5 and are 0; for k>=6 they do not exist.
-  if (Math.abs(x0) < EPS) {
+  // At x0 = 0: derivatives exist for k<=5 (and are 0); for k>=6 they do not exist.
+  if (Math.abs(x0) < EPS0) {
     if (k <= 5) return 0;
     return NaN;
   }
 
-  // Away from 0: g(x) = sign(x0) * x^6 locally (a polynomial)
   const s = Math.sign(x0); // ±1
   if (k > 6) return 0;
   return s * fallingFactorial(6, k) * Math.pow(x0, 6 - k);
 };
 
-export default function TaylorTheoremFailureExample() {
+export default function TaylorTheoremFailure() {
   return (
     <JSXGraphBoard
       config={{ boundingbox: [-5, 8, 8, -5] }}
       setup={(board: JXG.Board) => {
-        // Function graph
         const gGraph = createFunctionGraph(
           board,
           g,
@@ -62,63 +56,52 @@ export default function TaylorTheoremFailureExample() {
           {
             name: "g(x)",
             withLabel: true,
-            label: {
-              position: "rt",
-              offset: [-10, -10],
-              color: COLORS.blue,
-              fontSize: 12,
-            },
           },
           COLORS.blue
         );
 
-        // Expansion point x0
         const P = createGlider(
           board,
           [0, g(0), gGraph],
           {
-            ...DEFAULT_GLIDER_ATTRIBUTES,
             name: "x₀",
-            label: { offset: [0, 10], fontSize: 12, color: COLORS.blue },
           },
           COLORS.blue
         );
 
-        // Degree slider (allow reaching 6 to trigger the failure)
         const nSlider = createSlider(
           board,
           [-4, -4],
           [3, -4],
-          [0, 5, 6], // min, initial, max
+          [0, 5, 6], 
           {
             name: "n",
             snapWidth: 1,
-            label: { color: COLORS.pink, offset: [0, 10] },
+            precision: 0,
           }
         ) as JXG.Slider;
 
-        // Evaluation point x
         const Q = createGlider(
           board,
           [1, g(1), gGraph],
           {
-            ...DEFAULT_GLIDER_ATTRIBUTES,
             name: "x",
           },
           COLORS.orange
         );
 
-        // Getters
         const getX0 = () => P.X();
         const getN = () => Math.round(nSlider.Value());
         const getX = () => Q.X();
 
-        // Taylor polynomial is only defined if all derivatives up to n exist at x0.
-        // For this g, the only problematic case is x0=0 with n>=6.
-        const EPS = 1e-6;
-        const taylorIsDefined = () => !(Math.abs(getX0()) < EPS && getN() >= 6);
+        const EPS = 0.5;
 
-        // Taylor polynomial T_n(x) around x0
+        const taylorIsDefined = () => {
+          const x0 = getX0();
+          const n = getN();
+          return !(Math.abs(x0) < EPS && n >= 6);
+        };
+
         const T = (x: number) => {
           if (!taylorIsDefined()) return NaN;
 
@@ -135,28 +118,19 @@ export default function TaylorTheoremFailureExample() {
           return s;
         };
 
-        // Graph of T_n (hidden when undefined)
-        createFunctionGraph(
+        const tGraph = createFunctionGraph(
           board,
           T,
           [-10, 10],
           {
             name: "Tₙ(x)",
             withLabel: true,
-            label: {
-              position: "rt",
-              offset: [-10, 10],
-              color: COLORS.pink,
-              fontSize: 12,
-            },
-            strokeWidth: 3,
-            visible: () => taylorIsDefined(),
+
           },
           COLORS.pink
         );
 
-        // R_n(x) segment (also hidden when undefined)
-        createSegment(
+        const rSeg = createSegment(
           board,
           [
             [() => getX(), () => g(getX())],
@@ -168,10 +142,19 @@ export default function TaylorTheoremFailureExample() {
             name: "Rₙ(x)",
             withLabel: true,
             label: { color: COLORS.green, offset: [10, 0], fontSize: 12 },
-            visible: () => taylorIsDefined(),
           },
           COLORS.green
         );
+
+        const updateVisibility = () => {
+          const v = taylorIsDefined();
+          tGraph.setAttribute({ visible: v });
+          rSeg.setAttribute({ visible: v });
+          gGraph.setAttribute({ strokeColor: v ? COLORS.blue : COLORS.red });
+        };
+
+        board.on("update", updateVisibility);
+        updateVisibility();
       }}
     />
   );

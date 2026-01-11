@@ -14,11 +14,7 @@ export default function DifferentiabilityApplet() {
     return (
         <JSXGraphBoard
             config={{
-                boundingbox: [-5, 8, 8, -5],
-                axis: true,
-                showNavigation: false,
-                showZoom: false,
-                pan: { enabled: false },
+                boundingbox: [-5, 12, 12, -5],
             }}
             setup={(board: JXG.Board) => {
 
@@ -48,7 +44,7 @@ export default function DifferentiabilityApplet() {
                 }) as JXG.Slider;
 
                 // Point Q (x)
-                const Q = createGlider(board, [4, f(4), curve], {
+                const Q = createGlider(board, [3, f(3), curve], {
                     ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'x',
                 }, COLORS.orange);
@@ -63,8 +59,9 @@ export default function DifferentiabilityApplet() {
                 // Check if current m is a good approximation of f'(x0)
                 const isBestApprox = () => Math.abs(getM() - df(getX0())) < 0.2;
 
+                //Linear function L(x) becoming the tangent line t(x) at P
                 createFunctionGraph(board, tangentFunc, [-10, 10], {
-                    name: 't(x)',
+                    name: 'L(x)', 
                     withLabel: true,
                     label: { position: 'rt', offset: [-10, 10], color: COLORS.pink, fontSize: 12 },
                     strokeWidth: () => isBestApprox() ? 4 : 2

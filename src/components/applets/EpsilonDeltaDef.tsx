@@ -28,6 +28,7 @@ export default function EpsilonDeltaDefApplet() {
                     }
                 };
 
+                
                 // Function graph
                 createFunctionGraph(board, f, [-10, 10], {
                     strokeWidth: 2,
@@ -36,7 +37,6 @@ export default function EpsilonDeltaDefApplet() {
                 // a glider
                 const pointA = createGlider(board, [DISCONTINUITY, 0, board.defaultAxes.x], {
                     name: 'a',
-                    size: 6,
                     face: '<>',
                 }, COLORS.pink);
 
@@ -94,7 +94,6 @@ export default function EpsilonDeltaDefApplet() {
                     [1, f(pointA.X()) + 0.5, epsLine],
                     {
                         name: 'f(a)+ε',
-                        size: 6,
                         face: '<>',
                     },
                     COLORS.green
@@ -145,7 +144,6 @@ export default function EpsilonDeltaDefApplet() {
                     [pointA.X() + 0.75, 0, deltaLine],
                     {
                         name: 'a+δ',
-                        size: 6,
                         face: '<>',
                     },
                     COLORS.orange
@@ -196,7 +194,6 @@ export default function EpsilonDeltaDefApplet() {
                     [pointA.X() + getDelta() / 2, 0, xLine],
                     {
                         name: 'x',
-                        size: 6,
                         face: "<>",
                     },
                     COLORS.blue

@@ -45,7 +45,7 @@ export const COLORS = {
 
 export const DEFAULT_GLIDER_ATTRIBUTES: JXG.GliderAttributes = {
     face: "<>",
-    size: 6,
+    size: 8,
     strokeWidth: 2,
     highlight: false,
 };
@@ -61,20 +61,22 @@ export const DEFAULT_POINT_ATTRIBUTES: JXG.PointAttributes = {
 
 export const DEFAULT_LINE_ATTRIBUTES: JXG.LineAttributes = {
     strokeWidth: 1,
-        highlight: false,
+    highlight: false,
+    fixed: true
 
 };
 
 export const DEFAULT_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeWidth: 1,    highlight: false,
+    fixed: true
 
 };
 
 export const DEFAULT_FUNCTION_GRAPH_ATTRIBUTES: JXG.FunctiongraphAttributes = {
     strokeColor: COLORS.blue,
     strokeWidth: 2,
-        highlight: false,
-
+    highlight: false,
+    fixed: true
 };
 
 export const DEFAULT_SECANT_ATTRIBUTES: JXG.LineAttributes = {
@@ -83,7 +85,9 @@ export const DEFAULT_SECANT_ATTRIBUTES: JXG.LineAttributes = {
     dash: 2,
     straightFirst: true,
     straightLast: true,
-        highlight: false,
+    highlight: false,
+    fixed: true
+
 
 };
 
@@ -92,24 +96,24 @@ export const DEFAULT_TANGENT_ATTRIBUTES: JXG.LineAttributes = {
     strokeWidth: 2,
     straightFirst: true,
     straightLast: true,
-        highlight: false,
-
+    highlight: false,
+    fixed: true
 };
 
 export const DEFAULT_DASHED_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeColor: COLORS.gray,
     strokeWidth: 1,
     dash: 2,
-        highlight: false,
-
+    highlight: false,
+    fixed: true
 };
 
 export const DEFAULT_ARROW_SEGMENT_ATTRIBUTES: JXG.SegmentAttributes = {
     strokeColor: COLORS.orange,
     strokeWidth: 1,
     lastArrow: true,
-        highlight: false,
-
+    highlight: false,
+    fixed: true
 };
 
 export const DEFAULT_POLYGON_ATTRIBUTES: JXG.PolygonAttributes = {
@@ -117,8 +121,8 @@ export const DEFAULT_POLYGON_ATTRIBUTES: JXG.PolygonAttributes = {
     fillOpacity: 0.2,
     borders: { strokeWidth: 1 },
     vertices: { visible: false },
-        highlight: false,
-
+    highlight: false,
+    fixed: true
 };
 
 export const DEFAULT_INTEGRAL_ATTRIBUTES: JXG.IntegralAttributes = {
@@ -126,14 +130,14 @@ export const DEFAULT_INTEGRAL_ATTRIBUTES: JXG.IntegralAttributes = {
     fillOpacity: 0.2,
     isLabel: false,
     highlight: false,
-
+    withLabel: false,
+    fixed: true
 };
 
 export const DEFAULT_TEXT_ATTRIBUTES: JXG.TextAttributes = {
     fontSize: 12,
     color: COLORS.black,
     fixed: true
-
 };
 
 export const DEFAULT_SLIDER_ATTRIBUTES: JXG.SliderAttributes = {
@@ -152,6 +156,7 @@ export function createFunctionGraph(
     return board.create('functiongraph', [f, ...interval], {
         ...DEFAULT_FUNCTION_GRAPH_ATTRIBUTES,
         strokeColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     }) as JXG.Functiongraph;
 }
@@ -166,6 +171,8 @@ export function createPoint(
         ...DEFAULT_POINT_ATTRIBUTES,
         strokeColor: color, 
         fillColor: color,
+                label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
+
         ...attributes,
 
     });
@@ -182,6 +189,7 @@ export function createGlider(
         ...DEFAULT_GLIDER_ATTRIBUTES,
         strokeColor: color,
         fillColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     }) as JXG.Glider
 }
@@ -194,9 +202,10 @@ export function createLine(
 ) {
     const line = board.create('line', points, {
         ...DEFAULT_LINE_ATTRIBUTES,
+        strokeColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     });
-    line.setAttribute({strokeColor: color});
     return line;
 }
 
@@ -208,9 +217,10 @@ export function createSegment(
 ) {
     const segment = board.create('segment', points, {
         ...DEFAULT_SEGMENT_ATTRIBUTES,
+        strokeColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     });
-    segment.setAttribute({strokeColor: color});
     return segment;
 }
 
@@ -223,9 +233,10 @@ export function createSecant(
 ) {
     const line = board.create('line', points, {
         ...DEFAULT_SECANT_ATTRIBUTES,
+        strokeColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     });
-    line.setAttribute({strokeColor: color});
     return line;
 }
 
@@ -238,6 +249,7 @@ export function createTangent(
     const line = board.create('line', points, {
         ...DEFAULT_TANGENT_ATTRIBUTES,
         strokeColor: color,
+        label: { position: "rt", offset: [-10, -10], color, fontSize: 12 },
         ...attributes,
     });
     return line;

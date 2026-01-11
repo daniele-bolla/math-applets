@@ -63,12 +63,9 @@ export default function PointwiseConvergenceXn() {
 
         const xPoint = createGlider(board, [0.7, 0, xSeg], {
           name: "x",
-          size: 4,
-          strokeColor: "#000",
-          fillColor: "#000",
           fixed: false,
           label: { fontSize: 14, offset: [8, -12] },
-        });
+        }, COLORS.red);
 
         const bgCurves: JXG.Curve[] = [];
         for (let k = 1; k <= BACKGROUND_MAX; k++) {
@@ -283,6 +280,10 @@ export default function PointwiseConvergenceXn() {
           const ok = Math.abs(fnx - fx) < eps;
 
           Pn.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            fillColor: ok ? COLORS.green : COLORS.red,
+          });
+          xPoint.setAttribute({
             strokeColor: ok ? COLORS.green : COLORS.red,
             fillColor: ok ? COLORS.green : COLORS.red,
           });

@@ -1,15 +1,17 @@
 ---
-title:  TaylorTheorem 
-description: TaylorTheorem
-visible: false
+title:  Taylor’s theorem
+description: Taylor’s theorem
+visible: true
 approved: false
 category: Differentiation
+ord: 3
 ---
 
-import TaylorTheorem from "../../components/applets/TaylorTheorem";
+import TaylorTheoremSimple from "../../components/applets/TaylorTheoremSimple";
+import TaylorTheoremFails from "../../components/applets/TaylorTheoremFails";
 import MathBlock from "../../components/MathBlock";
 
-# TaylorTheorem
+# Taylor’s theorem
 
 <MathBlock type="definition" title="Taylor polynomial, remainder term">
 Let $I \subseteq \mathbb{R}$ be an interval, $x_0 \in I$, and $f : I \to \mathbb{R}$ an $n$ times differentiable function.
@@ -38,9 +40,88 @@ $
 </MathBlock>
 
 ---
-<TaylorTheorem client:load />
+### Example 1: $f(x)=e^x$ 
+<TaylorTheoremSimple client:load />
+---
+### Example 2: $g(x)=x^5|x|$ 
+
+<TaylorTheoremFails client:load />
 ---
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/TaylorTheorem.tsx).
+*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Definition6.6 and Theorem6.19 page 115
 
+
+In both applets:
+- Drag the **blue** point $x_0$ to choose the expansion point.
+- Use the slider **$n$** to choose the Taylor degree.
+- Drag the **orange** point $x$ to evaluate the approximation at a point.
+- The vertical segment labelled **$R_n(x)$** visualizes the approximation error at the current $x$.
+
+### Example 1: $f(x)=e^x$
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/TaylorTheoremSimple.tsx).
+
+For the exponential function, all derivatives exist everywhere and satisfy
+$$
+f^{(k)}(x_0)=e^{x_0}.
+$$
+Hence the Taylor polynomial is well-defined for every degree $n$ and every expansion point $x_0$.
+
+In the code, the Taylor polynomial is implemented as in the definition:
+
+```ts
+const T = (x: number) => {
+  const x0 = getX0();
+  const n = getN();
+  let s = 0;
+  const dx = x - x0;
+
+  for (let k = 0; k <= n; k++) {
+    s += (fDerivAt(k, x0) / factorial(k)) * Math.pow(dx, k);
+  }
+  return s;
+};
+The remainder is drawn as a vertical segment at the current x:
+```ts
+createSegment(board, [
+  [() => getX(), () => f(getX())],
+  [() => getX(), () => T(getX())],
+], {
+  name: "Rₙ(x)",
+  dash: 2,
+  strokeWidth: 4,
+  withLabel: true,
+}, COLORS.green);
+```
+### Example 2: $g(x)=x^5|x|$ — what fails
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/TaylorTheoremSimple.tsx).
+In this applet we use
+$$
+g(x)=x^5|x|.
+$$
+
+This function is **5 times differentiable at $x_0=0$**, but it is **not 6 times differentiable at $0$**.  
+Therefore, when the student chooses the expansion point $x_0=0$ and selects degree $n=6$, the coefficient
+$$
+\frac{g^{(6)}(x_0)}{6!}
+$$
+is not defined, and the Taylor polynomial of degree $6$ cannot be constructed.  
+
+In the code, this is detected by treating the Taylor polynomial as *undefined* 
+whenever $x_0$ is sufficiently close to $0$ and $n \ge 6$:
+
+```ts
+const EPS = 0.05;
+const taylorIsDefined = () => !(Math.abs(getX0()) < EPS && getN() >= 6);
+```
+When the condition fails, the applet hides both the Taylor graph and the remainder segment:
+```ts
+const updateVisibility = () => {
+  const v = taylorIsDefined();
+  tGraph.setAttribute({ visible: v });
+  rSeg.setAttribute({ visible: v });
+};
+
+board.on("update", updateVisibility);
+updateVisibility();
+```

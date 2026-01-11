@@ -6,7 +6,6 @@ import {
   createSegment,
   createGlider,
   createFunctionGraph,
-  createLine,
   createPoint,
   createDashedSegment,
   DEFAULT_LINE_ATTRIBUTES
@@ -54,12 +53,8 @@ export default function UniformConvergenceSinNxOverN() {
 
         const xPoint = createGlider(board, [1.0, 0, xSeg], {
           name: "x",
-          size: 4,
-          strokeColor: "#000",
-          fillColor: "#000",
-          fixed: false,
           label: { fontSize: 14, offset: [8, -12] },
-        });
+        }, COLORS.red);
 
         // --- Background family: f_k(x) dashed, visible iff k < n
         const bgCurves: JXG.Curve[] = [];
@@ -132,12 +127,9 @@ export default function UniformConvergenceSinNxOverN() {
           ...DEFAULT_LINE_ATTRIBUTES,
           straightFirst: true,
           straightLast: true,
-          fixed: true,
           strokeColor: "#666",
           dash: 1,
           strokeOpacity: 0.35,
-          strokeWidth: 1,
-          highlight: false,
         }) as JXG.Line;
 
         // Point P_n = (x, f_n(x))
@@ -217,6 +209,11 @@ export default function UniformConvergenceSinNxOverN() {
           const ok = Math.abs(fnx - fx) < eps;
 
           Pn.setAttribute({
+            strokeColor: ok ? COLORS.green : COLORS.red,
+            fillColor: ok ? COLORS.green : COLORS.red,
+          });
+          
+          xPoint.setAttribute({
             strokeColor: ok ? COLORS.green : COLORS.red,
             fillColor: ok ? COLORS.green : COLORS.red,
           });
