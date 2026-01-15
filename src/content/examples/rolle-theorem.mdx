@@ -1,0 +1,79 @@
+---
+title: Rolle's Theorem
+description: Visualization of Rolle's Theorem
+visible: true
+approved: false
+category: Differentiation
+ord: 2
+---
+
+import RolleTheorem from "../../components/applets/RolleTheorem";
+import MathBlock from "../../components/MathBlock";
+
+## Rolle's Theorem
+
+<MathBlock type="theorem" title="Rolle's Theorem">
+Let $ f : [a,b] \to \mathbb{R} $ be continuous on $[a,b]$ and differentiable on $(a,b)$.
+If $f(a) = f(b)$ then there exists at least one $ \xi \in (a,b) $ such that $f'(\xi) = 0.$
+</MathBlock>
+
+--- 
+<RolleTheorem client:load />
+--- 
+## Description
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/RolleTheorem.tsx).
+
+*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Theorem6.9 page 104
+
+The applet is an attempt to visualize the Rolle's theorem interactively.
+The student drag points $a$ and $b$, to change the interval.
+
+When the theorem conditions are met ($f(a) = f(b)$):
+```ts
+const eps = 0.1;
+
+function rolleConditionHolds() {
+    return Math.abs(f(pointA.X()) - f(pointB.X())) < eps;
+}
+```
+
+The student can see horizontal tangent lines for each critical point $\xi$ inside the interval.
+Using a symmetric function helps the student create this condition.
+
+Morover the chosen function is simple to deal with for calculting its critical points.
+
+Indeed $f(x) = x^4 - 2x^2$ with $f'(x)=4x^3 - 4x = 4x(x^2 -1)$.
+Therefore $f'(x)=0$ for $x= 1, -1$ and $x=0$.
+
+```ts
+const xis = [-1, 0, 1];
+
+xis.forEach((xi) => {
+
+    const pointXiX = createPoint(
+        board,
+        [xi, 0],
+        {
+            name: `ξ`,
+            visible: () => xiVisible(xi),
+        },
+        COLORS.purple
+    );
+
+    const pointXi = createPoint(
+        board,
+        [xi, f(xi)],
+        {
+            name: "f(ξ)",
+            visible: () => xiVisible(xi),
+        },
+        COLORS.purple
+    );
+...
+
+```
+
+
+
+
+

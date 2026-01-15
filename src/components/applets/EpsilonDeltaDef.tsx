@@ -1,262 +1,252 @@
 import JSXGraphBoard from "../JSXGraphBoard";
-import JXG from "jsxgraph";
+import * as JXG from "jsxgraph";
 import {
-    COLORS,
-    createFunctionGraph,
-    createGlider,
-    createPoint,
-    createLine
+  COLORS,
+  createFunctionGraph,
+  createGlider,
+  createPoint,
+  createLine,
 } from "../../utils/jsxgraph";
 
 export default function EpsilonDeltaDefApplet() {
-    return (
-        <JSXGraphBoard
-            config={{
-                boundingbox: [-3, 5, 5.5, -2],
-                axis: true,
-            }}
-            setup={(board: JXG.Board) => {
+  return (
+    <JSXGraphBoard
+      config={{
+        boundingbox: [-3, 5, 5.5, -2],
+        axis: true,
+      }}
+      setup={(board: JXG.Board) => {
+        // ---------------------------
+        // Function selector (buttons)
+        // ---------------------------
+        const DISCONTINUITY = 1.25;
 
-                // Function
-                const DISCONTINUITY = 1.25;
+        type Mode = "discontinuous" |  "arctan";
+        let mode: Mode = "discontinuous";
 
-                const f = (x: number) => {
-                    if (x < DISCONTINUITY) {
-                        return Math.pow(x, 3) * 0.3;
-                    } else {
-                        return Math.pow(x, 2);
-                    }
-                };
+        const f = (x: number) => {
+          if (mode === "arctan") return Math.atan(x);     
 
-                
-                // Function graph
-                createFunctionGraph(board, f, [-10, 10], {
-                    strokeWidth: 2,
-                }, COLORS.blue);
+          if (x < DISCONTINUITY) return 0.3 * Math.pow(x, 3);
+          return Math.pow(x, 2);
+        };
 
-                // a glider
-                const pointA = createGlider(board, [DISCONTINUITY, 0, board.defaultAxes.x], {
-                    name: 'a',
-                    face: '<>',
-                }, COLORS.pink);
+        const bbRight = () => board.getBoundingBox()[2];
+        const bbTop = () => board.getBoundingBox()[1];
 
-                // Point (a, f(a))
-                const fpointA = createPoint(board,
-                    [() => pointA.X(), () => f(pointA.X())],
-                    {
-                        name: '',
-                        size: 2,
-                        fixed: true,
-                    },
-                    COLORS.black
-                );
+        const createButton = (row: number, label: string, nextMode: Mode, color: string) => {
+          const btn = board.create(
+            "button",
+            [
+              () => bbRight() - 2.4,        
+              () => bbTop() - 0.6 - 0.55 * row,
+              label,
+              () => {
+                mode = nextMode;
+                board.update();
+              },
+            ],
+            {
+              fixed: true,
+              strokeColor: color,
+              cssStyle: "width: 150px;",
+            }
+          ) as JXG.Button;
 
-                // Vertical line from a to f(a)
-                createLine(board, [pointA, fpointA], {
-                    dash: 2,
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 1,
-                }, COLORS.black);
+          return btn;
+        };
 
-                // Point (0, f(a))
-                const pointYfpointA = createPoint(board,
-                    [0, () => f(pointA.X())],
-                    {
-                        name: '',
-                        size: 2,
-                        fixed: true,
-                    },
-                    COLORS.black
-                );
+        createButton(0, "discontinuous", "discontinuous", COLORS.red);
+        createButton(2, "atan(x)", "arctan", COLORS.orange);
 
-                // Horizontal line from (a, f(a)) to (0, f(a))
-                createLine(board, [fpointA, pointYfpointA], {
-                    dash: 2,
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 1,
-                }, COLORS.black);
+        // ---------------------------
+        // Function graph
+        // ---------------------------
+        const fGraph = createFunctionGraph(
+          board,
+          f,
+          [-10, 10],
+          { strokeWidth: 2 },
+          COLORS.blue
+        );
 
-                // ===== EPSILON =====
-                // Helper line for epsilon glider (vertical)
-                const epsLine = createLine(board,
-                    [() => [0, f(pointA.X())], () => [0, f(pointA.X()) + 2.5]],
-                    {
-                        visible: false,
-                        straightFirst: false,
-                        straightLast: false
-                    }
-                );
+        // ---------------------------
+        // Point a on x-axis
+        // ---------------------------
+        const pointA = createGlider(
+          board,
+          [DISCONTINUITY, 0, board.defaultAxes.x],
+          { name: "a", face: "<>" },
+          COLORS.pink
+        );
 
-                // Epsilon glider
-                const epsPoint = createGlider(board,
-                    [1, f(pointA.X()) + 0.5, epsLine],
-                    {
-                        name: 'f(a)+ε',
-                        face: '<>',
-                    },
-                    COLORS.green
-                );
+        // Point (a, f(a))
+        const fpointA = createPoint(
+          board,
+          [() => pointA.X(), () => f(pointA.X())],
+          { name: "", size: 2, fixed: true },
+          COLORS.black
+        );
 
-                const getEpsilon = () => Math.abs(epsPoint.Y() - f(pointA.X()));
+        // Vertical line from a to f(a)
+        createLine(
+          board,
+          [pointA, fpointA],
+          { dash: 2, straightFirst: false, straightLast: false, strokeWidth: 1 },
+          COLORS.black
+        );
 
-                // ε line (green)
-                createLine(board, [pointYfpointA, epsPoint], {
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 3,
-                }, COLORS.green);
+        // Point (0, f(a))
+        const pointYfpointA = createPoint(
+          board,
+          [0, () => f(pointA.X())],
+          { name: "", size: 2, fixed: true },
+          COLORS.black
+        );
 
-                // Line (a + ε)
-                createLine(board,
-                    [() => [0, epsPoint.Y()], () => [1, epsPoint.Y()]],
-                    {
-                        strokeWidth: 2,
-                        dash: 2,
-                    },
-                    COLORS.green
-                );
+        // Horizontal line from (a, f(a)) to y-axis
+        createLine(
+          board,
+          [fpointA, pointYfpointA],
+          { dash: 2, straightFirst: false, straightLast: false, strokeWidth: 1 },
+          COLORS.black
+        );
 
-                // Line (a - ε)
-                createLine(board,
-                    [() => [0, f(pointA.X()) - getEpsilon()], () => [1, f(pointA.X()) - getEpsilon()]],
-                    {
-                        strokeWidth: 2,
-                        dash: 2,
-                    },
-                    COLORS.green
-                );
+        // ===== EPSILON =====
+        const epsLine = createLine(
+          board,
+          [() => [0, f(pointA.X())], () => [0, f(pointA.X()) + 2.5]],
+          { visible: false, straightFirst: false, straightLast: false }
+        );
 
-                // ===== DELTA =====
-                // Helper line for delta glider (horizontal)
-                const deltaLine = createLine(board,
-                    [() => [pointA.X(), 0], () => [pointA.X() + 1.5, 0]],
-                    {
-                        visible: false,
-                        straightFirst: false,
-                        straightLast: false
-                    }
-                );
+        const epsPoint = createGlider(
+          board,
+          [1, f(pointA.X()) + 0.5, epsLine],
+          { name: "f(a)+ε", face: "<>" },
+          COLORS.green
+        );
 
-                // Delta glider
-                const deltaPoint = createGlider(board,
-                    [pointA.X() + 0.75, 0, deltaLine],
-                    {
-                        name: 'a+δ',
-                        face: '<>',
-                    },
-                    COLORS.orange
-                );
+        const getEpsilon = () => Math.abs(epsPoint.Y() - f(pointA.X()));
 
-                const getDelta = () => Math.abs(deltaPoint.X() - pointA.X());
+        createLine(
+          board,
+          [pointYfpointA, epsPoint],
+          { straightFirst: false, straightLast: false, strokeWidth: 3 },
+          COLORS.green
+        );
 
-                // Line (a+δ)
-                createLine(board,
-                    [() => [deltaPoint.X(), 0], () => [deltaPoint.X(), 1]],
-                    {
-                        strokeWidth: 2,
-                        dash: 2,
-                    },
-                    COLORS.orange
-                );
+        createLine(
+          board,
+          [() => [0, epsPoint.Y()], () => [1, epsPoint.Y()]],
+          { strokeWidth: 2, dash: 2 },
+          COLORS.green
+        );
 
-                // Line (a - ε)
-                createLine(board,
-                    [() => [0, pointA.X() - getDelta()], () => [1, pointA.X() - getDelta()]],
-                    {
-                        strokeWidth: 2,
-                        dash: 2,
-                    },
-                    COLORS.orange
-                );
+        createLine(
+          board,
+          [() => [0, f(pointA.X()) - getEpsilon()], () => [1, f(pointA.X()) - getEpsilon()]],
+          { strokeWidth: 2, dash: 2 },
+          COLORS.green
+        );
 
-                // δ line (orange)
-                createLine(board, [pointA, deltaPoint], {
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 3,
-                }, COLORS.orange);
+        // ===== DELTA =====
+        const deltaLine = createLine(
+          board,
+          [() => [pointA.X(), 0], () => [pointA.X() + 1.5, 0]],
+          { visible: false, straightFirst: false, straightLast: false }
+        );
 
-                // ===== POINT X =====
-                // Line for x glider (constrained to delta neighborhood)
-                const xLine = createLine(board,
-                    [() => [pointA.X() - getDelta(), 0], () => [deltaPoint.X(), 0]],
-                    {
-                        visible: false,
-                        straightFirst: false,
-                        straightLast: false
-                    }
-                );
+        const deltaPoint = createGlider(
+          board,
+          [pointA.X() + 0.75, 0, deltaLine],
+          { name: "a+δ", face: "<>" },
+          COLORS.orange
+        );
 
-                // x glider
-                const xPoint = createGlider(board,
-                    [pointA.X() + getDelta() / 2, 0, xLine],
-                    {
-                        name: 'x',
-                        face: "<>",
-                    },
-                    COLORS.blue
-                );
+        const getDelta = () => Math.abs(deltaPoint.X() - pointA.X());
 
-                // Point (x, f(x))
-                const fxPoint = createPoint(board,
-                    [() => xPoint.X(), () => f(xPoint.X())],
-                    {
-                        name: '',
-                        size: 2,
-                        fixed: true,
-                    },
-                    COLORS.black
-                );
+        createLine(
+          board,
+          [() => [deltaPoint.X(), 0], () => [deltaPoint.X(), 1]],
+          { strokeWidth: 2, dash: 2 },
+          COLORS.orange
+        );
 
-                // Point (0, f(x))
-                const point0fx = createPoint(board,
-                    [0, () => f(xPoint.X())],
-                    {
-                        name: 'f(x)',
-                        size: 2,
-                        fixed: true,
-                    },
-                    COLORS.black
-                );
+        // NOTE: your comment says "a - ε" but this is "a - δ"; also coordinates were swapped in your original.
+        createLine(
+          board,
+          [() => [pointA.X() - getDelta(), 0], () => [pointA.X() - getDelta(), 1]],
+          { strokeWidth: 2, dash: 2 },
+          COLORS.orange
+        );
 
-                // Vertical line from x to f(x)
-                createLine(board, [xPoint, fxPoint], {
-                    dash: 2,
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 1,
-                }, COLORS.black);
+        createLine(
+          board,
+          [pointA, deltaPoint],
+          { straightFirst: false, straightLast: false, strokeWidth: 3 },
+          COLORS.orange
+        );
 
-                // Horizontal line from f(x) to y-axis
-                createLine(board, [fxPoint, point0fx], {
-                    dash: 2,
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 1,
-                }, COLORS.black);
+        // ===== POINT X =====
+        const xLine = createLine(
+          board,
+          [() => [pointA.X() - getDelta(), 0], () => [deltaPoint.X(), 0]],
+          { visible: false, straightFirst: false, straightLast: false }
+        );
 
-                // ===== CONDITION CHECK =====
-                // |x - a| line (blue)
-                createLine(board, [pointA, xPoint], {
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 3,
-                }, COLORS.blue);
+        const xPoint = createGlider(
+          board,
+          [pointA.X() + getDelta() / 2, 0, xLine],
+          { name: "x", face: "<>" },
+          COLORS.blue
+        );
 
-                // |f(x) - f(a)| line (changes color)
-                createLine(board, [pointYfpointA, point0fx], {
-                    straightFirst: false,
-                    straightLast: false,
-                    strokeWidth: 3,
-                }, () => {
-                    const epsilon = getEpsilon();
-                    const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
-                    return dist < epsilon ? COLORS.green : COLORS.red;
-                });
+        const fxPoint = createPoint(
+          board,
+          [() => xPoint.X(), () => f(xPoint.X())],
+          { name: "", size: 2, fixed: true },
+          COLORS.black
+        );
 
-            }}
-        />
-    );
+        const point0fx = createPoint(
+          board,
+          [0, () => f(xPoint.X())],
+          { name: "f(x)", size: 2, fixed: true },
+          COLORS.black
+        );
+
+        createLine(
+          board,
+          [xPoint, fxPoint],
+          { dash: 2, straightFirst: false, straightLast: false, strokeWidth: 1 },
+          COLORS.black
+        );
+
+        createLine(
+          board,
+          [fxPoint, point0fx],
+          { dash: 2, straightFirst: false, straightLast: false, strokeWidth: 1 },
+          COLORS.black
+        );
+
+        createLine(
+          board,
+          [pointA, xPoint],
+          { straightFirst: false, straightLast: false, strokeWidth: 3 },
+          COLORS.blue
+        );
+
+        createLine(
+          board,
+          [pointYfpointA, point0fx],
+          { straightFirst: false, straightLast: false, strokeWidth: 3 },
+          () => {
+            const epsilon = getEpsilon();
+            const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
+            return dist < epsilon ? COLORS.green : COLORS.red;
+          }
+        );
+      }}
+    />
+  );
 }

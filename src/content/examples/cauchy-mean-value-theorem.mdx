@@ -1,15 +1,18 @@
 ---
-title:  CauchyMeanValueTheorem 
-description: CauchyMeanValueTheorem
-visible: false
+title:  Cauchy’s mean value theorem
+description: Cauchy’s mean value theorem"
+visible: true
 approved: false
 category: Differentiation
+ord: 4
 ---
 
 import CauchyMeanValueTheorem from "../../components/applets/CauchyMeanValueTheorem";
+import CauchyMeanValueTheoremSimple from "../../components/applets/CauchyMeanValueTheoremSimple";
+import CauchyMeanValueTheoremStandard from "../../components/applets/CauchyMeanValueTheoremStandard";
 import MathBlock from "../../components/MathBlock";
 
-# CauchyMeanValueTheorem
+# Cauchy’s mean value theorem
 
 <MathBlock type="theorem" title="Cauchy’s mean value theorem">
 Let $f, g : [a, b] \to \mathbb{R}$ be continuous as well as differentiable on $(a, b)$.  
@@ -22,11 +25,14 @@ $$
 
 </MathBlock>
 
-
 ---
 <CauchyMeanValueTheorem client:load />
 ---
+<CauchyMeanValueTheoremSimple client:load />
+---
+<CauchyMeanValueTheoremStandard client:load />
+---
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMeanValueTheorem.tsx).
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMeanValueTheoremStandard.tsx).
 
