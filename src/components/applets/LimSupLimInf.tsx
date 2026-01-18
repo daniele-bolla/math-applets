@@ -22,7 +22,6 @@ export default function LimSupLimInfApplet() {
                 const TRUE_SUP = 10;
                 const TRUE_INF = -10;
 
-                // 1. The Complex Sequence
                 const seq = (n: number) => {
                     const sign = Math.pow(-1, n);
                     const numerator = 10 + 60 * Math.sin(n * 0.8);
@@ -31,7 +30,6 @@ export default function LimSupLimInfApplet() {
 
                 const values: number[] = Array.from({ length: MAX_K }, (_, i) => seq(i + 1));
 
-                // 2. Visual Envelopes
                 board.create('functiongraph', [(x: number) => 10 + 70 / x, 1, MAX_K], {
                     strokeColor: COLORS.pink, 
                     strokeWidth: 1, 
@@ -45,7 +43,7 @@ export default function LimSupLimInfApplet() {
                     opacity: 0.1
                 });
 
-                // --- 3. FIXED LIMIT LINES ---
+                // LIMIT LINES ---
                 board.create('line', [[0, TRUE_SUP], [1, TRUE_SUP]], {
                     strokeColor: COLORS.pink, strokeWidth: 2, dash: 2, opacity: 0.6, fixed: true
                 });
@@ -54,7 +52,6 @@ export default function LimSupLimInfApplet() {
                     strokeColor: COLORS.blue, strokeWidth: 2, dash: 2, opacity: 0.6, fixed: true
                 });
 
-                // 4. Slider (k)
                 const kSlider = board.create('slider', [[SLIDER_X_START, SLIDER_Y], [SLIDER_X_END, SLIDER_Y], [SLIDER_MIN, SLIDER_INITIAL, SLIDER_MAX]], {
                     ...DEFAULT_GLIDER_ATTRIBUTES,
                     name: 'k',
@@ -97,7 +94,7 @@ export default function LimSupLimInfApplet() {
                 const getEpsSup = () => Math.abs(epsGliderSup.Y() - TRUE_SUP);
                 const getEpsInf = () => Math.abs(epsGliderInf.Y() - TRUE_INF);
 
-                // --- 6. NEIGHBORHOOD VISUALIZATION ---
+                //  NEIGHBORHOOD VISUALIZATION ---
                 board.create('line', [[0, () => TRUE_SUP + getEpsSup()], [1, () => TRUE_SUP + getEpsSup()]], {
                     strokeColor: COLORS.pink, strokeWidth: 2, dash: 3
                 });

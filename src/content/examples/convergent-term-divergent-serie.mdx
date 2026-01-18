@@ -1,5 +1,5 @@
 ---
-title: "Convergent terms, divergent series (p-series example)"
+title: "Convergent terms, divergent series "
 description: "Example where a_n → 0 but the series Σ a_n diverges; includes continuous trajectory models via function graphs."
 visible: true
 approved: false
@@ -43,6 +43,22 @@ s_n=\sum_{k=0}^{n}\frac{1}{(k+1)^{1/3}}.
 $$
 
 Blue points represent the terms $a_n$. Red points represent the partial sums $s_n$.  
+```ts
+const termPts: JXG.Point[] = [];
+const sumPts: JXG.Point[] = [];
+
+for (let n = 0; n <= MAX_N; n++) {
+    termPts.push(
+        board.create("point", [n, A[n]], {
+            ...})
+    );
+
+    sumPts.push(
+        board.create("point", [n, S[n]], {
+            ...})
+    );
+}
+```
 Move the slider `N` and observe that the blue values approach the dashed line $y=0$ (so $a_n\to 0$), while the red values keep increasing (so $(s_n)$ does not converge and the series diverges). This is a $p$-series with $p=\tfrac13<1$, so $\sum (n+1)^{-p}$ diverges even though $a_n\to 0$.
 
 To highlight the trend, the applet also draws two continuous “trajectory” curves using `functiongraph`. The first is a continuous model for the terms,

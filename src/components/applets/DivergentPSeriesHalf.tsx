@@ -131,8 +131,6 @@ export default function DivergentPSeriesHalf() {
         });
 
         function update() {
-          board.suspendUpdate();
-
           const N = Math.max(0, Math.min(MAX_N, Math.floor(nSlider.Value())));
 
           for (let n = 0; n <= MAX_N; n+= STEP) {
@@ -143,9 +141,6 @@ export default function DivergentPSeriesHalf() {
 
           termMarker.setPosition(JXG.COORDS_BY_USER, [N, A[N]]);
           sumMarker.setPosition(JXG.COORDS_BY_USER, [N, S[N]]);
-
-          board.unsuspendUpdate();
-          board.update();
         }
 
         nSlider.on("drag", update);
