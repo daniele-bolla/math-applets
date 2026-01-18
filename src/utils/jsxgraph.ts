@@ -138,6 +138,7 @@ export const DEFAULT_TEXT_ATTRIBUTES: JXG.TextAttributes = {
     fontSize: 12,
     color: COLORS.black,
     fixed: true
+    
 };
 
 export const DEFAULT_SLIDER_ATTRIBUTES: JXG.SliderAttributes = {

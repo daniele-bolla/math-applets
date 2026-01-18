@@ -53,7 +53,6 @@ export default function RolleTheoremApplet() {
                     COLORS.red
                 );
 
-                // Vertical guides
                 createDashedSegment(
                     board,
                     [() => [pointA.X(), 0], pointFA],

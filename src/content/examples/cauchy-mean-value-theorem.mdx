@@ -8,8 +8,7 @@ ord: 4
 ---
 
 import CauchyMeanValueTheorem from "../../components/applets/CauchyMeanValueTheorem";
-import CauchyMeanValueTheoremSimple from "../../components/applets/CauchyMeanValueTheoremSimple";
-import CauchyMeanValueTheoremStandard from "../../components/applets/CauchyMeanValueTheoremStandard";
+import CauchyMVTParametricCurve from "../../components/applets/CauchyMVTParametricCurve";
 import MathBlock from "../../components/MathBlock";
 
 # Cauchy’s mean value theorem
@@ -26,13 +25,205 @@ $$
 </MathBlock>
 
 ---
+### Example 1, from math.stackexchange
 <CauchyMeanValueTheorem client:load />
 ---
-<CauchyMeanValueTheoremSimple client:load />
----
-<CauchyMeanValueTheoremStandard client:load />
+### Example 2, extension of MVT as parametric curve
+<CauchyMVTParametricCurve client:load />
 ---
 
 ## Description
-[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMeanValueTheoremStandard.tsx).
+*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Lemma6.15 page 109
+The applet are an attempt to show the Cauchy’s mean value theorem.
 
+### Example 1
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMeanValueTheorem.tsx).
+
+This example is taken from this [Math StackExchange answer](https://math.stackexchange.com/a/4932567/608368).
+
+The argument is not exactly the same as the proof used in the lecture notes, 
+but it is very closea and provides a nice geometric interpretation.
+
+Given an interval $[a,b]$, the applet displays the functions $f(x)$, $r\,g(x)$, and
+
+$$
+
+h(x)=f(x)-r\,g(x),
+\qquad
+r=\frac{f(b)-f(a)}{g(b)-g(a)}.
+
+$$
+
+The choice of $r$ is designed so that the endpoints match:
+
+$$
+
+h(a)=h(b).
+
+$$
+Therefore, by Rolle’s Theorem, there exists $\xi\in(a,b)$ such that
+
+$$
+
+h'(\xi)=0.
+
+$$
+
+Since $r$ is constant once $a$ and $b$ are fixed, the derivative is
+
+$$
+
+h'(x)=f'(x)-r\,g'(x),
+
+$$
+computed analytically as a combination of $f'$ and $g'$.
+```ts
+const getR = () => {
+    const a = getA();
+    const b = getB();
+    const denom = g(b) - g(a);
+    if (Math.abs(denom) < 1e-10) return NaN;
+    return (f(b) - f(a)) / denom;
+};
+
+// h'(x) = f'(x) - r g'(x)
+const dh = (x: number) => df(x) - getR() * dg(x);
+```
+
+After fixing $a$ and $b$, the student can move the point $\xi$ along the interval and try to satisfy the condition $h'(\xi)\approx 0$.  
+When this happens, the applet highlights the geometric meaning of the theorem: 
+at $x=\xi$ the tangents to $f$ and $r\,g$ have the same slope, which corresponds to the CMVT conclusion
+
+$$
+
+\frac{f'(\xi)}{g'(\xi)}=\frac{f(b)-f(a)}{g(b)-g(a)}.
+
+$$
+### Example 2
+[Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/CauchyMVTParametricCurve.tsx).
+This applet visualizes **Cauchy’s Mean Value Theorem (CMVT)** through a geometric interpretation in the $(g,f)$-plane.
+
+Instead of drawing the graphs of $f$ and $g$ in the usual $(x,y)$-plane, we consider the **parametric curve**
+
+$$
+
+\gamma(t) = (g(t),\, f(t)).
+
+$$
+```ts      
+const curve = board.create(
+  "curve",
+  [(t: number) => g(t), (t: number) => f(t), xmin, xmax],
+  { strokeColor: COLORS.blue, strokeWidth: 4 }
+) as JXG.Curve;
+```
+
+We choose a particularly simple function
+
+$$
+
+g(t)=t,
+
+$$
+so that:
+- $g'(t)=1\neq 0$ everywhere),
+- $g^{-1}(u)=u$ is known explicitly,
+- the parameter $t$ is exactly the x–coordinate of the point on the curve.
+
+Two movable points $ (g(a),f(a))$ (green) and $(g(b),f(b))$ (red).
+The applet draws the **secant line** through $(g(a),f(a))$ and $(g(b),f(b))$. 
+
+In this applet we take:
+
+$$
+
+f(t)=0.3t^3-t,\qquad f'(t)=0.9t^2-1,
+
+$$
+
+$$
+
+g(t)=t,\qquad g'(t)=1.
+
+$$
+
+Let
+
+$$
+
+dF=f(b)-f(a),\qquad dG=g(b)-g(a)=b-a.
+
+$$
+Then
+
+$$
+
+h'(t)=dF\cdot g'(t)-dG\cdot f'(t)
+     =dF - dG(0.9t^2-1).
+
+$$
+Expand:
+
+$$
+
+h'(t)=dF - 0.9dG\,t^2 + dG
+     =(dF+dG) - 0.9dG\,t^2.
+
+$$
+To find $\xi$, we solve $h'(t)=0$:
+
+$$
+
+(dF+dG) - 0.9dG\,t^2=0
+\quad\Longrightarrow\quad
+t^2=\frac{dF+dG}{0.9\,dG}.
+
+$$
+
+This is why in the code `findXi()` computes:
+- the interval endpoints in parameter space:
+  - `left = min(a,b)`, `right = max(a,b)`
+- `dF = f(right) - f(left)`
+- `dG = right - left`
+- then
+  
+$$
+
+  t2 = \frac{dF+dG}{0.9\,dG}
+  
+$$
+  as `t2 = (dF + dG) / (0.9 * dG)`.
+
+Since $t^2=t2$, the candidates are
+
+$$
+
+t = +\sqrt{t2}\quad\text{and}\quad t = -\sqrt{t2}.
+
+$$
+The code then:
+1. discards the case $t2<0$ (no real square root; numerically this can occur for some endpoint choices),
+2. checks which candidate lies inside `left`, `right`,
+3. returns that one (if both are inside, it picks the one closer to the midpoint).
+
+Finally the tangnet at $\xi$ should be parallel to the secant:
+
+```ts
+// Secant line AB
+const secant = board.create("line", [A, B], {
+  strokeColor: COLORS.orange,
+  strokeWidth: 3,
+}) as JXG.Line;
+
+// ξ point on the parametric curve
+const Xi = board.create(
+  "point",
+  [() => g(findXi()), () => f(findXi())],
+  { name: "", size: 5, fixed: true, strokeColor: COLORS.purple, fillColor: COLORS.purple }
+) as JXG.Point;
+
+board.create("parallel", [secant, Xi], {
+  strokeColor: COLORS.purple,
+  strokeWidth: 3,
+});
+```
