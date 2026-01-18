@@ -42,6 +42,14 @@ and that the slope of a linear function is “slope = vertical difference divide
 the slope of the secant connecting the points $f(x)$ and $f(y)$
 has slope $\frac{|f(x) - f(y)|}{|x - y|}$. From the $L$-condition we retrieve
 $\frac{|f(x) - f(y)|}{|x - y|} \le L$.
+The applets updates the color accordingly:
+```ts
+const isConditionMet = () =>
+    Math.abs(p2.Y() - p1.Y()) <=
+    lSlider.Value() * Math.abs(p2.X() - p1.X());
+
+const color = () => (isConditionMet() ? COLORS.lightGreen : COLORS.lightRed);
+```
 
 Thus the absolute slope is constrained between $\pm L$, as shown.
 

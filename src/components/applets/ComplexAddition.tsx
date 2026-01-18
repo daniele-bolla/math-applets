@@ -4,7 +4,8 @@ import {
     COLORS,
     createText,
     createPoint,
-    createArrow
+    createArrow,
+    DEFAULT_GLIDER_ATTRIBUTES
 } from "../../utils/jsxgraph";
 
 export default function ComplexAdditionApplet() {
@@ -30,11 +31,15 @@ export default function ComplexAdditionApplet() {
         // z1
         const z1 = createPoint(board, [1, 2], {
           name: "",
+          fixed: false,
+          ...DEFAULT_GLIDER_ATTRIBUTES
         }, COLORS.blue);
 
         // z2
         const z2 = createPoint(board, [2, 0.5], {
           name: "",
+          fixed: false,
+          ...DEFAULT_GLIDER_ATTRIBUTES
         }, COLORS.blue);
 
         const z3 = createPoint(board,

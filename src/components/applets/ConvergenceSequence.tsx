@@ -11,7 +11,9 @@ import {
 export default function ConvergenceSequenceApplet() {
     return (
         <JSXGraphBoard
-            config={{ boundingbox: [-1, 1, 10, -1], axis: true }}
+            config={{ boundingbox: [-1, 1, 10, -1],                
+                showZoom: false,
+                pan: { enabled: false }, }}
             setup={(board: JXG.Board) => {
 
                 const sequence = (n: number) => 1 / n;

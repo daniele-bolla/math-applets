@@ -15,6 +15,8 @@ export default function AccumulationPointApplet() {
             config={{
                 boundingbox: [-0.2, 1.2, 1.2, -1],
                 axis: true,
+                showZoom: false,
+                pan: { enabled: false },
             }}
             setup={(board: JXG.Board) => {
                 // Constants

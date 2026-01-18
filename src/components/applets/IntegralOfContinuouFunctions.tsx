@@ -18,16 +18,10 @@ export default function IntegrabilityProofApplet() {
       setup={(board: JXG.Board) => {
         const EPS = 1e-9;
 
-        // ============================================================
-        // STEP 0: Choose a continuous function f and draw it.
-        // ============================================================
         const f = (x: number) => 0.5 * Math.sin(x) * x + 2.5;
 
         createFunctionGraph(board, f, [-10, 10]);
 
-        // ============================================================
-        // STEP 0: Controls (ε, n, interval endpoints a,b)
-        // ============================================================
         const epsSlider = createSlider(
           board,
           [5, -2],
@@ -52,9 +46,7 @@ export default function IntegrabilityProofApplet() {
           name: "b",
         }, COLORS.blue);
 
-        // ============================================================
-        // Graphics objects
-        // ============================================================
+
         const upperStep = createCurve(board, [[0], [0]], {
           strokeWidth: 2,
           fillOpacity: 0,
@@ -105,9 +97,7 @@ export default function IntegrabilityProofApplet() {
           layer: 10,
         }, "#800080");
 
-        // ============================================================
         // ε~-bracket at x=b (length 2ε~)
-        // ============================================================
         let currentB = 6;
         let currentETilde = 0.2;
         let deltaCopndition = true; // updated in update()
@@ -186,7 +176,7 @@ export default function IntegrabilityProofApplet() {
         const update = () => {
           board.suspendUpdate();
 
-          // STEP 1: read ε, n, [a,b]
+          // read ε, n, [a,b]
           const n = Math.max(1, Math.floor(nSlider.Value()));
           const aRaw = gliderA.X();
           const bRaw = gliderB.X();
@@ -221,28 +211,27 @@ export default function IntegrabilityProofApplet() {
 
           const eps = epsSlider.Value();
 
-          // STEP 2: ε~ = ε/(2(b-a))
+          //  ε~ = ε/(2(b-a))
           const eTilde = eps / (2 * range);
           currentETilde = eTilde;
 
-          // STEP 3: uniform partition Z with dx=(b-a)/n
+          //  uniform partition Z with dx=(b-a)/n
           const { cuts, dx } = uniformPartition(a, b, n);
 
-          // STEP 4: rigorous δ ensuring (7.2)
+          // δ ensuring (7.2)
           const maxAbsX = Math.max(Math.abs(a), Math.abs(b));
           const supDf = 0.5 * (1 + maxAbsX);
           const delta = eTilde / supDf;
 
-          // Proof condition: dx < δ
+          // dx < δ
           deltaCopndition = dx < delta;
 
-          // Color feedback (band + bracket + label)
           const okColor = deltaCopndition ? COLORS.green : COLORS.red;
           bandPoly.setAttribute({ fillColor: okColor });
           epsBracket.setAttribute({ strokeColor: okColor });
           epsBracketLabel.setAttribute({ color: okColor });
 
-          // STEP 5: define ψ and φ on each open interval using right endpoint x_i
+          // define ψ and φ on each open interval using right endpoint x_i
           const upperH = Array.from<number>({ length: n + 1 });
           const lowerH = Array.from<number>({ length: n + 1 });
 
@@ -252,7 +241,7 @@ export default function IntegrabilityProofApplet() {
             lowerH[i] = fx_i - eTilde;
           }
 
-          // STEP 6: draw φ, ψ and the band
+          // draw φ, ψ and the band
           const up = stepPolyline(cuts, upperH);
           const low = stepPolyline(cuts, lowerH);
 
@@ -266,7 +255,6 @@ export default function IntegrabilityProofApplet() {
           bandPoly.dataX = band.X;
           bandPoly.dataY = band.Y;
 
-          // STEP 7: colored dashed lines at partition points
           const xPhi: number[] = [];
           const yPhi: number[] = [];
           const xPsi: number[] = [];
@@ -288,7 +276,6 @@ export default function IntegrabilityProofApplet() {
           psiLines.dataX = xPsi;
           psiLines.dataY = yPsi;
 
-          // Labels near right end
           labelPhi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, upperH[n]]);
           labelPsi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, lowerH[n]]);
 

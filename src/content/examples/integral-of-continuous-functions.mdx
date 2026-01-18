@@ -43,6 +43,14 @@ and it is colored green/red together with the construction.
 Next choose $n$ (the number of subintervals) with `nSlider`. 
 The applet creates the uniform partition $Z: a=x_0<\dots<x_n=b$ with $x_k=a+k(b-a)/n$, implemented 
 by `uniformPartition(a,b,n)`, where `dx=(b-a)/n` is the mesh size, as in the proof.
+```ts
+const uniformPartition = (a: number, b: number, n: number) => {
+    const dx = (b - a) / n;
+    const cuts = Array.from({ length: n + 1 }, (_, k) => a + k * dx);
+    cuts[cuts.length - 1] = b;
+    return { cuts, dx };
+};
+```
 
 On each interval $(x_{i-1},x_i)$ the staircase functions are defined using the right endpoint $x_i$:
 `upperH[i] = f(x_i) + eTilde;` and `lowerH[i] = f(x_i) - eTilde;` ( I haven't included codition 7.3: $\psi(x_i) = \varphi(x_i) = f(x_i)$).
@@ -55,6 +63,14 @@ To make the $\delta$-step (7.2) explicit, the code uses a
 Lipschitz bound derived from $f'(x)$. Since $f(x)=\tfrac12 x\sin x + 2.5$, 
 we have $f'(x)=\tfrac12(\sin x + x\cos x)$ and therefore $|f'(x)|\le \tfrac12(1+|x|)$. 
 Hence on $[a,b]$ we can take `supDf = 0.5 * (1 + max(|a|,|b|))` and define `delta = eTilde / supDf`. 
+```ts
+// δ ensuring (7.2)
+const maxAbsX = Math.max(Math.abs(a), Math.abs(b));
+const supDf = 0.5 * (1 + maxAbsX);
+const delta = eTilde / supDf;
+// dx < δ
+deltaCopndition = dx < delta;
+```
 When `dx < δ` holds, condition (7.2) guarantees 
 that for all $x\in(x_{i-1},x_i)$ we have $|f(x)-f(x_i)|<\widetilde{\varepsilon}$, 
 which implies $\psi(x)\le f(x)\le\varphi(x)$ on each subinterval. 

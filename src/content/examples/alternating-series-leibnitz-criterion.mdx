@@ -55,3 +55,11 @@ so the two bounding subsequences squeeze together and must converge to the same 
 Therefore $(s_n)$ converges and the series converges.
 
 In this applet we use $a_n=\frac{1}{(n+1)^p}$ with $p>0$, which is decreasing and satisfies $a_n\to 0$.
+
+In the code all the sequnce points are computed in advance for performance reasons in `computeArrays`.
+
+The in the `update` function each sequence point is set to visible depending on the current `N`
+```ts
+    aPts[n].setAttribute({ visible: vis });
+    sPts[n].setAttribute({ visible: vis });
+```

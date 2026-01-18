@@ -8,6 +8,7 @@ import {
   createDashedSegment,
   createPolygon,
   createIntegral,
+  createSegment,
 } from "../../utils/jsxgraph";
 
 export default function FundamentalTheoremOfCalculs() {
@@ -27,9 +28,9 @@ export default function FundamentalTheoremOfCalculs() {
 
         // Explicit inverse of f (valid since f is strictly increasing here)
         const fInverse = (y: number) => Math.cbrt(10 * (y - 1));
-
-        const px = createGlider(board, [2, 0, board.defaultAxes.x], { name: "x" }, COLORS.green);
-        const pxh = createGlider(board, [3.5, 0, board.defaultAxes.x], { name: "x+h" }, COLORS.purple);
+        const contrainGliders= createSegment(board, [[0,0],[6,0]], {visible:false});
+        const px = createGlider(board, [2, 0, contrainGliders], { name: "x" }, COLORS.green);
+        const pxh = createGlider(board, [3.5, 0, contrainGliders], { name: "x+h" }, COLORS.purple);
 
         // interval as [xL, xR] with xL <= xR
         const xL = () => Math.min(px.X(), pxh.X());
@@ -51,7 +52,7 @@ export default function FundamentalTheoremOfCalculs() {
         createFunctionGraph(board, F, [-2, 10], {}, COLORS.red);
 
         // Blue area: F(x) = ∫_0^x f(t) dt  
-        createIntegral(board, [-2, () => px.X()], graphf, {}, COLORS.blue);
+        createIntegral(board, [0, () => px.X()], graphf, {}, COLORS.blue);
 
         // Orange slice: always ∫_{xL}^{xR} f(t) dt
         createIntegral(board, [xL, xR], graphf, {}, COLORS.orange);

@@ -4,7 +4,8 @@ import {
     COLORS,
     createText,
     createPoint,
-    createArrow
+    createArrow,
+    DEFAULT_GLIDER_ATTRIBUTES
 } from "../../utils/jsxgraph";
 
 export default function ComplexMultiplicationApplet() {
@@ -14,7 +15,6 @@ export default function ComplexMultiplicationApplet() {
         boundingbox: [-1.2, 3.4, 3.8, -1.8],
         axis: true,
         showZoom: false,
-        showNavigation: false,
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {
@@ -51,12 +51,16 @@ export default function ComplexMultiplicationApplet() {
         // ------------------------------------------------------------
         const z1 = createPoint(board, [2.3, 1.1], {
           name: "",
+          fixed: false,
           withLabel: false,
+          ...DEFAULT_GLIDER_ATTRIBUTES
         }, Z1_COLOR);
 
         const z2 = createPoint(board, [1.1, 2.0], {
           name: "",
+          fixed: false,
           withLabel: false,
+          ...DEFAULT_GLIDER_ATTRIBUTES
         }, Z2_COLOR);
 
         // Keep points away from origin so arg(z) is stable/meaningful

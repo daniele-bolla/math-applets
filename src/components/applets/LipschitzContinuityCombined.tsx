@@ -61,7 +61,6 @@ export default function LipschitzContinuityCombinedApplet() {
 
         // Cone
         const coneStyle = {
-          fillOpacity: 0.4,
           borders: { strokeWidth: 0 },
           layer: 0,
         };

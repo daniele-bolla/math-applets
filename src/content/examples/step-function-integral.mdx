@@ -47,9 +47,13 @@ $$
 This applet illustrates the definition of partitions, refinement and integral of a staircase functions.
 
 I selected a staircase function (to be integrated) by prescribed jump points
-```const jumps = [-4, -1, 2, 5, 8]```
-and corresponding constant values on each interval
-```const values = [1.5, -2, 2.5, -1]```.
+and corresponding constant values on each interval.
+```ts
+const stepJumps = [-4, -1, 2, 5, 8];
+const stepValues = [1.5, -2, 2.5, -1];
+const phi = makeStepFunction(stepJumps, stepValues);
+```
+
 
 Two different partitions of the interval are considered:
 the partition $Z_1$, consisting of all points in $[a,b]$ that are multiples of $2$,

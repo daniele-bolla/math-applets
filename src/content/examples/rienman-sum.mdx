@@ -78,8 +78,22 @@ $m_i=\inf_{x\in[x_{i-1},x_i]} f(x)$ and $M_i=\sup_{x\in[x_{i-1},x_i]} f(x)$.
 Since $f$ is a cubic polynomial, these extrema are attained at the endpoints 
 and at critical points (zeros of $f'$). 
 In the code the two critical points are precomputed in `criticalPoints`, 
-and the values $m_i$ and $M_i$ are computed by the function `extremaOnInterval(x1, x2)`.
+and the values $m_i$ and $M_i$ are computed by the function:
+```ts
+const extremaOnInterval = (x1: number, x2: number) => {
+    let minVal = Math.min(f(x1), f(x2));
+    let maxVal = Math.max(f(x1), f(x2));
 
+    for (const c of criticalPoints) {
+    if (c >= x1 - EPS && c <= x2 + EPS) {
+        const v = f(c);
+        minVal = Math.min(minVal, v);
+        maxVal = Math.max(maxVal, v);
+    }
+    }
+    return { min: minVal, max: maxVal };
+};
+```
 The red rectangles represent an upper staircase function and the green rectangles 
 represent a lower staircase function. 
 Their shapes are produced by the two JSXGraph curves `upperCurve` and `lowerCurve`. 
@@ -93,3 +107,23 @@ This guarantees that the green staircase function stays below $f$ and the red st
 function stays above $f$. 
 When $\delta$ is decreased toward $0$, the bounds become tighter and approach 
 the “best” lower and upper step functions associated to the chosen partition.
+```ts
+const computeRectangleCurve = (cuts: number[], type: "upper" | "lower") => {
+    const X: number[] = [];
+    const Y: number[] = [];
+    const delta = Math.max(0, deltaSlider.Value());
+
+    for (let i = 0; i < cuts.length - 1; i++) {
+    const x1 = cuts[i];
+    const x2 = cuts[i + 1];
+    const { min, max } = extremaOnInterval(x1, x2);
+
+    const h = type === "upper" ? max + delta : min - delta;
+
+    X.push(x1, x1, x2, x2);
+    Y.push(0, h, h, 0);
+    }
+
+    return { X, Y };
+};
+```

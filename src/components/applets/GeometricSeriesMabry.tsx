@@ -14,9 +14,7 @@ export default function GeometricSeriesMabry() {
       config={{
         boundingbox: [-1.25, 1.95, 1.25, -0.25],
         axis: false,
-        keepAspectRatio: true,
         showZoom: false,
-        showNavigation: false,
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {

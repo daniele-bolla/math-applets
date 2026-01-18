@@ -15,7 +15,6 @@ export default function ComplexRootsOfunity() {
         boundingbox: [-1.6, 1.6, 2.1, -1.6],
         axis: true,
         showZoom: false,
-        showNavigation: false,
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {

@@ -7,10 +7,6 @@ export default function MVTIntegralClean() {
         <JSXGraphBoard
             config={{
                 boundingbox: [-1, 5, 8, -3],
-                axis: true,
-                showNavigation: false,
-                showZoom: false,
-                pan: { enabled: false },
             }}
             setup={(board: JXG.Board) => {
                 const den = (x: number)=> x*(x - 2)*(x - 4)

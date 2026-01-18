@@ -49,7 +49,22 @@ By moving the point `a` toward the limit point zero along the x-axis, the applet
 and shrinks down the epsilon neighborhood of $a$.
 
 When points in the sequence fall within the epsilon-neighborhood, the line representing them will turn green.
-The student should notice that, as one gets closer to zero, this happens more frequently and infinitely many times once at zero.
+```ts
+const isIntercepting = () => {
+    const r = getRadius();
+    if (p.X() === 0) return true;
+    return sequencePoints.some(ps => ps.Dist(p) <= r);
+};
+...
+createSegment(board, [
+    [() => p.X() - getRadius(), 0],
+    [() => p.X() + getRadius(), 0]
+], {
+    ...
+}, () => isIntercepting() ? COLORS.green : COLORS.red);
+```
+The student should notice that, as one gets closer to zero, this happens more frequently 
+and infinitely many times once at zero.
 
 I am aware that this is not very intuitive and may need further refinement,
 but I wanted to experiment with this idea.

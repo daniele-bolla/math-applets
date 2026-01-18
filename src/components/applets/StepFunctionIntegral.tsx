@@ -119,9 +119,7 @@ export default function StepFunctionIntegral() {
 
         const sharedCuts = intersectAsSet(cutsZ1, cutsZ2);
 
-        // ----------------------------
-        // UI (BUTTONS + TEXT)
-        // ----------------------------
+        
         let partitionZ1Active = true;
         let partitionZ2Active = false;
 

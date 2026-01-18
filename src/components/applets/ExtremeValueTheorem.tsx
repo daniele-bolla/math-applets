@@ -1,143 +1,191 @@
-import { useState, useCallback } from "react";
 import JXG from "jsxgraph";
 import JSXGraphBoard from "../JSXGraphBoard";
-import AppButton from "../AppButton";
 import { COLORS, DEFAULT_POINT_ATTRIBUTES } from "../../utils/jsxgraph";
 
 type ExampleKey = "discontinuousAtMax" | "openInterval";
 
 interface Example {
-    name: string;
-    interval: [number, number];
-    isOpen: boolean;
-    render: (board: JXG.Board, a: number, b: number) => void;
+  name: string;
+  interval: [number, number];
+  isOpen: boolean;
+  render: (board: JXG.Board, a: number, b: number) => JXG.GeometryElement[];
 }
 
 const examples: Record<ExampleKey, Example> = {
-    discontinuousAtMax: {
-        name: "Discontinuous at Maximum",
-        interval: [0, 4],
-        isOpen: false,
-        render: (board, a, b) => {
-            // const f = (x: number) => -(x - 2) * (x - 2) + 3;
-            const f = (x: number) => -Math.pow(x, 2) + 4 * x - 1;
+  discontinuousAtMax: {
+    name: "Discontinuous max",
+    interval: [0, 4],
+    isOpen: false,
+    render: (board, a, b) => {
+      const objs: JXG.GeometryElement[] = [];
+      const f = (x: number) => -x * x + 4 * x - 1;
 
-            board.create("functiongraph", [f, a, 1.999], {
-                strokeColor: COLORS.blue,
-                strokeWidth: 3,
-            });
-            board.create("functiongraph", [f, 2.001, b], {
-                strokeColor: COLORS.blue,
-                strokeWidth: 3,
-            });
-            // max point at (2, 3)
-            board.create("point", [2, 3], {
-                ...DEFAULT_POINT_ATTRIBUTES,
-                size: 4,
-                fillColor: COLORS.white,
-                strokeColor: COLORS.pink,
-                strokeWidth: 2,
-                fixed: true,
-            });
-        },
+      objs.push(
+        board.create("functiongraph", [f, a, 1.999], {
+          strokeColor: COLORS.blue,
+          strokeWidth: 3,
+          fixed: true,
+        }),
+        board.create("functiongraph", [f, 2.001, b], {
+          strokeColor: COLORS.blue,
+          strokeWidth: 3,
+          fixed: true,
+        }),
+        board.create("point", [2, 3], {
+          ...DEFAULT_POINT_ATTRIBUTES,
+          size: 4,
+          fillColor: COLORS.white,
+          strokeColor: COLORS.pink,
+          strokeWidth: 2,
+          fixed: true,
+        })
+      );
+
+      return objs;
     },
-    openInterval: {
-        name: "Open Interval",
-        interval: [1, 3],
-        isOpen: true,
-        render: (board, a, b) => {
-            const f = (x: number) => x;
+  },
 
-            board.create("functiongraph", [f, a, b], {
-                strokeColor: COLORS.blue,
-                strokeWidth: 3,
-            });
+  openInterval: {
+    name: "Open interval",
+    interval: [1, 3],
+    isOpen: true,
+    render: (board, a, b) => {
+      const objs: JXG.GeometryElement[] = [];
+      const f = (x: number) => x;
 
-            board.create("point", [a, f(a)], {
-                ...DEFAULT_POINT_ATTRIBUTES,
-                size: 4,
-                fillColor: COLORS.white,
-                strokeColor: COLORS.pink,
-                strokeWidth: 2,
-                fixed: true,
-            });
+      objs.push(
+        board.create("functiongraph", [f, a, b], {
+          strokeColor: COLORS.blue,
+          strokeWidth: 3,
+          fixed: true,
+        }),
+        board.create("point", [a, f(a)], {
+          ...DEFAULT_POINT_ATTRIBUTES,
+          size: 4,
+          fillColor: COLORS.white,
+          strokeColor: COLORS.pink,
+          strokeWidth: 2,
+          fixed: true,
+        }),
+        board.create("point", [b, f(b)], {
+          ...DEFAULT_POINT_ATTRIBUTES,
+          size: 4,
+          fillColor: COLORS.white,
+          strokeColor: COLORS.pink,
+          strokeWidth: 2,
+          fixed: true,
+        })
+      );
 
-            board.create("point", [b, f(b)], {
-                ...DEFAULT_POINT_ATTRIBUTES,
-                size: 4,
-                fillColor: COLORS.white,
-                strokeColor: COLORS.pink,
-                strokeWidth: 2,
-                fixed: true,
-            });
-        },
+      return objs;
     },
+  },
 };
 
 export default function EVTApplet() {
-    const [currentExample, setCurrentExample] =
-        useState<ExampleKey>("discontinuousAtMax");
+  return (
+    <JSXGraphBoard
+      config={{
+        boundingbox: [-1, 4, 5, -2.5],
+        showZoom: false,
+        pan: { enabled: false },
+      }}
+      setup={(board: JXG.Board) => {
+        let currentExample: ExampleKey = "discontinuousAtMax";
+        let activeObjects: JXG.GeometryElement[] = [];
 
-    const setup = useCallback(
-        (board: JXG.Board) => {
-            const example = examples[currentExample];
-            const [a, b] = example.interval;
-            const isOpen = example.isOpen;
+        const btnStyle =
+          "padding:6px 10px;border-radius:4px;cursor:pointer;user-select:none;";
 
-            example.render(board, a, b);
+        function clearActive() {
+          activeObjects.forEach((o) => {
+            try {
+              board.removeObject(o);
+            } catch {}
+          });
+          activeObjects = [];
+        }
 
-            const pointA = board.create("point", [a, 0], {
-                ...DEFAULT_POINT_ATTRIBUTES,
-                name: isOpen ? "(" : "[",
-                size: 4,
-                fillColor: isOpen ? COLORS.white : COLORS.green,
-                strokeColor: COLORS.green,
-                strokeWidth: isOpen ? 2 : 1,
-                fixed: true,
-                label: { offset: [-15, -15], fontSize: 16 },
-            });
+        function drawExample(key: ExampleKey) {
+          clearActive();
 
-            const pointB = board.create("point", [b, 0], {
-                ...DEFAULT_POINT_ATTRIBUTES,
-                name: isOpen ? ")" : "]",
-                size: 4,
-                fillColor: isOpen ? COLORS.white : COLORS.red,
-                strokeColor: COLORS.red,
-                strokeWidth: isOpen ? 2 : 1,
-                fixed: true,
-                label: { offset: [10, -15], fontSize: 16 },
-            });
+          const ex = examples[key];
+          const [a, b] = ex.interval;
 
-            board.create("segment", [pointA, pointB], {
-                strokeColor: COLORS.orange,
-                strokeWidth: 4,
-                fixed: true,
-            });
-        },
-        [currentExample]
-    );
+          activeObjects.push(...ex.render(board, a, b));
 
-    return (
-        <div className="flex flex-col items-center w-full gap-4">
-            <JSXGraphBoard
-                config={{
-                    boundingbox: [-1, 4, 5, -1],
+          // interval endpoints
+          const A = board.create("point", [a, 0], {
+            ...DEFAULT_POINT_ATTRIBUTES,
+            name: ex.isOpen ? "(" : "[",
+            size: 4,
+            fillColor: ex.isOpen ? COLORS.white : COLORS.green,
+            strokeColor: COLORS.green,
+            strokeWidth: ex.isOpen ? 2 : 1,
+            fixed: true,
+            label: { offset: [-15, -15], fontSize: 16 },
+          });
 
-                }}
-                setup={setup}
-            />
+          const B = board.create("point", [b, 0], {
+            ...DEFAULT_POINT_ATTRIBUTES,
+            name: ex.isOpen ? ")" : "]",
+            size: 4,
+            fillColor: ex.isOpen ? COLORS.white : COLORS.red,
+            strokeColor: COLORS.red,
+            strokeWidth: ex.isOpen ? 2 : 1,
+            fixed: true,
+            label: { offset: [10, -15], fontSize: 16 },
+          });
 
-            <div className="flex gap-2">
-                {(Object.keys(examples) as ExampleKey[]).map((key) => (
-                    <AppButton
-                        key={key}
-                        active={currentExample === key}
-                        onClick={() => setCurrentExample(key)}
-                    >
-                        {examples[key].name}
-                    </AppButton>
-                ))}
-            </div>
-        </div>
-    );
+          const seg = board.create("segment", [A, B], {
+            strokeColor: COLORS.orange,
+            strokeWidth: 4,
+            fixed: true,
+          });
+
+          activeObjects.push(A, B, seg);
+        }
+
+        // -------------------------
+        // BUTTONS (bottom-right)
+        // -------------------------
+        board.create(
+          "button",
+          [
+            1.0,
+            -2.1,
+            "Discontinuous max",
+            () => {
+              currentExample = "discontinuousAtMax";
+              drawExample(currentExample);
+            },
+          ],
+          {
+            fixed: true,
+            cssStyle: `${btnStyle} background:#e3f2fd;color:#0d47a1;`,
+          }
+        );
+
+        board.create(
+          "button",
+          [
+            3.0,
+            -2.1,
+            "Open interval",
+            () => {
+              currentExample = "openInterval";
+              drawExample(currentExample);
+            },
+          ],
+          {
+            fixed: true,
+            cssStyle: `${btnStyle} background:#f3e5f5;color:#4a148c;`,
+          }
+        );
+
+        // initial render
+        drawExample(currentExample);
+      }}
+    />
+  );
 }

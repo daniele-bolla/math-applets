@@ -8,7 +8,6 @@ import {
   createLine,
   createIntegral,
   createPolygon,
-  createSegment,
   createDashedSegment
 } from "../../utils/jsxgraph";
 
@@ -18,7 +17,6 @@ export default function IntegralMeanValueTheorem() {
       config={{
         boundingbox: [-1, 5, 8, -3],
         axis: true,
-        showNavigation: false,
         showZoom: false,
         pan: { enabled: false },
       }}

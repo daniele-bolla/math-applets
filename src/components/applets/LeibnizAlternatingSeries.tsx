@@ -14,11 +14,10 @@ export default function LeibnizAlternatingSeries() {
         pan: { enabled: false },
       }}
       setup={(board: JXG.Board) => {
-        const MAX_N = 120;   // was 200
-        const X_SCALE = 10;  // keep as is  
+        const MAX_N = 120;   
+        const X_SCALE = 10;    
         const x = (n: number) => n / X_SCALE;
 
-        // --- Sliders (bottom-right)
         const nSlider = board.create(
           "slider",
           [
@@ -121,7 +120,6 @@ export default function LeibnizAlternatingSeries() {
           highlight: false,
         }) as JXG.Curve;
 
-        // --- Markers
         const evenMarker = board.create("point", [0, 0], {
           name: "",
           size: 5,
@@ -192,13 +190,11 @@ export default function LeibnizAlternatingSeries() {
           return { A, S };
         }
 
-        // Cache when p changes
         let cachedP = NaN;
         let cachedA: number[] = [];
         let cachedS: number[] = [];
 
         function update() {
-          board.suspendUpdate();
 
           const N = Math.min(MAX_N, Math.floor(nSlider.Value()));
           const p = pSlider.Value();
@@ -267,8 +263,6 @@ export default function LeibnizAlternatingSeries() {
           gapSeg.point1.setPosition(JXG.COORDS_BY_USER, [xGap, lowerY]);
           gapSeg.point2.setPosition(JXG.COORDS_BY_USER, [xGap, upperY]);
 
-          board.unsuspendUpdate();
-          board.update();
         }
 
         nSlider.on("drag", update);
