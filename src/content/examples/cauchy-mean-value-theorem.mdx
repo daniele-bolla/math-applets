@@ -2,7 +2,7 @@
 title:  Cauchy’s mean value theorem
 description: Cauchy’s mean value theorem"
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 4
 ---
@@ -25,10 +25,53 @@ $$
 </MathBlock>
 
 ---
-### Example 1, from math.stackexchange
+## Example 1, from math.stackexchange
+### How to use the applet:
+- Drag the blue points **$a$** and **$b$** along the $x$-axis to choose the interval $[a,b]$.
+- Drag the purple point **$\xi$** along the $x$-axis (it is constrained to stay inside $[a,b]$).
+- The **blue curve** is $f(x)$.
+- The **orange curve** is $r\,g(x)$, where$r=\frac{f(b)-f(a)}{g(b)-g(a)}.$
+- The **red curve** (in the lower panel) is $h(x)=f(x)-r\,g(x),$
+  constructed so that $h(a)=h(b)$.
+1. First choose $a$ and $b$. The applet automatically recomputes $r$ so that the endpoints of $h$ match.
+2. Now move $\xi$ and look at the tangents at $x=\xi$.
+   - When you hit a point where $h'(\xi)\approx 0$, the applet highlights $\xi$ (turns green).
+3. At such a $\xi$, the tangents to $f$ and $r\,g$ have the **same slope**, because
+$$
+
+   h'(\xi)=f'(\xi)-r\,g'(\xi)=0
+   \quad\Longleftrightarrow\quad
+   \frac{f'(\xi)}{g'(\xi)}=r
+   =\frac{f(b)-f(a)}{g(b)-g(a)}.
+   
+$$
+
+<br/>
 <CauchyMeanValueTheorem client:load />
 ---
-### Example 2, extension of MVT as parametric curve
+## Example 2, extension of MVT as parametric curve
+### How to use
+Instead of drawing $f$ and $g$ as graphs in the $(x,y)$-plane, we look at the parametric curve
+$\gamma(t)=(g(t),\,f(t))$
+in the $(g,f)$-plane. In this applet $g(t)=t$, so the horizontal coordinate is just $t$.
+- Drag the green point $A=(g(a),f(a))$ and the red point $B=(g(b),f(b))$ along the blue curve $\gamma$.
+  (They determine the parameters $a$ and $b$, i.e. the interval $[a,b]$.)
+- The orange line is the secant through $A$ and $B$ in the $(g,f)$-plane.
+  Its slope is $\frac{f(b)-f(a)}{g(b)-g(a)}.$
+- The purple point is $\gamma(\xi)=(g(\xi),f(\xi))$, and the purple line is drawn **parallel** to the secant through that point.
+- CMVT guarantees that there exists $\xi\in(a,b)$ such that
+  
+$$
+
+  \frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}.
+  
+$$
+- In the $(g,f)$-plane, the derivative ratio $\frac{f'(\xi)}{g'(\xi)}$ is exactly the slope of the **tangent** to $\gamma$ at $\xi$ (because $\gamma'(t)=(g'(t),f'(t))$).
+  So “parallel to the secant” is the geometric way to see the theorem.
+- The applet computes one such $\xi$ automatically (so you can focus on the geometry rather than solving the equation by hand).
+
+<br/>
+
 <CauchyMVTParametricCurve client:load />
 ---
 

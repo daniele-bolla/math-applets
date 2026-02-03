@@ -2,7 +2,7 @@
 title: Epsilon Delta Definition
 description: Visualization of the Epsilon Delta Definition.
 visible: true
-approved: false
+approved: true
 category: Functions and Continuity
 ord: 2
 ---
@@ -19,6 +19,21 @@ import EpsilonDeltaDef from "../../components/applets/EpsilonDeltaDef";
 </MathBlock>
 
 --- 
+### How to use the applet
+- Drag **$a$** on the $x$-axis to choose the point where we test continuity.
+- Drag the green point **$f(a)+\varepsilon$** to set $\varepsilon$ (this creates the green horizontal band $f(a)\pm\varepsilon$).
+- Drag the orange point **$a+\delta$** to set $\delta$ (this creates the orange vertical band $a\pm\delta$).
+- Drag **$x$** (blue) inside the interval $(a-\delta,\ a+\delta)$.
+- Use the buttons to switch the function (e.g. a discontinuous example vs. $\arctan(x)$).
+- Click **“Find $\delta$”** to automatically choose a $\delta$ that works for the current $\varepsilon$, if such a $\delta$ exists.
+- The blue segment represents $|x-a|$ (kept $<\delta$ by construction).
+- The vertical difference $|f(x)-f(a)|$ is shown on the $y$-axis and is colored:
+  - **green** if $|f(x)-f(a)|<\varepsilon$,
+  - **red** if $|f(x)-f(a)|\ge \varepsilon$.
+- For a **continuous** function at $a$, you can make $\varepsilon$ small and still find some $\delta$ so that the output stays inside the green band whenever $x$ stays inside the orange band.
+- For the **discontinuous** example (with $a$ at the jump), for sufficiently small $\varepsilon$ there is **no** $\delta$ that works: the “Find $\delta$” button will report that no $\delta$ is found.
+<br/>
+
 <EpsilonDeltaDef client:load />
 --- 
 

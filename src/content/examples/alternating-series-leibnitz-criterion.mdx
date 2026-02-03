@@ -2,7 +2,7 @@
 title: "Alternating series (Leibniz criterion)"
 description: "Visual"
 visible: true
-approved: false
+approved: true
 category: "Series"
 ord: 1
 ---
@@ -25,6 +25,25 @@ converges.
 </MathBlock>
 
 ---
+### How to use the applet
+
+- $a_n=\frac{1}{(n+1)^p}$, $ s_n=\sum_{k=0}^{n}(-1)^k a_k.$
+- Move **$N$** to show terms and partial sums up to index $N$.
+- Move **$p$** to change how fast $a_n$ decreases.
+- **Green**: the terms $a_n$.
+- **Red**: the even partial sums $s_{2m}$.
+- **Blue**: the odd partial sums $s_{2m+1}$.
+- The dashed horizontal red/blue lines indicate the current bounds $s_{2m+1}\le s \le s_{2m}.$
+- The vertical gray segment visualizes the “gap” $
+  s_{2m}-s_{2m+1}=a_{2m+1},$
+  which tends to $0$ as $m\to\infty$.
+- $s_{2m}$ (red) moves downward, $s_{2m+1}$ (blue) moves upward, and the gap shrinks; 
+hence both subsequences converge to the same limit, so $(s_n)$ converges.
+- The alternating series $\sum (-1)^k a_k$ converges for every $p>0$ (Leibniz).
+- The corresponding positive series $\sum a_k=\sum \frac{1}{(k+1)^p}$ converges **only if $p>1$** 
+(and diverges for $0<p\le 1$).
+
+<br/>
 <LeibnizAlternatingSeries client:load />
 ---
 ## Description

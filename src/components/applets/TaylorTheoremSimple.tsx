@@ -2,7 +2,6 @@ import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
 import {
   COLORS,
-  DEFAULT_GLIDER_ATTRIBUTES,
   createFunctionGraph,
   createGlider,
   createSlider,
@@ -15,14 +14,18 @@ const factorial = (n: number) => {
   return r;
 };
 
-//f(x) = e^x, all derivatives are e^x
-const f = (x: number) => Math.exp(x);
-const fDerivAt = (k: number, x: number) => Math.exp(x); // k-th derivative at x
+// f(x) = sin(x)
+const f = (x: number) => Math.sin(x);
+
+// k-th derivative of sin at x:  f^(k)(x) = sin(x + k*pi/2)
+const fDerivAt = (k: number, x: number) => Math.sin(x + (k * Math.PI) / 2);
 
 export default function TaylorTheorem() {
   return (
     <JSXGraphBoard
-      config={{ boundingbox: [-5, 8, 8, -5] }}
+      config={{
+        boundingbox: [-5, 2.2, 8, -2.2],
+      }}
       setup={(board: JXG.Board) => {
         // f graph
         const fGraph = createFunctionGraph(
@@ -40,18 +43,16 @@ export default function TaylorTheorem() {
         const P = createGlider(
           board,
           [0, f(0), fGraph],
-          {
-            name: "x₀",
-          },
+          { name: "x₀" },
           COLORS.blue
         );
 
         // Degree slider n
         const nSlider = createSlider(
           board,
-          [-4, -4],
-          [3, -4],
-          [0, 0, 10], // min, initial, max
+          [-4, -5],
+          [3, -5],
+          [0, 3, 12], // min, initial, max
           {
             name: "n",
             snapWidth: 1,
@@ -59,27 +60,25 @@ export default function TaylorTheorem() {
           }
         ) as JXG.Slider;
 
-        // point x 
+        // point x
         const Q = createGlider(
           board,
           [1, f(1), fGraph],
-          { 
-            name: "x",
-          },
+          { name: "x" },
           COLORS.orange
         );
 
         const getX0 = () => P.X();
-        const getN = () => nSlider.Value();
+        const getN = () => Math.round(nSlider.Value());
         const getX = () => Q.X();
 
-        // Taylor polynomial T_n(x) around 
+        // Taylor polynomial T_n(x) around x0
         const T = (x: number) => {
           const x0 = getX0();
           const n = getN();
-          let s = 0;
           const dx = x - x0;
 
+          let s = 0;
           for (let k = 0; k <= n; k++) {
             s += (fDerivAt(k, x0) / factorial(k)) * Math.pow(dx, k);
           }
@@ -113,7 +112,6 @@ export default function TaylorTheorem() {
           },
           COLORS.green
         );
-
       }}
     />
   );

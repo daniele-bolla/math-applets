@@ -6,7 +6,6 @@ import {
   createSegment,
   createGlider,
   createFunctionGraph,
-  createLine,
   createPoint,
   createDashedSegment,
   createText,

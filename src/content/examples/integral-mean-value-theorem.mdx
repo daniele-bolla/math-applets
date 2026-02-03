@@ -2,7 +2,7 @@
 title: Mean Value Theorem For Integrals
 description: Visualization of the Mean Value Theorem for Integrals using an analytical inverse function.
 visible: true
-approved: false
+approved: true
 category: Integration
 ord: 3
 ---
@@ -21,6 +21,21 @@ $$
 </MathBlock>
 
 --- 
+## How to use
+- Drag the blue points **$a$** and **$b$** along the $x$-axis to choose the interval.
+- The **blue curve** is $f(x)$.
+- The **blue shaded region** represents the area $\displaystyle \int_a^b f(x)\,dx$.
+- The **red rectangle** has base $(b-a)$ and height $\overline f$ (the average value of $f$ on $[a,b]$).
+- The blue point labeled **$f(\xi)$** is placed so that $f(\xi)=\overline f=\frac{1}{b-a}\int_a^b f(x)\,dx.$
+  A dashed vertical segment drops from $f(\xi)$ to the $x$-axis to help you read the corresponding $\xi$.
+- The **gray dashed horizontal lines** labeled **$m$** and **$M$** indicate (an approximation of) 
+the minimum and maximum of $f$ on $[a,b]$. They highlight the inequality $m \le \overline f \le M,$
+which guarantees that the horizontal line $y=\overline f$ intersects the graph in the interval.
+- Move $a$ and $b$ and watch how the blue shaded area $\int_a^b f(x)\,dx$ changes.
+- Notice that the red rectangle adjusts its height so that its area matches the integral area.
+- Track the point $f(\xi)$: it always lies on the graph *and* on the level $y=\overline f$, illustrating the existence of a mean value point.
+- Try different interval lengths and positions: the average value $\overline f$ moves up/down, and the displayed $\xi$ shifts accordingly.
+
 <IntegralMeanValueTheoremWithInvertibleFun client:load />
 --- 
 

@@ -36,6 +36,44 @@ $$
 </MathBlock>
 
 ---
+## How to use
+    - Visualize the integral of a staircase function
+      $$
+      I_Z(\varphi)=\sum_i c_i\,(x_i-x_{i-1})
+      $$
+      as a sum of signed rectangle areas.
+    - Check that the value of the integral does **not** depend on whether you compute it using partition $Z_1$, partition $Z_2$, or their common refinement.
+    - Drag the blue points **$a$** and **$b$** on the $x$-axis to choose the integration interval.
+      - The applet always uses $[\min(a,b),\max(a,b)]$.
+    - Use the buttons:
+      - **Z1 [ON/OFF]** to show/hide partition $Z_1$,
+      - **Z2 [ON/OFF]** to show/hide partition $Z_2$.
+      - Turning **both** on shows their union, i.e. a refinement.
+
+    - The **blue staircase** is the function $\varphi$ (piecewise constant, with jumps).
+    - **Vertical partition marks** indicate the active partition points:
+      - **orange** marks: cuts coming from $Z_1$,
+      - **purple** marks: cuts coming from $Z_2$,
+      - **purple dashed** marks: cuts that belong to both partitions (overlap).
+    - The **shaded rectangles** represent the terms $c_i\,(x_i-x_{i-1})$:
+      - rectangles above the $x$-axis contribute positively,
+      - rectangles below the $x$-axis contribute negatively.
+    - The text at the bottom shows the current total:
+      - `Partition Z1: I = ...`, or
+      - `Partition Z2: I = ...`, or
+      - `Refinement Z: I = ...` (when both are active).
+    - Inside each rectangle, a small label shows the numerical value of that sub-interval contribution (after you release the mouse).
+
+    - Turn **Z1 ON** (and Z2 OFF): observe the rectangles and the displayed total $I_{Z_1}(\varphi)$.
+    - Turn **Z2 ON** (and Z1 OFF): observe the new rectangles and the displayed total $I_{Z_2}(\varphi)$.
+    - Turn **both ON**: the applet uses the **refinement** (union of all cuts), producing more (thinner) rectangles.
+    - Compare the totals: even though the individual rectangles change when you change partition, the final total stays the same (up to rounding), illustrating
+      $$
+      I_{Z_1}(\varphi)=I_{Z_2}(\varphi).
+      $$
+    - Drag $a$ and $b$ so that the interval crosses a jump of the staircase: notice how the sum changes exactly when the interval includes more (or less) constant pieces.
+    - If you turn **both partitions OFF**, the applet cannot form a sum and shows “Select a partition”.
+    <br/>
 <StepFunctionIntegral client:load />
 ---
 

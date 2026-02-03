@@ -373,3 +373,24 @@ export function createCurve(
     });
     return curve;
 }
+
+export const createButton = (
+    board: JXG.Board,
+    x: number | (() => number),
+    y: number | (() => number),
+    label: string,
+    onClick: () => void,
+    color: string
+) => {
+            const btnStyle =
+    "padding: 2px 4px; border-radius: 4px; cursor: pointer; user-select: none;";
+    return board.create(
+    "button",
+    [x, y, label, onClick],
+    {
+        fixed: true,
+        strokeColor: color,
+    cssStyle: `${btnStyle} color: #E65100; background-color: #fff3e0;`,
+    }
+    ) as JXG.Button;
+};

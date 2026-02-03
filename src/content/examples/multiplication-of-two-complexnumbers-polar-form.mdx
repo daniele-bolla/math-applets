@@ -2,7 +2,7 @@
 title: Complex Multiplication
 description: Multiplication of two complex numbers in polar form
 visible: true
-approved: false
+approved: true
 category: Complex Numbers and Trigonometric Functions
 ord: 1
 ---
@@ -27,6 +27,37 @@ Note that we may have $\varphi \notin (-\pi,\pi]$, so $\varphi$ may not be the p
 
 
 ---
+### How to use the applet
+- Drag the points **$z_1$** (green) and **$z_2$** (red) in the complex plane.
+- The arrows from the origin represent $z_1$, $z_2$, and the product $z=z_1z_2$ (black).
+- The colored angle sectors show the arguments (angles with the positive real axis):
+  
+$$
+
+  \varphi_1=\arg(z_1),\qquad \varphi_2=\arg(z_2),\qquad \varphi=\arg(z).
+  
+$$
+
+If
+
+$$
+
+z_1=r_1 e^{i\varphi_1},\qquad z_2=r_2 e^{i\varphi_2},
+
+$$
+then
+
+$$
+
+z=z_1z_2=(r_1r_2)e^{i(\varphi_1+\varphi_2)}.
+
+$$
+So, when you drag $z_1$ and $z_2$:
+- the **length** of the product vector changes like $ |z|=|z_1|\,|z_2| $;
+- the **angle** of the product changes like $ \varphi \approx \varphi_1+\varphi_2 $ (modulo $2\pi$, so it may “wrap around”).
+
+<br/>
+
 <ComplexMultiplication client:load />
 ---
 

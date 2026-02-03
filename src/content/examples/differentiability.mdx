@@ -2,7 +2,7 @@
 title:  Differentiability 
 description: Differentiability
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 1
 ---
@@ -60,6 +60,27 @@ as a measure for the quality of a linear approximation, and to call a linear app
 </MathBlock>
 
 ---
+### How to use the applet
+- Drag the blue point **$x_0$** on the curve to choose the base point $P=(x_0,f(x_0))$.
+- Move the slider **$m$** to choose the slope of a candidate linear approximation
+$$
+
+  L(x)=f(x_0)+m(x-x_0).
+  
+$$
+- Drag the orange point **$x$** on the curve to choose a comparison point $Q=(x,f(x))$.
+- The pink/green line is the linear function $L(x)$ through $P$ with slope $m$.
+- The green dashed vertical segment labeled $R(x)$ shows the remainder (approximation error) at $x$:
+$$
+
+  R(x)=f(x)-L(x).
+  
+$$
+- The faint gray dashed line is the secant through $P$ and $Q$ (visual aid).
+- If $m$ is chosen close to the true derivative $f'(x_0)$, then $L(x)$ is a good local approximation near $x_0$, and $R(x)$ becomes small when $x$ is close to $x_0$.
+- The applet highlights this situation by drawing $L(x)$ in **green** (and thicker) when $m$ is close to $f'(x_0)$.
+
+<br/>
 <Differentiability client:load />
 ---
 

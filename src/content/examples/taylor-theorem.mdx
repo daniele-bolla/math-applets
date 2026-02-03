@@ -2,7 +2,7 @@
 title:  Taylor’s theorem
 description: Taylor’s theorem
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 4
 ---
@@ -41,10 +41,46 @@ $
 
 ---
 ### Example 1: $f(x)=e^x$ 
+#### How to use 
+    - Visualize Taylor’s formula for $f(x)=\sin(x)$ by comparing the function with its Taylor polynomial $T_n$ around a movable expansion point $x_0$.
+    - See the remainder term at a chosen point $x$: $R_n(x)=f(x)-T_n(x).$
+    - Drag the **blue** point **$x_0$** on the curve to choose the expansion point.
+    - Move the slider **$n$** to select the degree of the Taylor polynomial $T_n$.
+    - Drag the **orange** point **$x$** on the curve to choose where you evaluate the approximation.
+    - The **blue curve** is $f(x)=\sin(x)$.
+    - The **pink curve** is the Taylor polynomial $T_n(x)$ centered at $x_0$.
+    - The **green vertical dashed segment** at the current $x$ is the remainder $R_n(x)$: its length is $|f(x)-T_n(x)|$.
+    - The endpoints of the green segment are $(x,f(x))$ and $(x,T_n(x))$.
+    - Fix $x_0$ and drag $x$ close to $x_0$: the green segment becomes small, illustrating that $T_n(x)$ approximates $f(x)$ well near the expansion point.
+    - Keep $x_0$ fixed and increase $n$: the pink curve typically matches the blue curve better near $x_0$, and the remainder at the chosen $x$ usually decreases.
+    - For a fixed degree $n$, move $x$ farther away from $x_0$: the remainder generally grows, showing that Taylor polynomials are **local** approximations.
+
 <TaylorTheoremSimple client:load />
 ---
 ### Example 2: $g(x)=x^5|x|$ 
 
+#### How to use 
+    - See that Taylor’s theorem needs enough differentiability at the expansion point.
+    - For $g(x)=x^5|x|,$
+      the function is $5$-times differentiable at $x_0=0$, but **not** $6$-times 
+      differentiable at $x_0=0$. The applet shows what goes wrong when you try to use degree $n=6$ near $0$.
+    - Drag the **blue** point **$x_0$** on the curve to choose the expansion point.
+    - Move the slider **$n$** (allowed values $0,\dots,6$).
+    - Drag the **orange** point **$x$** on the curve to choose where you evaluate the approximation.
+    - The **blue curve** is $g(x)$.
+    - The **pink curve** is the Taylor polynomial $T_n(x)$ around the chosen $x_0$ (only shown when the required derivatives exist).
+    - The **green vertical dashed segment** at the current $x$ is the remainder $R_n(x)=g(x)-T_n(x)$ (its length is $|g(x)-T_n(x)|$).
+    - If the Taylor polynomial is not defined (the “failure case”), the applet hides $T_n$ and $R_n$, and the graph of $g$ turns **red** as a warning.
+    - First set $n=5$ and move $x_0$ close to $0$: the Taylor polynomial is still defined, and near $x_0$ the remainder segment tends to get small.
+    - Now set $n=6$ and drag $x_0$ toward $0$:
+      - as $x_0$ gets sufficiently close to $0$, the applet declares the Taylor polynomial **undefined** (pink curve and green remainder disappear, and $g$ turns red).
+      - this corresponds to the fact that $g^{(6)}(0)$ does not exist, so the degree-6 Taylor polynomial at $x_0=0$ is not well-defined.
+    - Even *before* the polynomial disappears, you can observe instability for $n=6$ when $x_0$ is near $0$:
+      - keep $n=6$,
+      - choose $x_0$ close to $0$,
+      - move the evaluation point $x$ a bit away from $x_0$,
+      - notice that the remainder segment $R_6(x)$ can become **very large**.
+<br/>
 <TaylorTheoremFails client:load />
 ---
 

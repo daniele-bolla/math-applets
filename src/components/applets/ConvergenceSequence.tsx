@@ -13,6 +13,7 @@ export default function ConvergenceSequenceApplet() {
         <JSXGraphBoard
             config={{ boundingbox: [-1, 1, 10, -1],                
                 showZoom: false,
+                zoom: {  enabled: false },
                 pan: { enabled: false }, }}
             setup={(board: JXG.Board) => {
 

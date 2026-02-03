@@ -2,7 +2,7 @@
 title: Rolle's Theorem
 description: Visualization of Rolle's Theorem
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 2
 ---
@@ -18,6 +18,17 @@ If $f(a) = f(b)$ then there exists at least one $ \xi \in (a,b) $ such that $f'(
 </MathBlock>
 
 --- 
+### How to use the applet
+- Drag the green point **$a$** along the $x$-axis to choose the left endpoint.
+- The red point **$b$** is computed automatically so that $f(a)=f(b)$ (here $b=-a$), so the main hypothesis of Rolle’s theorem is always satisfied.
+- The dashed vertical segments indicate the values $f(a)$ and $f(b)$.
+- The purple points $\xi$ mark the critical points of the chosen function $f(x)=x^4-2x^2$, and a purple tangent is drawn there when $\xi\in(a,b)$.
+- As you move $a$, the interval $(a,b)$ changes.
+- Whenever at least one of the marked points $\xi$ lies strictly between $a$ and $b$, the tangent at that point is horizontal, illustrating $f'(\xi)=0$.
+- For this function, the critical points are $\xi\in\{-1,0,1\}$ (since $f'(x)=4x(x^2-1)$), and the applet shows exactly which of them fall inside $(a,b)$.
+
+<br/>
+
 <RolleTheorem client:load />
 --- 
 ## Description

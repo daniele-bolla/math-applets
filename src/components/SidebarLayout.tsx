@@ -94,17 +94,40 @@ export default function SidebarLayout({ examples, title, children }: SidebarLayo
 
               <div className="space-y-1">
                 {sortedGrouped[category].map((ex) => (
-                  <a
+                                 <a
                     key={ex.slug}
                     href={`${import.meta.env.BASE_URL}/examples/${ex.slug}`}
-                    className={[
-                      "block py-1",
-                      ex.data.approved
-                        ? "line-through text-red-500"
-                        : "text-slate-900 hover:text-blue-600",
-                    ].join(" ")}
+                    className="flex items-center justify-between py-1 text-slate-900 hover:text-blue-600 group"
                   >
-                    {ex.data.title}
+                    <span className="truncate mr-2">{ex.data.title}</span>
+                    
+                    {/* Status Icons */}
+                    <div className="flex-shrink-0">
+                      {ex.data.approved && (
+                       <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="w-4 h-4 text-green-500"
+                          aria-label="Approved"
+                        >
+                          <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                        </svg>
+                      )}
+
+                      {!ex.data.approved && (
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor" 
+                          className="w-4 h-4 text-amber-500"
+                          aria-label="Pending Approval"
+                        >
+                          <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+
                   </a>
                 ))}
               </div>

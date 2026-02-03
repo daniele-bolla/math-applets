@@ -2,7 +2,7 @@
 title: Pointwise Convergence
 description: Visualization of the Pointwise Convergence.
 visible: true
-approved: false
+approved: true
 category: Convergence of Function Sequences
 ord: 0
 ---
@@ -28,6 +28,43 @@ $
 </MathBlock>
 
 --- 
+  - Explore **pointwise convergence** for the sequence
+    $$
+    f_n(x)=x^n \qquad (x\in[0,1]),
+    $$
+    and its pointwise limit
+    $$
+    f(x)=
+    \begin{cases}
+    0,& 0\le x<1,\\[4pt]
+    1,& x=1.
+    \end{cases}
+    $$
+  - For a *fixed* choice of $x$ and $\varepsilon>0$, the applet helps you see when
+    $$
+    |f_n(x)-f(x)|<\varepsilon
+    \quad\text{for all } n \ge N_{x,\varepsilon}.
+    $$
+  - Use the slider **$n$** to choose the current index $n$ (the solid blue curve is $x^n$).
+  - Use the slider **$\varepsilon$** to set the tolerance $\varepsilon>0$.
+  - Drag the point **$x$** on the $x$-axis to choose the evaluation point $x\in[0,1]$.
+  - The **solid blue curve** is the current function $f_n(x)=x^n$.
+  - The **faint dashed blue curves** are earlier functions $x^k$ (for $k<n$), to show the trend as $n$ grows.
+  - The **red limit function** is drawn as:
+    - the red line $y=0$ (limit on $[0,1)$),
+    - the red point $(1,1)$ (since $1^n=1$ for all $n$).
+  - The **vertical gray guide** marks the chosen $x$.
+  - The **dashed horizontal lines** form the $\varepsilon$-tube around the limit value at the chosen $x$: $f(x)\pm\varepsilon$.
+  - The point $P_n=(x,f_n(x))$ shows the current value of the sequence at your chosen $x$.
+  - The dashed segment from $f(x)$ to $f_n(x)$ visualizes the error $|f_n(x)-f(x)|$.
+  - Fix an $x<1$ and increase $n$: the point $P_n=(x,x^n)$ moves down toward $0$, and eventually enters the $\varepsilon$-tube around $f(x)=0$.
+  - When
+    $$
+    |f_n(x)-f(x)|<\varepsilon,
+    $$
+    the point $P_n$ (and the point $x$ on the axis) turn **green**.
+  - Drag $x$ closer to $1$ (e.g. $0.9,0.99,0.999$) while keeping $\varepsilon$ fixed: you will need **much larger** $n$ before $x^n<\varepsilon$. This shows that $N_{x,\varepsilon}$ depends strongly on $x$.
+  - Check the special case $x=1$: since $f_n(1)=1$ for all $n$, the limit value is $f(1)=1$ (the red point $(1,1)$), not $0$.
 <PointwiseConvergenceXn client:load />
 --- 
 

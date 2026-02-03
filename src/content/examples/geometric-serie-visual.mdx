@@ -2,7 +2,7 @@
 title: "Geometric series"
 description: "A triangle-area visualization of 1/4 + (1/4)^2 + (1/4)^3 + … = 1/3."
 visible: true
-approved: false
+approved: true
 category: "Series"
 ord: 2
 ---
@@ -29,6 +29,33 @@ $$
 </MathBlock>
 
 ---
+
+### How to use the applet
+
+- Move the slider **$N$** to display the first $N$ shaded triangles.
+- Start with the large triangle $T_1$.
+- In any triangle, connect the midpoints of its sides. The central (medial) triangle has side length scaled by $\tfrac12$, hence **area scaled by $(\tfrac12)^2=\tfrac14$**.
+- In the applet, at step $k$ the shaded triangle has area
+  
+$$
+
+  \left(\frac14\right)^k
+  
+$$
+  (relative to the area of the original triangle).
+
+- As $N$ increases, you are adding areas
+  
+$$
+
+  \frac14,\ \left(\frac14\right)^2,\ \left(\frac14\right)^3,\ \dots
+  
+$$
+  so the total shaded area approaches a limit.
+- The construction partitions the current triangle into **4 congruent** triangles each time: 1 shaded + 3 unshaded. 
+Repeating this indefinitely shows the shaded region approaches **one third** of the whole triangle, 
+matching the sum $\frac13$.
+
 <GeometricSeriesMabry client:load />
 ---
 

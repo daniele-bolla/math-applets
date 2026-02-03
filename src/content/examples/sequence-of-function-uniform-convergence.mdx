@@ -2,7 +2,7 @@
 title: Uniform Convergence
 description: Visualization of the Uniform Convergence.
 visible: true
-approved: false
+approved: true
 category: Convergence of Function Sequences
 ord: 1
 ---
@@ -23,6 +23,24 @@ $$
 </MathBlock>
 
 --- 
+  - Visualize **uniform convergence** for the sequence $ f_n(x)=\frac{\sin(nx)}{n}\qquad (x\in[0,2\pi]), $
+    and its limit function $ f(x)=0. $
+  - Use the slider **$n$** to choose the current index $n$ (the solid blue curve is $f_n$).
+  - Use the slider **$\varepsilon$** to set the tolerance $\varepsilon>0$.
+  - Drag the point **$x$** on the $x$-axis to choose the evaluation point $x\in[0,2\pi]$.
+  - The **solid blue curve** is the current function $f_n(x)=\sin(nx)/n$.
+  - The **faint dashed blue curves** are earlier functions $f_k(x)=\sin(kx)/k$ (for $k<n$), to show how the whole family shrinks as $n$ increases.
+  - The **red horizontal line** is the limit function $f(x)=0$.
+  - The **dashed red lines** are the $\varepsilon$-tube around the limit: $y=\pm\varepsilon$.
+  - The **vertical gray guide** marks the chosen $x$.
+  - The highlighted point $P_n=(x,f_n(x))$ shows the value at the chosen $x$.
+  - The dashed segment from $(x,0)$ to $(x,f_n(x))$ visualizes the error $|f_n(x)-0|$.
+
+    - choose an $\varepsilon>0$,
+    - increase $n$ until the **entire blue curve** stays inside the $\varepsilon$-tube $y=\pm\varepsilon$,
+    - now drag $x$ across the whole interval $[0,2\pi]$ and notice that $P_n$ stays green everywhere.
+
+    <br/>
 <UniformConvergence client:load />
 --- 
 

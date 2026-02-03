@@ -2,7 +2,7 @@
 title: "Convergent terms, divergent series "
 description: "Example where a_n → 0 but the series Σ a_n diverges; includes continuous trajectory models via function graphs."
 visible: true
-approved: false
+approved: true
 category: "Series"
 ord: 0
 ---
@@ -25,6 +25,17 @@ This applet provides a clear counterexample using a p-series with $p<1$.
 </MathBlock>
 
 ---
+## How to use the applet
+- Sequence and partial sums used: $a_n=\frac{1}{(n+1)^{1/3}}$, $s_n=\sum_{k=0}^{n} a_k.$
+- Move the slider **$N$** to display the values up to index $N$.
+- **Blue points** represent the terms $a_n$.
+- **Red points** represent the partial sums $s_n$.
+- The larger blue/red markers indicate the current values $a_N$ and $s_N$.
+- As $N$ increases, the blue points approach $0$: $a_n\to 0$.
+- Nevertheless, the red points keep increasing and do not approach a finite limit: $(s_n)$ diverges, so the series $\sum_{k=0}^\infty a_k$ diverges.
+
+<br/>
+
 <DivergentPSeriesHalf client:load />
 ---
 

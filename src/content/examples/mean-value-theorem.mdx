@@ -2,7 +2,7 @@
 title: Mean Value Theorem
 description: Visualization of the Mean Value Theorem.
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 3
 ---
@@ -19,6 +19,17 @@ import MeanValueTheorem from "../../components/applets/MeanValueTheorem";
 </MathBlock>
 
 --- 
+### How to use the applet
+- Drag the points **$a$** (green) and **$b$** (red) along the $x$-axis to change the interval $[a,b]$.
+- The points $(a,f(a))$ and $(b,f(b))$ are marked on the graph.
+- The red line is the **secant** through $(a,f(a))$ and $(b,f(b))$. Its slope is $\frac{f(b)-f(a)}{b-a}$.
+- The point **$c$** (purple) is computed so that $f'(c)$ equals this secant slope.
+- The purple line is drawn **parallel** to the secant through $(c,f(c))$, visualizing that the tangent slope at $c$ matches the secant slope.
+- As you move $a$ and $b$, the secant slope changes, and the applet updates $c$ accordingly.
+- The theorem guarantees that at least one such point $c\in(a,b)$ exists (for functions continuous on $[a,b]$ and differentiable on $(a,b)$); in this example the applet displays one solution.
+
+<br/>
+
 <MeanValueTheorem client:load />
 --- 
 

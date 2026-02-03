@@ -2,7 +2,7 @@
 title: Intermediate Value Theorem
 description: Visualization of the Intermediate Value Theorem.
 visible: true
-approved: false
+approved: true
 category: Functions and Continuity
 ord: 1
 ---
@@ -18,6 +18,24 @@ $f(a) < c < f(b)$ or $f(a) > c > f(b)$. Then there exists an $x \in (a,b)$ such 
 </MathBlock>
 
 --- 
+### How to use the applet
+- Drag the point **$a$** and **$b$** along the $x$-axis to change the interval $[a,b]$.
+- Drag the point/slider **$c$** (the horizontal level) to choose the target value.
+- The graph of $f$ on the chosen interval $[a,b]$.
+- A horizontal line $y=c$.
+- Intersection points between the graph and the line $y=c$ (up to a fixed maximum number), together with their projections onto the $x$-axis.
+- If $f$ is continuous on $[a,b]$ and
+$$
+
+  \min\{f(a),f(b)\} < c < \max\{f(a),f(b)\},
+  
+$$
+  then at least one intersection point appears with $x\in(a,b)$, meaning there exists $\xi\in(a,b)$ such that $f(\xi)=c$.
+- By moving $c$, you can see that there may be **more than one** solution $\xi$.
+- The applet also highlights the *image* $f([a,b])$:
+  - **green segment** when the function is continuous on the chosen interval (no “gaps” in the values),
+  - **orange warning segment** when the function is not continuous on the chosen interval (gaps can occur, and IVT can fail).
+<br/>
 <IntermediateValueTheorem client:load />
 --- 
 

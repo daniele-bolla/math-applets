@@ -2,7 +2,7 @@
 title: Secant and Tangent 
 description: Visualization of the derivative.
 visible: true
-approved: false
+approved: true
 category: Differentiation
 ord: 0
 ---
@@ -17,6 +17,28 @@ $$f'(x_0) := \lim_{x \to x_0} \frac{f(x) - f(x_0)}{x - x_0}$$
 exists. In this case, $f'(x_0)$ is called the derivative of $f$ in $x_0$.
 </MathBlock>
 ---
+### How to use the applet
+- Drag the green point $(a,f(a))$ along the curve to choose the base point $a$.
+- Move the slider **$h$** to choose a second point $B=(a+h,f(a+h))$.
+- The red line is the **secant** through $(a,f(a))$ and $(a+h,f(a+h))$. Its slope is
+$$
+
+  \frac{f(a+h)-f(a)}{(a+h)-a}=\frac{f(a+h)-f(a)}{h}.
+  
+$$
+- The orange arrows highlight the horizontal change $h$ and the vertical change $\Delta f=f(a+h)-f(a)$.
+- When $h$ is very small, the applet switches to the purple **tangent** line at $(a,f(a))$, whose slope equals the derivative $f'(a)$.
+- As $h\to 0$, the secant slope approaches the tangent slope:
+  
+$$
+
+  \lim_{h\to 0}\frac{f(a+h)-f(a)}{h}=f'(a).
+  
+$$
+- For the example $f(x)=x^2$, the applet displays $f'(a)=2a$. Try moving $a$ and check how the tangent steepness changes.
+
+<br/>
+
 <Tangent client:load />
 ---
 

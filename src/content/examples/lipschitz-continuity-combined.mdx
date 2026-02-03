@@ -2,7 +2,7 @@
 title: "Lipschitz Continuity"
 description: "Geometric interpretation of Lipschitz continuity "
 visible: true
-approved: false
+approved: true
 category: Functions and Continuity
 ord: 3
 ---
@@ -23,7 +23,23 @@ $|f(x) - f(y)| \le L\, |x - y|$.
 </MathBlock>
 
 ---
+### How to use the applet
+- Drag the two orange points on the curve: they represent $(x_1,f(x_1))$ and $(x_2,f(x_2))$.
+- Move the slider **$L$** to change the allowed Lipschitz constant.
+- The **red dashed line** is the secant line through the two chosen points.
+- The **right triangle** encodes the differences $\Delta x$ (horizontal) and $\Delta y$ (vertical), so the (absolute) secant slope is
+$$
 
+  \frac{|\Delta y|}{|\Delta x|}=\frac{|f(x_2)-f(x_1)|}{|x_2-x_1|}.
+  
+$$
+- The arrows labeled **$+L$** and **$-L$** visualize the slope bounds $\pm L$.
+- The shaded “cone” with vertex at the left point shows the region between the two lines of slope $\pm L$.
+- **Green**: the Lipschitz inequality holds for the currently chosen points (the secant slope is $\le L$ in absolute value).
+- **Red**: the inequality fails for the chosen points (you would need a larger $L$).
+- For $f(x)=\sin x$, choosing $L\ge 1$ makes the condition succeed for all pairs of points (consistent with the Mean Value Theorem and $|\cos z|\le 1$).
+
+<br/>
 <LipschitzContinuityCombined client:load />
 
 ---

@@ -1,14 +1,8 @@
 import JSXGraphBoard from "../JSXGraphBoard";
 import * as JXG from "jsxgraph";
-import {
-    COLORS,
-    createText,
-    createPoint,
-    createSlider,
-    createArrow
-} from "../../utils/jsxgraph";
+import { COLORS, createText, createPoint, createSlider } from "../../utils/jsxgraph";
 
-export default function ComplexRootsOfunity() {
+export default function ComplexRootsOfUnity() {
   return (
     <JSXGraphBoard
       config={{
@@ -33,21 +27,13 @@ export default function ComplexRootsOfunity() {
           anchorX: "left",
         });
 
-        // ----- Sliders (BOTTOM-RIGHT)
+        // ----- Slider (BOTTOM-RIGHT)
         const nSlider = createSlider(
           board,
-          [0.6, -1.25],
-          [1.6, -1.25],
-          [0, 0, MAX_N],
+          [0.6, -1.35],
+          [1.6, -1.35],
+          [2, 6, MAX_N], // min=2 avoids division by 0/1
           { name: "n", snapWidth: 1 }
-        ) as JXG.Slider;
-
-        const xSlider = createSlider(
-          board,
-          [0.6, -1.42],
-          [1.6, -1.42],
-          [0, 0, TAU],           // min=0, start=0, max=2π
-          { name: "x", snapWidth: 0.01 }
         ) as JXG.Slider;
 
         // ----- Base points and unit circle
@@ -70,110 +56,64 @@ export default function ComplexRootsOfunity() {
           highlight: false,
         });
 
-        // ----- Continuous point z = e^{ix}
-        const z = createPoint(
-          board,
-          [
-            () => Math.cos(xSlider.Value()),
-            () => Math.sin(xSlider.Value()),
-          ],
-          {
-            name: "e^{ix}",
-            size: 2,
-            fixed: true,
-            label: { offset: [-28, -28], fontSize: 14, color: COLORS.red },
-            highlight: false,
-          },
-          COLORS.red
-        );
-
-        // Ray from origin to e^{ix}
-        createArrow(board, [O, z], {
-          lastArrow: true,
-          highlight: false,
-        }, COLORS.red);
-
-        // Arc from 1 to e^{ix} (shows “x is an angle”)
-        const arcCurve = board.create("curve", [[0], [0]], {
-          strokeColor: COLORS.red,
-          strokeWidth: 2,
-          strokeOpacity: 0.55,
-          highlight: false,
-        });
-
-        board.create("angle", [One, O, z], {
-          type: "sector",
-          name: "",
-          radius: 0.4,
-          fillColor: COLORS.red,
-          fillOpacity: 0.18,
-          strokeColor: COLORS.red,
-          strokeOpacity: 0.35,
-          strokeWidth: 2,
-          highlight: false,
-          label: { visible: false },
-          orthoType: "none",
-          orthoSensitivity: 0,
-        });
-
-        // ----- Roots of unity points z_k and polygon
+        // ----- Roots of unity points z_k and labels
         const roots: JXG.Point[] = [];
+        const rootLabels: JXG.Text[] = [];
+
         for (let k = 0; k < MAX_N; k++) {
-          roots.push(
-            createPoint(
-              board,
-              [
-                () => Math.cos((TAU * k) / Math.floor(nSlider.Value())),
-                () => Math.sin((TAU * k) / Math.floor(nSlider.Value())),
-              ],
-              {
-                name: "",
-                size: 3,
-                fixed: true,
-                visible: false,
-                highlight: false,
+          const pk = createPoint(
+            board,
+            [
+              () => {
+                const n = Math.max(2, Math.floor(nSlider.Value()));
+                return Math.cos((TAU * k) / n);
               },
-              COLORS.blue
-            )
+              () => {
+                const n = Math.max(2, Math.floor(nSlider.Value()));
+                return Math.sin((TAU * k) / n);
+              },
+            ],
+            {
+              name: "",
+              size: 3,
+              fixed: true,
+              visible: false,
+              highlight: false,
+            },
+            COLORS.blue
           );
+
+          roots.push(pk);
+
+          const tk = createText(
+            board,
+            [() => pk.X() + 0.06, () => pk.Y() + 0.06],
+            `z_${k}`,
+            { fontSize: 14, fixed: true, visible: false },
+            COLORS.blue
+          ) as unknown as JXG.Text;
+
+          rootLabels.push(tk);
         }
 
+        // ----- Polygon through the roots (regular n-gon)
         const polygonCurve = board.create("curve", [[0], [0]], {
           strokeColor: COLORS.blue,
           strokeWidth: 3,
           highlight: false,
-        });
-
-        // Highlight nearest root to current angle x
-        const highlight = createPoint(board, [1, 0], {
-          name: "",
-          size: 5,
-          fixed: true,
-          visible: true,
-          highlight: false,
-        }, COLORS.blue);
-
-        createText(
-          board,
-          [() => highlight.X() + 0.08, () => highlight.Y() + 0.08],
-          () => {
-            const n = Math.max(2, Math.floor(nSlider.Value()));
-            const x = xSlider.Value();
-            const k = ((Math.round((n * x) / TAU) % n) + n) % n;
-            return `z_${k}`;
-          },
-          { fontSize: 16 },
-          COLORS.blue
-        );
+        }) as JXG.Curve;
 
         const update = () => {
           board.suspendUpdate();
 
           const n = Math.max(2, Math.floor(nSlider.Value()));
-          const x = xSlider.Value();
 
-          // show first n roots
-          for (let k = 0; k < MAX_N; k++) roots[k].setAttribute({ visible: k < n });
+          // show first n roots and labels
+          for (let k = 0; k < MAX_N; k++) {
+            const vis = k < n;
+            roots[k].setAttribute({ visible: vis });
+            rootLabels[k].setAttribute({ visible: vis });
+          }
 
           // polygon through roots and close it
           const X: number[] = [];
@@ -187,33 +127,12 @@ export default function ComplexRootsOfunity() {
           polygonCurve.dataX = X;
           polygonCurve.dataY = Y;
 
-          // arc from 0 to x
-          const steps = 220;
-          const ax: number[] = [];
-          const ay: number[] = [];
-          for (let i = 0; i <= steps; i++) {
-            const t = (x * i) / steps;
-            ax.push(Math.cos(t));
-            ay.push(Math.sin(t));
-          }
-          arcCurve.dataX = ax;
-          arcCurve.dataY = ay;
-
-          // nearest root index to x
-          const kNearest = ((Math.round((n * x) / TAU) % n) + n) % n;
-          highlight.setPosition(JXG.COORDS_BY_USER, [
-            Math.cos((TAU * kNearest) / n),
-            Math.sin((TAU * kNearest) / n),
-          ]);
-
           board.unsuspendUpdate();
           board.update();
         };
 
         nSlider.on("drag", update);
         nSlider.on("up", update);
-        xSlider.on("drag", update);
-        xSlider.on("up", update);
 
         update();
       }}

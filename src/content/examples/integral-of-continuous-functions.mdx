@@ -16,6 +16,39 @@ Let $f : [a,b] \to \mathbb{R}$ be continuous. Then $f$ is integrable.
 </MathBlock>
 
 --- 
+### How to use
+    - Visualize the proof idea: for every $\varepsilon>0$ we construct staircase functions $\psi$ and $\varphi$ such that
+      $\psi \le f \le \varphi
+      \quad\text{and}\quad
+      I(\varphi)-I(\psi)=\varepsilon.$
+    - The applet shows when the key “mesh-size condition” of the proof is satisfied.
+    - Drag the blue points **$a$** and **$b$** to choose the interval $[a,b]$.
+    - Use the slider **$\varepsilon$** to choose the tolerance.
+    - Use the slider **$n$** to choose the number of subintervals in the uniform partition $Z$.
+    - The **blue curve** is the continuous function $f$.
+    - The partition $Z$ is uniform with mesh size
+      $\Delta x=\frac{b-a}{n}.$
+    - The applet computes
+      $\tilde\varepsilon=\frac{\varepsilon}{2(b-a)}.$
+      The vertical bracket at $x=b$ has height $2\tilde\varepsilon$.
+    - The **orange staircase** is $\varphi$ (intended upper bound), defined on each open interval $(x_{i-1},x_i)$ by
+      $\varphi(x)=f(x_i)+\tilde\varepsilon.$
+    - The **purple staircase** is $\psi$ (intended lower bound), defined on each open interval $(x_{i-1},x_i)$ by
+      $\psi(x)=f(x_i)-\tilde\varepsilon.$
+    - The filled band between them is colored **green/red** depending on whether the proof’s size condition is satisfied.
+    - The proof requires choosing $n$ so that $\Delta x < \delta$, where $\delta$ comes from uniform continuity (condition (7.2)).
+    - In the applet, this is checked via a sufficient bound (using an estimate of $\sup|f'|$ for the fixed function $f$). 
+    Concretely, it computes a number $\delta$ and checks whether
+      $\frac{b-a}{n} < \delta.$
+    - **If the applet shows the red message “$(b-a)/n \ge \delta$” (as in your screenshot), then the proof hypothesis is not satisfied.**
+      - In this red case, $\psi$ and $\varphi$ are still drawn, but they are **not guaranteed** to satisfy $\psi \le f \le \varphi$ on every subinterval.
+      - That is exactly why you sometimes see the purple staircase above the blue curve, or the orange staircase below it: the construction only becomes a true lower/upper bound after the mesh is fine enough.
+    - **To make $\psi\le f\le\varphi$ hold (the “proof regime”), you need to reach the green state.** You can do that by:
+      - increasing $n$ (smaller $\Delta x$),
+      - shrinking the interval (smaller $b-a$),
+      - or increasing $\varepsilon$ (larger $\tilde\varepsilon$, hence an easier condition).
+    - Once the display turns **green**, the intended implication of (7.2) is in effect:$|x-x_i|<\delta \Rightarrow |f(x)-f(x_i)|<\tilde\varepsilon,$
+      which gives $\psi(x)\le f(x)\le\varphi(x)$ on each $(x_{i-1},x_i)$, matching the proof idea.
 <IntegralOfContinuouFunctions client:load />
 --- 
 

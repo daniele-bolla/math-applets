@@ -12,7 +12,7 @@ export default function ComplexMultiplicationApplet() {
   return (
     <JSXGraphBoard
       config={{
-        boundingbox: [-1.2, 3.4, 3.8, -1.8],
+        boundingbox: [-2, 7, 5, -3],
         axis: true,
         showZoom: false,
         pan: { enabled: false },
@@ -49,14 +49,14 @@ export default function ComplexMultiplicationApplet() {
         // ------------------------------------------------------------
         // Draggable z1, z2 (constrained away from origin)
         // ------------------------------------------------------------
-        const z1 = createPoint(board, [2.3, 1.1], {
+        const z1 = createPoint(board, [2, 1], {
           name: "",
           fixed: false,
           withLabel: false,
           ...DEFAULT_GLIDER_ATTRIBUTES
         }, Z1_COLOR);
 
-        const z2 = createPoint(board, [1.1, 2.0], {
+        const z2 = createPoint(board, [1, 2], {
           name: "",
           fixed: false,
           withLabel: false,
@@ -141,8 +141,8 @@ export default function ComplexMultiplicationApplet() {
         // ------------------------------------------------------------
         const sectorCommon = {
           type: "sector" as const,
-          orthoType: "square" as const,
-          orthoSensitivity: 2,
+          orthoType: "sector" as const,
+          orthoSensitivity: 0,
           strokeOpacity: 0.25,
           fillOpacity: 0.20,
           highlight: false,
@@ -150,6 +150,7 @@ export default function ComplexMultiplicationApplet() {
 
         board.create("angle", [U, O, z1], {
           ...sectorCommon,
+          orthoSensitivity: 0,
           name: "φ₁",
           radius: 0.75,
           fillColor: Z1_COLOR,

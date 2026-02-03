@@ -2,7 +2,7 @@
 title: Roots of Unity
 description: Roots of unity and polygonal approximation of arc length on the unit circle
 visible: true
-approved: false
+approved: true
 category: Complex Numbers and Trigonometric Functions
 ord: 2
 ---
@@ -35,6 +35,21 @@ $\ell_n = 2n\sin\!\big(\frac{x}{2n}\big)$ and $\lim_{n\to\infty}\ell_n = x$.
 </MathBlock>
 
 ---
+### How to use the applet
+- Move the slider **$n$** to choose how many roots of unity are displayed.
+- The blue points are the $n$-th roots of unity
+  
+$$
+
+  z_k = e^{i\frac{2\pi k}{n}}, \qquad k=0,\dots,n-1.
+  
+$$
+- The blue polygon connects the points in order, showing that the roots form a **regular $n$-gon** inscribed in the unit circle.
+- The roots are **equally spaced**: the angle between consecutive roots is $\frac{2\pi}{n}$.
+- Increasing $n$ makes the polygon look closer and closer to the circle (this is the geometric idea behind approximating circular quantities by polygons).
+
+<br/>
+
 <ComplexRootsOfUnity client:load />
 ---
 
@@ -71,7 +86,3 @@ Concretely, the applet creates an array of points `roots`.
           );
         }
 ```
-This matches exactly $z_k=e^{i\frac{2\pi k}{n}}$.
-
-To connect with Remark 5.11 and Figure 5.2, the slider `xSlider` moves the point $e^{ix}$ along the unit circle.
-(This can be maybe done in a separate applet instead).

@@ -2,7 +2,7 @@
 title: LimSup LimInf  
 description: Visualization of  LimSup LimIn.
 visible: true
-approved: false
+approved: true
 category: Sequences
 ord: 1
 ---
@@ -29,11 +29,48 @@ i) It holds that $a_n < a + \varepsilon$ for almost all (i.e., all except finite
 ii) It holds that $a_n > a - \varepsilon$ for infinitely many $n \in \mathbb{N}$.
 </MathBlock>
 
+### How to use the applet
+- Use the slider **$k$** to choose the tail $\{a_n : n\ge k\}$.
+- Use the slider **$\varepsilon$** to change the thickness of the $\varepsilon$-neighborhoods around $\limsup a_n$ (pink) and $\liminf a_n$ (blue).
+
+- The **red circle** marks $\sup_{n\ge k} a_n$ (computed over the displayed tail).
+- The **blue circle** marks $\inf_{n\ge k} a_n$ (computed over the displayed tail).
+- The **dashed horizontal lines** are the levels $\limsup a_n$ (pink) and $\liminf a_n$ (blue).
+- The **dashed bands** show $\limsup a_n \pm \varepsilon$ (pink) and $\liminf a_n \pm \varepsilon$ (blue).
+- Points with $n<k$ are faded (they are “discarded” when looking at the tail).
+
+- **Orange points** are *exceptions*:
+  - above $\limsup a_n + \varepsilon$, or
+  - below $\liminf a_n - \varepsilon$.
+  For a correct limit statement, you should be able to choose $k$ so that there are only **finitely many** such exceptions.
+- **Pink points** are “witnesses” that the sequence comes **arbitrarily close from below** to $\limsup a_n$:
+  
+$$
+
+  a_n > \limsup a_n - \varepsilon \quad \text{infinitely often.}
+  
+$$
+- **Blue points** are “witnesses” that the sequence comes **arbitrarily close from above** to $\liminf a_n$:
+  
+$$
+
+  a_n < \liminf a_n + \varepsilon \quad \text{infinitely often.}
+  
+$$
+
+**Suggested exploration**
+1. Fix a small $\varepsilon$ (e.g. $\varepsilon=1$) and increase $k$.  
+   Observe: orange points eventually disappear.
+2. Keep $k$ large and shrink $\varepsilon$.  
+   Observe: you still get infinitely many pink/blue witness points near the corresponding dashed level.
+
+<br/>
+
 --- 
 <LimSupLimInf client:only />
 --- 
 
-## Description
+## Technical Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/LimSupLimInf.tsx).
 
 *Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Theorem 2.16 page 28 

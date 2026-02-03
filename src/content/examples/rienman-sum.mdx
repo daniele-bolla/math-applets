@@ -1,8 +1,8 @@
 ---
-title:  Rienman Sum 
-description: Rienman Sum
+title:  Rienmann Sum 
+description: Rienmann Sum
 visible: true
-approved: false
+approved: true
 category: Integration
 ord: 1
 ---
@@ -53,6 +53,22 @@ and call it the *(Riemann) integral* of $f$.
 
 
 ---
+### How to use the applet
+- Drag the two blue points on the $x$-axis to choose the interval $[a,b]$.
+- Move the slider **$n$** to choose the number of subintervals in the partition $a=x_0<x_1<\dots<x_n=b.$
+- Click **“Randomize partition”** to generate a new random partition with the same number $n$.
+- Move the slider **$\delta$** to control how “loose” the upper and lower staircase bounds are.
+- The **blue curve** is the function $f$.
+- The **red rectangles** form an *upper staircase function*: on each subinterval $[x_{i-1},x_i]$ 
+the height is $M_i+\delta$, where $M_i=\sup_{x\in[x_{i-1},x_i]} f(x).$
+- The **green rectangles** form a *lower staircase function*: on each subinterval the height is $m_i-\delta$, 
+where $m_i=\inf_{x\in[x_{i-1},x_i]} f(x).$
+- The green step function stays **below** $f$, and the red step function stays **above** $f$ (by construction).
+- Decreasing $\delta$ toward $0$ makes the bounds tighter for the chosen partition.
+- Increasing $n$ (more, finer subintervals) typically makes the upper and lower step functions closer, illustrating why integrable functions have matching upper and lower integrals in the limit of finer partitions.
+
+<br/>
+
 <RienmanSum client:load />
 ---
 

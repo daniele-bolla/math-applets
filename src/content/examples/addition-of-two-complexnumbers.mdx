@@ -2,7 +2,7 @@
 title: Complex Addition
 description: Addition of two complex numbers
 visible: true
-approved: false
+approved: true
 category: Complex Numbers and Trigonometric Functions
 ord: 0
 ---
@@ -22,6 +22,38 @@ of a triangle is at least the length of the longest edge.
 
 
 ---
+### How to use the applet 
+- Drag the two blue points to change the complex numbers
+  
+$$
+
+  z_1 = x_1 + i y_1, \qquad z_2 = x_2 + i y_2.
+  
+$$
+- The axes are the complex plane: horizontal $=\mathrm{Re}(z)$, vertical $=\mathrm{Im}(z)$.
+- The **blue arrows** from the origin represent the vectors $z_1$ and $z_2$.
+- The **red arrow** represents the sum
+  
+$$
+
+  z_1+z_2=(x_1+x_2)+i(y_1+y_2).
+  
+$$
+- The **dashed light-blue arrows** show the parallelogram rule:
+  - the arrow $z_2\to z_1+z_2$ is a translated copy of $z_1$,
+  - the arrow $z_1\to z_1+z_2$ is a translated copy of $z_2$.
+The picture forms a triangle (or parallelogram) with side lengths $|z_1|$, $|z_2|$, and $|z_1+z_2|$.  
+This illustrates the triangle inequality:
+
+$$
+
+|z_1+z_2|\le |z_1|+|z_2|.
+
+$$
+Equality happens when $z_1$ and $z_2$ point in the same direction (same argument).
+
+<br/>
+
 <ComplexAddition client:load />
 ---
 

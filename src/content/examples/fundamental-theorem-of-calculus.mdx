@@ -19,6 +19,35 @@ i) The function $F : I \to \mathbb{R}, \quad x \mapsto F(x) = \int_a^x f(t) \, d
 
 </MathBlock>
 ---
+### How to use
+    - Visaulization of the first part of the proof
+    - Drag the **green** point **$x$** on the $x$-axis.
+    - Drag the **purple** point **$x+h$** on the $x$-axis (this changes both the size and the sign of $h$).
+    - The **blue curve** is $f(t)$.
+    - The **red curve** is $F(x)=\int_0^x f(t)\,dt$.
+    - The **blue shaded area** represents $F(x)=\int_0^x f(t)\,dt$.
+    - The **orange shaded area** represents
+      $$
+      \int_{x_L}^{x_R} f(t)\,dt = F(x_R)-F(x_L),
+      $$
+      i.e. the area “slice” between $x$ and $x+h$.
+    - The **red points** $F(x)$ and $F(x+h)$ lie on the graph of $F$, and the line through them is the **secant line**.
+      Its slope is the difference quotient $\dfrac{F(x+h)-F(x)}{h}$.
+    - The **green rectangle** has base width $|h|=x_R-x_L$ and height
+      $$
+      \frac{F(x_R)-F(x_L)}{x_R-x_L},
+      $$
+      so its area matches the orange slice.
+    - The **green point** $\xi_h$ (with the point $f(\xi_h)$ on the graph) is chosen so that
+      $$
+      f(\xi_h)=\frac{F(x+h)-F(x)}{h}.
+      $$
+    - First choose $x$, then move $x+h$ so that $h$ is not too small: compare the secant slope on $F$ with the height $f(\xi_h)$. They represent the same number.
+    - Now drag $x+h$ closer to $x$ (so $|h|\to 0$):
+      - the orange slice becomes thinner,
+      - $\xi_h$ moves toward $x$,
+      - the secant line becomes closer to the tangent line at $x$, tuiirning into a tangent line (colored in purple)
+      - the slope $\dfrac{F(x+h)-F(x)}{h}$ approaches $f(x)$.
 <FundamentalTheoremOfCalculus client:load />
 ---
 

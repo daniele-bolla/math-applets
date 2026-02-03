@@ -218,7 +218,7 @@ export default function IntegrabilityProofApplet() {
           //  uniform partition Z with dx=(b-a)/n
           const { cuts, dx } = uniformPartition(a, b, n);
 
-          // δ ensuring (7.2)
+          // δ ensuring (7.2) application of mvt
           const maxAbsX = Math.max(Math.abs(a), Math.abs(b));
           const supDf = 0.5 * (1 + maxAbsX);
           const delta = eTilde / supDf;

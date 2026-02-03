@@ -6,6 +6,7 @@ import {
   createGlider,
   createPoint,
   createLine,
+  createButton,
 } from "../../utils/jsxgraph";
 
 export default function EpsilonDeltaDefApplet() {
@@ -17,47 +18,50 @@ export default function EpsilonDeltaDefApplet() {
       }}
       setup={(board: JXG.Board) => {
         // ---------------------------
-        // Function selector (buttons)
+        // Function selector (modes)
         // ---------------------------
         const DISCONTINUITY = 1.25;
 
-        type Mode = "discontinuous" |  "arctan";
+        type Mode = "discontinuous" | "arctan";
         let mode: Mode = "discontinuous";
 
         const f = (x: number) => {
-          if (mode === "arctan") return Math.atan(x);     
+          if (mode === "arctan") return Math.atan(x);
 
           if (x < DISCONTINUITY) return 0.3 * Math.pow(x, 3);
           return Math.pow(x, 2);
         };
 
-        const bbRight = () => board.getBoundingBox()[2];
-        const bbTop = () => board.getBoundingBox()[1];
 
-        const createButton = (row: number, label: string, nextMode: Mode, color: string) => {
-          const btn = board.create(
-            "button",
-            [
-              () => bbRight() - 2.4,        
-              () => bbTop() - 0.6 - 0.55 * row,
-              label,
-              () => {
-                mode = nextMode;
-                board.update();
-              },
-            ],
-            {
-              fixed: true,
-              strokeColor: color,
-              cssStyle: "width: 150px;",
-            }
-          ) as JXG.Button;
+        // Local wrapper: mode buttons
+        const createModeButton = (
+          x: number | (() => number),
+          y: number | (() => number),
+          label: string,
+          nextMode: Mode,
+          color: string
+        ) =>
+          createButton(
+            board,
+            x,
+            y,
+            label,
+            () => {
+              mode = nextMode;
+              // optional: clear status message when changing mode
+              statusText.setText("");
+              board.update();
+            },
+            color
+          );
 
-          return btn;
-        };
+        // bottom-row layout
+        const bbLeft = () => board.getBoundingBox()[0];
+        const bbBottom = () => board.getBoundingBox()[3];
 
-        createButton(0, "discontinuous", "discontinuous", COLORS.red);
-        createButton(2, "atan(x)", "arctan", COLORS.orange);
+        const BTN_Y = () => bbBottom() + 0.35; // slightly above bottom
+        const X0 = () => bbLeft() + 0.35;      // left margin
+        const GAP = 2.25;                      // spacing between buttons (tune)
 
         // ---------------------------
         // Function graph
@@ -150,9 +154,11 @@ export default function EpsilonDeltaDefApplet() {
         );
 
         // ===== DELTA =====
+        const DELTA_SEARCH_MAX = 3.0;
+
         const deltaLine = createLine(
           board,
-          [() => [pointA.X(), 0], () => [pointA.X() + 1.5, 0]],
+          [() => [pointA.X(), 0], () => [pointA.X() + DELTA_SEARCH_MAX, 0]],
           { visible: false, straightFirst: false, straightLast: false }
         );
 
@@ -172,7 +178,7 @@ export default function EpsilonDeltaDefApplet() {
           COLORS.orange
         );
 
-        // NOTE: your comment says "a - ε" but this is "a - δ"; also coordinates were swapped in your original.
+        // a - δ
         createLine(
           board,
           [() => [pointA.X() - getDelta(), 0], () => [pointA.X() - getDelta(), 1]],
@@ -187,7 +193,7 @@ export default function EpsilonDeltaDefApplet() {
           COLORS.orange
         );
 
-        // ===== POINT X =====
+        // ===== POINT X (constrained to |x-a|<δ) =====
         const xLine = createLine(
           board,
           [() => [pointA.X() - getDelta(), 0], () => [deltaPoint.X(), 0]],
@@ -236,16 +242,95 @@ export default function EpsilonDeltaDefApplet() {
           COLORS.blue
         );
 
+        // distance |f(x)-f(a)| (colored based on epsilon)
         createLine(
           board,
           [pointYfpointA, point0fx],
-          { straightFirst: false, straightLast: false, strokeWidth: 3 },
+          {
+            straightFirst: false,
+            straightLast: false,
+            strokeWidth: 3,
+          },
           () => {
             const epsilon = getEpsilon();
             const dist = Math.abs(point0fx.Y() - pointYfpointA.Y());
             return dist < epsilon ? COLORS.green : COLORS.red;
           }
         );
+
+        // ============================================================
+        // Find δ: numerical search for a suitable delta for chosen epsilon
+        // ============================================================
+        const statusText = board.create(
+          "text",
+          [() => X0() + 3.1 * GAP, () => BTN_Y() + 0.05, ""],
+          {
+            fixed: true,
+            fontSize: 14,
+            anchorX: "left",
+            strokeColor: "#333",
+          }
+        ) as JXG.Text;
+
+        const TINY = 1e-4;
+
+        const fa = () => f(pointA.X());
+        const distFromFa = (x: number) => Math.abs(f(x) - fa());
+
+        const findDeltaOneSide = (sign: 1 | -1, eps: number): number | null => {
+          const a = pointA.X();
+
+          // If it already fails arbitrarily close to a on this side, no δ exists
+          if (distFromFa(a + sign * TINY) >= eps) return null;
+
+          let lo = TINY;
+          let hi = TINY;
+
+          // Expand until we cross eps or hit max
+          while (hi < DELTA_SEARCH_MAX && distFromFa(a + sign * hi) < eps) {
+            lo = hi;
+            hi *= 1.5;
+          }
+
+          if (hi >= DELTA_SEARCH_MAX) return DELTA_SEARCH_MAX;
+
+          // Bisection near boundary dist = eps
+          for (let i = 0; i < 50; i++) {
+            const mid = 0.5 * (lo + hi);
+            if (distFromFa(a + sign * mid) < eps) lo = mid;
+            else hi = mid;
+          }
+
+          return lo;
+        };
+
+        const computeDelta = (eps: number): number | null => {
+          if (!(eps > 0)) return null;
+          const dR = findDeltaOneSide(1, eps);
+          const dL = findDeltaOneSide(-1, eps);
+          if (dR === null || dL === null) return null;
+          return Math.min(dR, dL);
+        };
+
+        // ---------------------------
+        // Bottom-row buttons (aligned)
+        // ---------------------------
+        createModeButton(() => X0() + 0 * GAP, BTN_Y, "discontinuous", "discontinuous", COLORS.red);
+        createModeButton(() => X0() + 1 * GAP, BTN_Y, "atan(x)", "arctan", COLORS.orange);
+
+        createButton(board,() => X0() + 2 * GAP, BTN_Y, "Find δ", () => {
+          const eps = getEpsilon();
+          const d = computeDelta(eps);
+
+          if (d === null) {
+            statusText.setText("No δ found (fails near a)");
+          } else {
+            statusText.setText(`δ ≈ ${d.toFixed(4)}`);
+            deltaPoint.setPosition(JXG.COORDS_BY_USER, [pointA.X() + d, 0]);
+          }
+
+          board.update();
+        }, COLORS.orange);
       }}
     />
   );

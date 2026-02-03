@@ -2,7 +2,7 @@
 title: Convergence of a sequence
 description: Visualization of convergence of a sequence.
 visible: true
-approved: false
+approved: true
 category: Sequences
 ord: 0
 ---
@@ -18,6 +18,18 @@ In this case, $a$ is called the limit of the sequence $(a_n)_{n \in \mathbb{N}}$
 $$\lim_{n \to \infty} a_n = a \quad \text{or} \quad a_n \to a \text{ for } n \to \infty.$$
 </MathBlock>
 ---
+### How to use the applet
+- $|a_n-a|<\varepsilon \quad \text{for all } n\ge N$ for the sequence $a_n=\frac1n$ and the limit $a=0$.
+-  Drag the green point **$\varepsilon$** up/down to choose an error tolerance.
+-  The two green dashed lines show the $\varepsilon$-neighborhood of the limit:
+$a-\varepsilon \quad \text{and} \quad a+\varepsilon \qquad (a=0).$
+- The purple vertical line marks the computed threshold $N_\varepsilon=\left\lceil\frac1\varepsilon\right\rceil$.
+
+- **Red points** correspond to indices $n < N_\varepsilon$: the inequality $|a_n-a|<\varepsilon$ may fail.
+- **Purple points** correspond to indices $n \ge N_\varepsilon$: all of them lie inside the green band, i.e.
+$\left|\frac1n-0\right|<\varepsilon.$
+<br/>
+
 <ConvergenceSequence client:load />
 ---
 ## Description
