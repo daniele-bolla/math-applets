@@ -12,7 +12,7 @@ export default function JSXGraphBoard({
 }: JSXGraphBoardProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(true);
-    const [showHelp, setShowHelp] = useState(false);
+    const [showHelp, setShowHelp] = useState(true);
 
     const reactId = useId();
     const idRef = useRef(`board-${reactId}`);
