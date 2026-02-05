@@ -40,10 +40,10 @@ Let $f : [a,b] \to \mathbb{R}$ be continuous. Then $f$ is integrable.
     - In the applet, this is checked via a sufficient bound (using an estimate of $\sup|f'|$ for the fixed function $f$). 
     Concretely, it computes a number $\delta$ and checks whether
       $\frac{b-a}{n} < \delta.$
-    - **If the applet shows the red message “$(b-a)/n \ge \delta$” (as in your screenshot), then the proof hypothesis is not satisfied.**
+    - **If the applet shows the red message “$(b-a)/n \ge \delta$”, then the proof hypothesis is not satisfied.**
       - In this red case, $\psi$ and $\varphi$ are still drawn, but they are **not guaranteed** to satisfy $\psi \le f \le \varphi$ on every subinterval.
       - That is exactly why you sometimes see the purple staircase above the blue curve, or the orange staircase below it: the construction only becomes a true lower/upper bound after the mesh is fine enough.
-    - **To make $\psi\le f\le\varphi$ hold (the “proof regime”), you need to reach the green state.** You can do that by:
+    - **To make $\psi\le f\le\varphi$ hold, you need to reach the green state.** You can do that by:
       - increasing $n$ (smaller $\Delta x$),
       - shrinking the interval (smaller $b-a$),
       - or increasing $\varepsilon$ (larger $\tilde\varepsilon$, hence an easier condition).
