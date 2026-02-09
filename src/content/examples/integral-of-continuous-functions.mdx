@@ -17,47 +17,53 @@ Let $f : [a,b] \to \mathbb{R}$ be continuous. Then $f$ is integrable.
 
 --- 
 ### How to use
-    - Visualize the proof idea: for every $\varepsilon>0$ we construct staircase functions $\psi$ and $\varphi$ such that
-      $\psi \le f \le \varphi
-      \quad\text{and}\quad
-      I(\varphi)-I(\psi)=\varepsilon.$
-    - The applet shows when the key “mesh-size condition” of the proof is satisfied.
-    - Drag the blue points **$a$** and **$b$** to choose the interval $[a,b]$.
-    - Use the slider **$\varepsilon$** to choose the tolerance.
-    - Use the slider **$n$** to choose the number of subintervals in the uniform partition $Z$.
-    - The **blue curve** is the continuous function $f$.
-    - The partition $Z$ is uniform with mesh size
-      $\Delta x=\frac{b-a}{n}.$
-    - The applet computes
-      $\tilde\varepsilon=\frac{\varepsilon}{2(b-a)}.$
-      The vertical bracket at $x=b$ has height $2\tilde\varepsilon$.
-    - The **orange staircase** is $\varphi$ (intended upper bound), defined on each open interval $(x_{i-1},x_i)$ by
-      $\varphi(x)=f(x_i)+\tilde\varepsilon.$
-    - The **purple staircase** is $\psi$ (intended lower bound), defined on each open interval $(x_{i-1},x_i)$ by
-      $\psi(x)=f(x_i)-\tilde\varepsilon.$
-    - The filled band between them is colored **green/red** depending on whether the proof’s size condition is satisfied.
-    - The proof requires choosing $n$ so that $\Delta x < \delta$, where $\delta$ comes from uniform continuity (condition (7.2)).
-    - In the applet, this is checked via a sufficient bound (using an estimate of $\sup|f'|$ for the fixed function $f$). 
-    Concretely, it computes a number $\delta$ and checks whether
-      $\frac{b-a}{n} < \delta.$
-    - **If the applet shows the red message “$(b-a)/n \ge \delta$”, then the proof hypothesis is not satisfied.**
-      - In this red case, $\psi$ and $\varphi$ are still drawn, but they are **not guaranteed** to satisfy $\psi \le f \le \varphi$ on every subinterval.
-      - That is exactly why you sometimes see the purple staircase above the blue curve, or the orange staircase below it: the construction only becomes a true lower/upper bound after the mesh is fine enough.
-    - **To make $\psi\le f\le\varphi$ hold, you need to reach the green state.** You can do that by:
-      - increasing $n$ (smaller $\Delta x$),
-      - shrinking the interval (smaller $b-a$),
-      - or increasing $\varepsilon$ (larger $\tilde\varepsilon$, hence an easier condition).
-    - Once the display turns **green**, the intended implication of (7.2) is in effect:$|x-x_i|<\delta \Rightarrow |f(x)-f(x_i)|<\tilde\varepsilon,$
-      which gives $\psi(x)\le f(x)\le\varphi(x)$ on each $(x_{i-1},x_i)$, matching the proof idea.
+- Visualize the proof idea: for every $\varepsilon>0$ we construct staircase functions $\psi$ and $\varphi$ such that
+  $\psi \le f \le \varphi
+  \quad\text{and}\quad
+  I(\varphi)-I(\psi)=\varepsilon.$
+- Drag the blue points **$a$** and **$b$** to choose the interval $[a,b]$.
+- Use the slider **$\varepsilon$** to choose the tolerance.
+- Use the slider **$n$** to choose the number of subintervals in the uniform partition $Z$.
+- The **blue curve** is the continuous function $f$.
+- The partition $Z$ is uniform with mesh size
+  $\Delta x=\frac{b-a}{n}.$
+- The applet computes
+  $\tilde\varepsilon=\frac{\varepsilon}{2(b-a)}.$
+  The vertical bracket at $x=b$ has height $2\tilde\varepsilon$.
+- The **orange staircase** is $\varphi$ (intended upper bound), defined on each open interval $(x_{i-1},x_i)$ by
+  $\varphi(x)=f(x_i)+\tilde\varepsilon.$
+- The **purple staircase** is $\psi$ (intended lower bound), defined on each open interval $(x_{i-1},x_i)$ by
+  $\psi(x)=f(x_i)-\tilde\varepsilon.$
+- The filled band between them is colored **green/red** depending on whether the proof's size condition is satisfied.
+- The proof requires choosing $n$ so that $\Delta x < \delta$, where $\delta$ comes from uniform continuity (condition (7.2)).
+- In the applet, this is checked via a sufficient bound (using an estimate of $\sup|f'|$ for the fixed function $f$). 
+  Concretely, it computes a number $\delta$ and checks whether
+  $\frac{b-a}{n} < \delta.$
+- When you change $\varepsilon$, $a$, or $b$, the $n$ slider automatically jumps to the minimum value required for the proof condition to hold (green state).
+- You can manually drag the $n$ slider **below** the required minimum to see what happens when the proof condition fails:
+  - Everything turns **red** (band, staircases, labels).
+  - A warning message appears: "⚠️ Bounds fail: $\psi \not\le f$ or $f \not\le \varphi$".
+  - You can visually observe the **blue curve escaping** the red band — the purple staircase may appear above $f$, or the orange staircase below $f$.
+  - This demonstrates **why** the condition $(b-a)/n < \delta$ is necessary: without it, the construction does not produce valid bounds.
+- **To restore the green (valid) state**, you can:
+  - Increase $n$ (finer partition → smaller $\Delta x$),
+  - Increase $\varepsilon$ (larger tolerance → easier condition),
+  - Or shrink the interval $[a,b]$ (smaller range).
+- Once the display turns **green**, the intended implication of (7.2) is in effect:
+  $|x-x_i|<\delta \Rightarrow |f(x)-f(x_i)|<\tilde\varepsilon,$
+  which gives $\psi(x)\le f(x)\le\varphi(x)$ on each $(x_{i-1},x_i)$, matching the proof idea.
+
+
 <IntegralOfContinuouFunctions client:load />
+
 --- 
 
 ## Description
 [Link to code](https://github.com/daniele-bolla/math-applets/blob/main/src/components/applets/IntegralOfContinuouFunctions.tsx).
 
-*Reference*: Lecture Notes Calculus 1 ( May22,2022 ) Theorem7.5 page 129
+*Reference*: Lecture Notes Calculus 1 (May 22, 2022) Theorem 7.5 page 129
 
-This applet is quiet experimental and visualizes the proof that a continuous function 
+This applet is quite experimental and visualizes the proof that a continuous function 
 $f:[a,b]\to\mathbb{R}$ is Riemann integrable by constructing two staircase 
 functions $\psi\le f\le\varphi$ whose integrals differ by at most $\varepsilon$. 
 The function is fixed in the code as `const f = (x: number) => 0.5 * Math.sin(x) * x + 2.5;`.
@@ -65,8 +71,9 @@ The function is fixed in the code as `const f = (x: number) => 0.5 * Math.sin(x)
 A good way to use the applet is the same order as the proof. 
 First fix an interval $[a,b]$ by dragging the gliders `gliderA` and `gliderB`. 
 Then choose an error tolerance $\varepsilon>0$ with `epsSlider`. 
-After selecting the  $\varepsilon>0$, thge student should decrease the interval or add more n-steps `nSlider`, 
-to get condition 7.2 ($(b-a)/n < \delta$) works and therefore the all construction.
+After selecting the $\varepsilon>0$, the $n$ slider will auto-adjust to the minimum required value.
+The student can then decrease $n$ manually to observe the failure case (red state),
+or increase $n$ further to see the construction with a finer partition.
 
 The applet computes $\widetilde{\varepsilon}=\varepsilon/(2(b-a))$
 via `const eTilde = eps / (2 * range);`. The dashed bracket at $x=b$ 
@@ -83,29 +90,3 @@ const uniformPartition = (a: number, b: number, n: number) => {
     cuts[cuts.length - 1] = b;
     return { cuts, dx };
 };
-```
-
-On each interval $(x_{i-1},x_i)$ the staircase functions are defined using the right endpoint $x_i$:
-`upperH[i] = f(x_i) + eTilde;` and `lowerH[i] = f(x_i) - eTilde;` ( I haven't included codition 7.3: $\psi(x_i) = \varphi(x_i) = f(x_i)$).
-
-These are drawn as step graphs (`upperStep` for $\varphi$ in orange 
-and `lowerStep` for $\psi$ in purple). The filled region between them (`bandPoly`) 
-illustrates the intended inequality $\psi \le f \le \varphi$.
-
-To make the $\delta$-step (7.2) explicit, the code uses a 
-Lipschitz bound derived from $f'(x)$. Since $f(x)=\tfrac12 x\sin x + 2.5$, 
-we have $f'(x)=\tfrac12(\sin x + x\cos x)$ and therefore $|f'(x)|\le \tfrac12(1+|x|)$. 
-Hence on $[a,b]$ we can take `supDf = 0.5 * (1 + max(|a|,|b|))` and define `delta = eTilde / supDf`. 
-```ts
-// δ ensuring (7.2)
-const maxAbsX = Math.max(Math.abs(a), Math.abs(b));
-const supDf = 0.5 * (1 + maxAbsX);
-const delta = eTilde / supDf;
-// dx < δ
-deltaCopndition = dx < delta;
-```
-When `dx < δ` holds, condition (7.2) guarantees 
-that for all $x\in(x_{i-1},x_i)$ we have $|f(x)-f(x_i)|<\widetilde{\varepsilon}$, 
-which implies $\psi(x)\le f(x)\le\varphi(x)$ on each subinterval. 
-The band (and the $\widetilde{\varepsilon}$-bracket) turns green when this 
-condition is satisfied, and red when it is not guaranteed.

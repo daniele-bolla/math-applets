@@ -18,34 +18,81 @@ export default function IntegrabilityProofApplet() {
       setup={(board: JXG.Board) => {
         const EPS = 1e-9;
 
+        // ===== CONSTRAIN [a,b] TO THIS FIXED INTERVAL =====
+        const DOMAIN_MIN = 0;
+        const DOMAIN_MAX = 8;
+
         const f = (x: number) => 0.5 * Math.sin(x) * x + 2.5;
 
-        createFunctionGraph(board, f, [-10, 10]);
-
-        const epsSlider = createSlider(
-          board,
-          [5, -2],
-          [8, -2],
-          [0.1, 1.5, 5.0],
-          { name: "&epsilon;", snapWidth: 0.1 }
-        );
+        createFunctionGraph(board, f, [DOMAIN_MIN, DOMAIN_MAX]);
 
         const nSlider = createSlider(
           board,
           [5, -3.5],
           [8, -3.5],
-          [1, 10, 200],
+          [1, 50, 500],
           { name: "n", snapWidth: 1, precision: 0 }
         );
 
-        const gliderA = createGlider(board, [1, 0, board.defaultAxes.x], {
-          name: "a",
-        }, COLORS.blue);
+        const epsSlider = createSlider(
+          board,
+          [5, -2],
+          [8, -2],
+          [0.5, 2.0, 10.0],
+          { name: "&epsilon;", snapWidth: 0.1 }
+        );
 
-        const gliderB = createGlider(board, [6, 0, board.defaultAxes.x], {
-          name: "b",
-        }, COLORS.blue);
+        // Create a segment on the x-axis for constraining gliders
+        const domainLeft = createPoint(
+          board,
+          [DOMAIN_MIN, 0],
+          { visible: false, fixed: true },
+          COLORS.black
+        );
+        const domainRight = createPoint(
+          board,
+          [DOMAIN_MAX, 0],
+          { visible: false, fixed: true },
+          COLORS.black
+        );
+        const domainSegment = createSegment(
+          board,
+          [domainLeft, domainRight],
+          { visible: false, fixed: true },
+          COLORS.black
+        );
 
+        // Gliders constrained to the domain segment
+        const gliderA = createGlider(
+          board,
+          [1, 0, domainSegment],
+          { name: "a" },
+          COLORS.blue
+        );
+
+        const gliderB = createGlider(
+          board,
+          [6, 0, domainSegment],
+          { name: "b" },
+          COLORS.blue
+        );
+
+
+        const conditionLabel = createText(
+          board,
+          [0.5, -3.4],
+          "",
+          { fixed: true, fontSize: 12, anchorX: "left" },
+          COLORS.green
+        );
+
+        const failureLabel = createText(
+          board,
+          [0.5, -4.1],
+          "",
+          { fixed: true, fontSize: 11, anchorX: "left" },
+          COLORS.red
+        );
 
         const upperStep = createCurve(board, [[0], [0]], {
           strokeWidth: 2,
@@ -68,16 +115,15 @@ export default function IntegrabilityProofApplet() {
           layer: 3,
         }, COLORS.green);
 
-        // Partition lines (orange for φ, purple for ψ)
         const phiLines = createCurve(board, [[0], [0]], {
-          strokeWidth: .5,
+          strokeWidth: 0.5,
           strokeOpacity: 0.6,
           dash: 3,
           layer: 9,
         }, COLORS.orange);
 
         const psiLines = createCurve(board, [[0], [0]], {
-          strokeWidth: .5,
+          strokeWidth: 0.5,
           strokeOpacity: 0.6,
           dash: 3,
           layer: 9,
@@ -97,10 +143,8 @@ export default function IntegrabilityProofApplet() {
           layer: 10,
         }, "#800080");
 
-        // ε~-bracket at x=b (length 2ε~)
         let currentB = 6;
         let currentETilde = 0.2;
-        let deltaCopndition = true; // updated in update()
 
         const epsP1 = createPoint(
           board,
@@ -121,15 +165,11 @@ export default function IntegrabilityProofApplet() {
 
         const epsBracketLabel = createText(
           board,
-          [() => currentB + 0.45, () => f(currentB)],
-          () =>
-            `2ε~ (${
-              deltaCopndition ? "(b-a)/n < δ" : "(b-a)/n ≥ δ"
-            })`,
+          [() => currentB + 0.25, () => f(currentB)],
+          "2ε̃",
           { fixed: true, anchorX: "left", fontSize: 12, layer: 10 },
           COLORS.green
         );
-
 
         const uniformPartition = (a: number, b: number, n: number) => {
           const dx = (b - a) / n;
@@ -173,11 +213,32 @@ export default function IntegrabilityProofApplet() {
           return { X, Y };
         };
 
-        const update = () => {
+        const checkBoundsContainF = (
+          cuts: number[],
+          upperH: number[],
+          lowerH: number[],
+          samples: number = 20
+        ): boolean => {
+          const n = cuts.length - 1;
+          for (let i = 1; i <= n; i++) {
+            const left = cuts[i - 1];
+            const right = cuts[i];
+            for (let j = 0; j <= samples; j++) {
+              const x = left + (j / samples) * (right - left);
+              const y = f(x);
+              if (y > upperH[i] + EPS || y < lowerH[i] - EPS) {
+                return false;
+              }
+            }
+          }
+          return true;
+        };
+
+        let isUpdatingSlider = false;
+
+        const update = (autoAdjustN: boolean = false) => {
           board.suspendUpdate();
 
-          // read ε, n, [a,b]
-          const n = Math.max(1, Math.floor(nSlider.Value()));
           const aRaw = gliderA.X();
           const bRaw = gliderB.X();
           const a = Math.min(aRaw, bRaw);
@@ -185,7 +246,7 @@ export default function IntegrabilityProofApplet() {
           const range = b - a;
 
           currentB = b;
-          // If invalid interval, clear and exit
+
           if (range < EPS) {
             upperStep.dataX = [];
             upperStep.dataY = [];
@@ -197,10 +258,9 @@ export default function IntegrabilityProofApplet() {
             phiLines.dataY = [];
             psiLines.dataX = [];
             psiLines.dataY = [];
-
             epsBracket.setAttribute({ visible: false });
             epsBracketLabel.setAttribute({ visible: false });
-
+            failureLabel.setText("");
             board.unsuspendUpdate();
             board.update();
             return;
@@ -210,28 +270,30 @@ export default function IntegrabilityProofApplet() {
           epsBracketLabel.setAttribute({ visible: true });
 
           const eps = epsSlider.Value();
-
-          //  ε~ = ε/(2(b-a))
           const eTilde = eps / (2 * range);
           currentETilde = eTilde;
 
-          //  uniform partition Z with dx=(b-a)/n
-          const { cuts, dx } = uniformPartition(a, b, n);
-
-          // δ ensuring (7.2) application of mvt
           const maxAbsX = Math.max(Math.abs(a), Math.abs(b));
           const supDf = 0.5 * (1 + maxAbsX);
           const delta = eTilde / supDf;
 
-          // dx < δ
-          deltaCopndition = dx < delta;
+          const minN = Math.ceil(range / delta) + 1;
+          let n = Math.max(1, Math.floor(nSlider.Value()));
 
-          const okColor = deltaCopndition ? COLORS.green : COLORS.red;
-          bandPoly.setAttribute({ fillColor: okColor });
-          epsBracket.setAttribute({ strokeColor: okColor });
-          epsBracketLabel.setAttribute({ color: okColor });
+          if (autoAdjustN && !isUpdatingSlider) {
+            isUpdatingSlider = true;
+            const sliderMax = 500;
+            const newN = Math.min(minN, sliderMax);
+            nSlider.setValue(newN);
+            n = newN;
+            isUpdatingSlider = false;
+          }
 
-          // define ψ and φ on each open interval using right endpoint x_i
+          const dx = range / n;
+          const isConditionMet = dx < delta;
+
+          const { cuts } = uniformPartition(a, b, n);
+
           const upperH = Array.from<number>({ length: n + 1 });
           const lowerH = Array.from<number>({ length: n + 1 });
 
@@ -241,7 +303,38 @@ export default function IntegrabilityProofApplet() {
             lowerH[i] = fx_i - eTilde;
           }
 
-          // draw φ, ψ and the band
+          const boundsWork = checkBoundsContainF(cuts, upperH, lowerH);
+
+          if (isConditionMet && boundsWork) {
+            conditionLabel.setText(`(b-a)/n < δ ✓  (n = ${n} ≥ ${minN})`);
+            conditionLabel.setAttribute({ color: COLORS.green });
+            failureLabel.setText("");
+            
+            bandPoly.setAttribute({ fillColor: COLORS.green });
+            epsBracket.setAttribute({ strokeColor: COLORS.green });
+            epsBracketLabel.setAttribute({ color: COLORS.green });
+            upperStep.setAttribute({ strokeColor: COLORS.orange });
+            lowerStep.setAttribute({ strokeColor: "#800080" });
+            phiLines.setAttribute({ strokeColor: COLORS.orange });
+            psiLines.setAttribute({ strokeColor: "#800080" });
+            labelPhi.setAttribute({ color: COLORS.orange });
+            labelPsi.setAttribute({ color: "#800080" });
+          } else {
+            conditionLabel.setText(`(b-a)/n ≥ δ ✗  (n = ${n} < ${minN} required)`);
+            conditionLabel.setAttribute({ color: COLORS.red });
+            failureLabel.setText("⚠️ Bounds fail: ψ ≰ f or f ≰ φ on some intervals!");
+            
+            bandPoly.setAttribute({ fillColor: COLORS.red });
+            epsBracket.setAttribute({ strokeColor: COLORS.red });
+            epsBracketLabel.setAttribute({ color: COLORS.red });
+            upperStep.setAttribute({ strokeColor: COLORS.red });
+            lowerStep.setAttribute({ strokeColor: COLORS.red });
+            phiLines.setAttribute({ strokeColor: COLORS.red });
+            psiLines.setAttribute({ strokeColor: COLORS.red });
+            labelPhi.setAttribute({ color: COLORS.red });
+            labelPsi.setAttribute({ color: COLORS.red });
+          }
+
           const up = stepPolyline(cuts, upperH);
           const low = stepPolyline(cuts, lowerH);
 
@@ -279,24 +372,22 @@ export default function IntegrabilityProofApplet() {
           labelPhi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, upperH[n]]);
           labelPsi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, lowerH[n]]);
 
-
           board.unsuspendUpdate();
           board.update();
         };
 
-        // Event listeners
-        gliderA.on("drag", update);
-        gliderB.on("drag", update);
-        gliderA.on("up", update);
-        gliderB.on("up", update);
+        epsSlider.on("drag", () => update(true));
+        epsSlider.on("up", () => update(true));
 
-        epsSlider.on("drag", update);
-        epsSlider.on("up", update);
+        gliderA.on("drag", () => update(true));
+        gliderB.on("drag", () => update(true));
+        gliderA.on("up", () => update(true));
+        gliderB.on("up", () => update(true));
 
-        nSlider.on("drag", update);
-        nSlider.on("up", update);
+        nSlider.on("drag", () => update(false));
+        nSlider.on("up", () => update(false));
 
-        update();
+        update(true);
       }}
     />
   );
