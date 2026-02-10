@@ -30,7 +30,7 @@ export default function IntegrabilityProofApplet() {
           board,
           [5, -3],
           [8, -3],
-          [1, 50, 883],
+          [1, 50, 1153],
           { name: "n", snapWidth: 1, precision: 0 }
         );
 
