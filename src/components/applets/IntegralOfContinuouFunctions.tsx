@@ -14,7 +14,7 @@ import {
 export default function IntegrabilityProofApplet() {
   return (
     <JSXGraphBoard
-      config={{ boundingbox: [-1, 6, 9, -5], axis: true }}
+      config={{ boundingbox: [-1, 7, 9, -4], axis: true }}
       setup={(board: JXG.Board) => {
         const EPS = 1e-9;
 
@@ -28,9 +28,9 @@ export default function IntegrabilityProofApplet() {
 
         const nSlider = createSlider(
           board,
-          [5, -3.5],
-          [8, -3.5],
-          [1, 50, 500],
+          [5, -3],
+          [8, -3],
+          [1, 50, 883],
           { name: "n", snapWidth: 1, precision: 0 }
         );
 
