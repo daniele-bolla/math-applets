@@ -24,7 +24,6 @@ export default function UniformConvergenceSinNxOverN() {
         const MAX_N = 60;
         const BACKGROUND_MAX = 40;
 
-        // --- Sliders (same “bottom band” idea as your pointwise applet)
         const nSlider = createSlider(
           board,
           [TAU - 2.2, -0.20],
@@ -164,7 +163,6 @@ export default function UniformConvergenceSinNxOverN() {
           highlight: false,
         });
 
-        // --- Performance: update only bg visibility changes
         let prevN = Math.floor(nSlider.Value());
 
         function updateBackgroundVisibility(n: number) {
@@ -205,7 +203,6 @@ export default function UniformConvergenceSinNxOverN() {
           const n = Math.floor(nSlider.Value());
           const fnx = fn(x, n);
 
-          // Pointwise-style local check (same as your pointwise applet)
           const ok = Math.abs(fnx - fx) < eps;
 
           Pn.setAttribute({
@@ -226,7 +223,6 @@ export default function UniformConvergenceSinNxOverN() {
           // Uniform check: sup_x |sin(nx)/n| = 1/n
           const okUniform = 1 / n < eps;
 
-          // currentCurve.setAttribute({ strokeColor: okUniform ? COLORS.green : COLORS.blue });
 
           tubeUpper.setAttribute({
             strokeColor: okUniform ? COLORS.green : COLORS.red,
