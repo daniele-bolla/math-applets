@@ -21,15 +21,15 @@ export default function UniformConvergenceSinNxOverN() {
       setup={(board: JXG.Board) => {
         const TAU = 2 * Math.PI;
 
-        const MAX_N = 300;
-        const BACKGROUND_MAX = 100;
+        const MAX_N = 60;
+        const BACKGROUND_MAX = 40;
 
         // --- Sliders (same “bottom band” idea as your pointwise applet)
         const nSlider = createSlider(
           board,
           [TAU - 2.2, -0.20],
           [TAU - 0.2, -0.20],
-          [1, 10, MAX_N],
+          [1, 3, MAX_N],
           { name: "n", snapWidth: 1, precision: 0 }
         );
 
