@@ -364,10 +364,10 @@ export default function IntegrabilityProofApplet() {
             yPsi.push(0, lowerH[j], NaN);
           }
 
-          phiLines.dataX = xPhi;
-          phiLines.dataY = yPhi;
-          psiLines.dataX = xPsi;
-          psiLines.dataY = yPsi;
+          phiLines.dataX = n < 40 ? xPhi : [];
+          phiLines.dataY =  n < 40 ?yPhi: [];
+          psiLines.dataX = n < 40 ? xPsi : [];
+          psiLines.dataY =  n < 40 ?yPsi: [];
 
           labelPhi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, upperH[n]]);
           labelPsi.setPosition(JXG.COORDS_BY_USER, [b + 0.12, lowerH[n]]);
